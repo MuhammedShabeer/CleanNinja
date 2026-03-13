@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="cleanninja.client/cleanninja.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="CleanNinja.Server/CleanNinja.Server.csproj" />
+</Solution>

@@ -1,0 +1,58 @@
+<div class="booking-page container">
+  <h1 class="page-title text-center">Book Your Service</h1>
+
+  <div *ngIf="submitSuccess" class="success-message text-center">
+    <h2>🎉 Booking Received!</h2>
+    <p>We'll be in touch shortly to confirm your service.</p>
+    <a routerLink="/" class="btn-primary" style="display:inline-block; margin-top:20px;">Return Home</a>
+  </div>
+
+  <div *ngIf="!submitSuccess" class="booking-grid">
+    <div class="packages-column">
+      <h2>1. Select a Package</h2>
+      
+      <div class="package-card glass-card" [class.selected]="selectedPackage === 'Silver'" (click)="selectPackage('Silver')">
+        <div class="package-header">
+          <h3>Silver Package</h3>
+          <span class="price">£{{ silverPrice }}</span>
+        </div>
+        <ul class="features-list">
+          <li *ngFor="let f of silverFeatures">✓ {{ f }}</li>
+        </ul>
+      </div>
+
+      <div class="package-card glass-card gold" [class.selected]="selectedPackage === 'Gold'" (click)="selectPackage('Gold')">
+        <div class="package-header">
+          <h3>Gold Package</h3>
+          <span class="price">£{{ goldPrice }}</span>
+        </div>
+        <ul class="features-list">
+          <li *ngFor="let f of goldFeatures">✓ {{ f }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-column">
+      <h2>2. Pin Location & Details</h2>
+      <div class="map-container">
+        <div id="booking-map" class="map-view"></div>
+        <p class="map-hint">Drag marker or click map to set location.</p>
+      </div>
+
+      <form class="booking-form" (submit)="submitBooking($event)">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000">
+        </div>
+        
+        <button type="submit" class="btn-primary btn-submit" [disabled]="isSubmitting || !selectedPackage">
+          {{ isSubmitting ? 'Submitting...' : 'Confirm Booking' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

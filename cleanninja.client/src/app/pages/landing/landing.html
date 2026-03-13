@@ -1,0 +1,29 @@
+<div class="hero-section">
+  <div class="container hero-content">
+    <h1 class="hero-title">Clean Ninja</h1>
+    <p class="hero-tagline">{{ tagline }}</p>
+    <div class="hero-actions">
+      <a routerLink="/booking" class="btn-primary btn-lg">Book Service</a>
+    </div>
+  </div>
+</div>
+
+<div class="services-section container">
+  <h2 class="section-title text-center">Our Services</h2>
+  <div class="services-grid">
+    <div class="glass-card service-card" *ngFor="let service of services">
+      <h3>{{ service }}</h3>
+      <p>Professional {{ service | lowercase }} for the modern age.</p>
+    </div>
+  </div>
+</div>
+
+<div class="social-section container">
+  <h2 class="section-title text-center">Follow Us on Instagram</h2>
+  <p class="text-center"><a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">{{ instagramHandle }}</a></p>
+  <div class="instagram-gallery text-center">
+    <div class="glass-card gallery-placeholder">
+      <p>📸 Instagram Gallery Placeholder</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="admin-page container">
+  <h1 class="page-title">Admin Dashboard</h1>
+
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'bookings'" (click)="switchTab('bookings')">Pending Bookings</button>
+    <button class="tab-btn" [class.active]="activeTab === 'content'" (click)="switchTab('content')">Site Content</button>
+  </div>
+
+  <div class="tab-content" [hidden]="activeTab !== 'bookings'">
+    <div class="bookings-layout">
+      <div class="map-container glass-card">
+        <div id="admin-map" class="map-view"></div>
+      </div>
+      <div class="bookings-list">
+        <h2>Pending Requests ({{ pendingBookings.length }})</h2>
+        <div class="booking-card glass-card" *ngFor="let b of pendingBookings">
+          <div class="b-details">
+            <h3>{{ b.customerName }} <span class="badge">{{ b.servicePackage }}</span></h3>
+            <p>Ph: {{ b.phone }} | Date: {{ b.createdAt | date:'short' }}</p>
+          </div>
+          <button class="btn-primary btn-approve" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">Approve & WhatsApp</button>
+        </div>
+        <p *ngIf="pendingBookings.length === 0" class="empty-state">No pending bookings right now.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" [hidden]="activeTab !== 'content'">
+    <div class="content-editor glass-card">
+      <h2>Edit Dynamic Content</h2>
+      <p>Ensure JSON formatting for arrays like Features and Services.</p>
+      <div class="content-grid">
+        <div class="content-item" *ngFor="let item of contentItems">
+          <label>{{ item.section }} - <strong>{{ item.key }}</strong></label>
+          <div class="input-group">
+            <textarea [(ngModel)]="item.value" rows="2"></textarea>
+            <button class="btn-primary" (click)="saveContentItem(item)">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

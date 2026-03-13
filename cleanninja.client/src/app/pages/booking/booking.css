@@ -1,0 +1,145 @@
+.booking-page {
+  padding: 60px 20px;
+}
+
+.page-title {
+  margin-bottom: 50px;
+}
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 768px) {
+  .booking-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.package-card {
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.package-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.package-card.selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 20px rgba(255,0,0,0.3);
+}
+
+.package-card.gold {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0,0,0,0));
+}
+.package-card.gold.selected {
+  border-color: gold;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 15px;
+}
+
+.package-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+.gold .price { color: gold; }
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features-list li {
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+.map-container {
+  margin-bottom: 30px;
+}
+
+.map-view {
+  height: 300px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.map-hint {
+  font-size: 0.85rem;
+  color: #aaa;
+  text-align: right;
+  margin-top: 5px;
+}
+
+.booking-form {
+  background: rgba(255,255,255,0.02);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ddd;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.btn-submit {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 14px;
+}
+
+.btn-submit:disabled {
+  background: #555;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.success-message {
+  padding: 60px 20px;
+  background: rgba(0,255,0,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(0,255,0,0.2);
+}
