@@ -13,6 +13,7 @@ namespace CleanNinja.Server.Data
         public DbSet<AdminUser> AdminUsers { get; set; } = null!;
         public DbSet<Service> Services { get; set; } = null!;
         public DbSet<ServiceMedia> ServiceMedia { get; set; } = null!;
+        public DbSet<GalleryImage> GalleryImages { get; set; } = null!;
         public DbSet<ServiceFeedback> ServiceFeedbacks { get; set; } = null!;
     }
 }

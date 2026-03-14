@@ -1,77 +1,146 @@
 <div class="hero-section">
   <div class="container hero-content">
-    <img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja" style="max-height: 180px; margin-bottom: 20px;">
-    <p class="hero-tagline">{{ tagline }}</p>
+    <img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja" style="max-height: 220px; margin-bottom: 30px; filter: hue-rotate(30deg) saturate(1.5) drop-shadow(0 0 20px rgba(246, 129, 20, 0.4));">
+    <p class="hero-tagline" style="font-family: var(--heading-font); font-size: 2rem; color: #fff; margin-bottom: 50px;">{{ tagline }}</p>
     <div class="hero-actions">
-      <a routerLink="/booking" class="btn-primary btn-lg">Book Service</a>
+      <a routerLink="/booking" class="btn-primary" style="padding: 20px 60px; font-size: 1.2rem;">Get Your Quote</a>
     </div>
   </div>
 </div>
 
+<!-- About Us Section -->
+<div class="container about-section">
+  <div class="about-grid">
+    <div class="about-image">
+      <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 20px; border: 4px solid var(--primary-color);">
+        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800" alt="Clean Ninja Van" style="width: 100%; height: auto; display: block;">
+      </div>
+    </div>
+    <div class="about-text">
+      <h2 class="section-title" style="left: 0; transform: none; margin-top: 0;">Who We Are</h2>
+      <h3>Mobile Premium Valeting in Liverpool</h3>
+      <p>Clean Ninja is Liverpool's premier mobile valeting and bin cleaning specialist. We don't just clean; we restore. Our fully equipped "Ninja Vans" bring the highest standard of exterior foam washing and interior detailing straight to your driveway.</p>
+      
+      <div class="usp-list">
+        <div class="usp-item"><span class="usp-icon">🛡️</span> Fully Insured</div>
+        <div class="usp-item"><span class="usp-icon">📍</span> Liverpool Based</div>
+        <div class="usp-item"><span class="usp-icon">⚡</span> Rapid Ninja Response</div>
+        <div class="usp-item"><span class="usp-icon">💎</span> 100% Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Services Section -->
 <div class="services-section container">
-  <h2 class="section-title text-center">Our Services</h2>
+  <h2 class="section-title text-center">Ninja Services</h2>
   <div class="services-grid">
     <div class="glass-card service-card" *ngFor="let service of services" [class.is-highlighted]="service.isHighlighted">
-      <div *ngIf="service.isHighlighted" class="featured-badge">⭐ Recommended</div>
-      <div class="service-icon-wrap">{{ service.icon }}</div>
-      <h3>{{ service.name }}</h3>
-      <p>{{ service.description }}</p>
+      <div *ngIf="service.isHighlighted" class="featured-badge" style="background: #fff; color: #000;">⭐ MOST POPULAR</div>
+      <div class="service-icon-wrap" style="color: var(--primary-color);">{{ service.icon }}</div>
+      <h3 style="font-size: 1.8rem;">{{ service.name }}</h3>
+      <p style="margin-bottom: 20px;">{{ service.description }}</p>
 
       <!-- Price -->
-      <div class="service-price-row" *ngIf="service.price">
+      <div class="service-price-row" style="justify-content: center; margin-bottom: 20px;">
         <span *ngIf="service.discountedPrice" class="price-original">£{{ service.price | number:'1.2-2' }}</span>
-        <span class="price-current">£{{ (service.discountedPrice ?? service.price) | number:'1.2-2' }}</span>
-        <span *ngIf="service.discountedPrice" class="price-badge">SALE</span>
+        <span class="price-current" style="font-size: 2rem;">£{{ (service.discountedPrice || service.price) | number:'1.2-2' }}</span>
       </div>
+
+      <a routerLink="/booking" class="btn-primary" style="width: 100%; padding: 12px; font-size: 0.9rem;">Book This Service</a>
 
       <!-- Media thumbnail -->
-      <div class="service-media" *ngIf="service.media && service.media.length > 0">
-        <img *ngIf="service.media[0].fileType === 'image'" [src]="service.media[0].url" [alt]="service.name" class="service-thumb" />
-        <video *ngIf="service.media[0].fileType === 'video'" [src]="service.media[0].url" autoplay muted loop class="service-thumb"></video>
+      <div class="service-media" *ngIf="service.media && service.media.length > 0" style="margin-top: 25px;">
+        <img [src]="getMediaUrl(service.media[0].url)" [alt]="service.name" class="service-thumb" style="border-radius: 12px;" />
       </div>
-
-      <!-- Star rating summary -->
-      <div class="rating-summary" *ngIf="service.feedbacks && service.feedbacks.length > 0">
-        <span class="stars-display">{{ '★'.repeat(avgRating(service.feedbacks)) }}{{ '☆'.repeat(5 - avgRating(service.feedbacks)) }}</span>
-        <span class="rating-count">({{ service.feedbacks.length }} review{{ service.feedbacks.length !== 1 ? 's' : '' }})</span>
-      </div>
-
-      <!-- Approved reviews -->
-      <div class="reviews-list" *ngIf="service.feedbacks && service.feedbacks.length > 0">
-        <div class="review-item" *ngFor="let fb of service.feedbacks.slice(0, 2)">
-          <span class="stars-sm">{{ '★'.repeat(fb.rating) }}</span>
-          <strong>{{ fb.customerName }}</strong>
-          <p>{{ fb.comment }}</p>
-        </div>
-      </div>
-
-      <!-- Leave a review form -->
-      <div class="feedback-form-wrap">
-        <button class="feedback-toggle-btn" (click)="toggleFeedbackForm(service.id)">
-          {{ openFeedbackForms[service.id] ? '✕ Close' : '✍️ Leave a Review' }}
-        </button>
-        <div class="feedback-form" *ngIf="openFeedbackForms[service.id]">
-          <input type="text" [(ngModel)]="feedbackDrafts[service.id].customerName" placeholder="Your name" />
-          <div class="star-picker">
-            <span *ngFor="let n of [1,2,3,4,5]" (click)="feedbackDrafts[service.id].rating = n"
-              [class.active]="feedbackDrafts[service.id].rating >= n">★</span>
-          </div>
-          <textarea [(ngModel)]="feedbackDrafts[service.id].comment" rows="2" placeholder="Your comment..."></textarea>
-          <button class="btn-primary" style="width:100%;" (click)="submitFeedback(service.id)">Submit Review</button>
-          <p *ngIf="feedbackSuccess[service.id]" style="color:#4caf50;margin-top:8px;">Thank you! Your review will appear after approval.</p>
-        </div>
-      </div>
-
     </div>
   </div>
 </div>
 
+<!-- Testimonials Section -->
+<div class="container testimonials-section">
+  <h2 class="section-title text-center">Customer Reviews</h2>
+  <div class="testimonials-slider">
+    <div class="glass-card testimonial-card" *ngFor="let i of [1,2,3]">
+      <div class="stars-display" style="margin-bottom: 15px; color: var(--primary-color);">★★★★★</div>
+      <p class="quote-text">"Best bin cleaning service in Liverpool. They are on time, professional and the results are amazing. Highly recommended!"</p>
+      <div class="author-info">
+        <div style="width: 40px; height: 40px; background: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">JD</div>
+        <div>
+          <strong style="display: block;">John Doe</strong>
+          <span style="font-size: 0.8rem; color: #777;">Liverpool, UK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery Section -->
 <div class="social-section container">
-  <h2 class="section-title text-center">Follow Us on Instagram</h2>
-  <p class="text-center"><a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">{{ instagramHandle }}</a></p>
-  <div class="instagram-gallery text-center">
-    <div class="glass-card gallery-placeholder">
-      <p>📸 Instagram Gallery Placeholder</p>
+  <h2 class="section-title text-center">Work Showcase</h2>
+  <p class="text-center" style="color:#aaa;margin-bottom:30px;">Premium results for our Liverpool community.</p>
+  
+  <div class="gallery-grid" *ngIf="gallery.length > 0">
+    <div class="gallery-card" *ngFor="let img of gallery">
+      <img [src]="getMediaUrl(img.url)" [alt]="img.title || 'Work Gallery'" class="gallery-img">
+      <div class="gallery-overlay">
+        <h4 class="overlay-title">{{ img.title || 'Premium Finish' }}</h4>
+        <button class="view-btn-sm">View Project</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center" *ngIf="gallery.length === 0">
+    <div class="glass-card gallery-placeholder" style="border-color: var(--primary-color);">
+      <p>📸 Ninja work is being uploaded...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Contact Section -->
+<div class="container contact-section">
+  <h2 class="section-title text-center">Get In Touch</h2>
+  <div class="contact-grid">
+    <div class="contact-info-card glass-card">
+      <div class="info-item">
+        <h4>📞 Phone</h4>
+        <p>+44 7578 334674</p>
+      </div>
+      <div class="info-item">
+        <h4>📧 Email</h4>
+        <p>hello@cleanninja.uk</p>
+      </div>
+      <div class="info-item">
+        <h4>📍 Service Area</h4>
+        <p>Serving all of Liverpool and surrounding areas.</p>
+      </div>
+      <div class="instagram-link">
+        <a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">Follow @clean_ninja_official</a>
+      </div>
+    </div>
+    
+    <div class="contact-form-side glass-card">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Ninja Customer">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="example@email.com">
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea rows="4" placeholder="How can we help you?"></textarea>
+      </div>
+      <button class="btn-primary" style="width: 100%;">Send Message</button>
+    </div>
+  </div>
+
+  <!-- Regional Map -->
+  <div class="map-container">
+    <img src="assets/images/liverpool_map.png" alt="Liverpool Map Area" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2) brightness(0.5) sepia(0.2) hue-rotate(320deg);">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(246, 129, 20, 0.1);">
+      <h3 style="background: rgba(0,0,0,0.8); padding: 15px 30px; border-radius: 50px; border: 2px solid var(--primary-color);">Serving Liverpool & Wirral</h3>
     </div>
   </div>
 </div>

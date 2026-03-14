@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ContentService, SiteContent } from '../../services/content.service';
 import { AuthService } from '../../services/auth.service';
-import { ServiceApiService, CleanService, ServiceFeedback } from '../../services/service-api.service';
+import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
 import { Router } from '@angular/router';
 import * as L from 'leaflet';
 
@@ -13,7 +13,7 @@ import * as L from 'leaflet';
   standalone: false
 })
 export class Admin implements OnInit, AfterViewInit {
-  public activeTab: 'bookings' | 'employees' | 'services' | 'content' = 'bookings';
+  public activeTab: 'bookings' | 'employees' | 'services' | 'content' | 'gallery' = 'bookings';
   public pendingBookings: any[] = [];
   public employees: any[] = [];
   public contentItems: SiteContent[] = [];
@@ -29,6 +29,10 @@ export class Admin implements OnInit, AfterViewInit {
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
   public loadedFeedbacks: { [serviceId: number]: ServiceFeedback[] } = {};
+
+  // Gallery
+  public galleryImages: GalleryImage[] = [];
+  public isUploadingGallery: boolean = false;
 
   private map: any;
   private markers: L.Marker[] = [];
@@ -46,6 +50,7 @@ export class Admin implements OnInit, AfterViewInit {
     this.fetchBookings();
     this.fetchEmployees();
     this.fetchServices();
+    this.fetchGallery();
     this.contentService.getContent().subscribe(items => {
       this.contentItems = JSON.parse(JSON.stringify(items));
       const waItem = this.contentItems.find(c => c.key === 'WhatsAppContact');
@@ -205,6 +210,35 @@ export class Admin implements OnInit, AfterViewInit {
   toggleHighlight(s: CleanService): void {
     s.isHighlighted = !s.isHighlighted;
     this.serviceApi.updateService(s.id, s).subscribe(() => this.fetchServices());
+  }
+
+  // ── Gallery ──────────────────────────────────────────
+  fetchGallery(): void {
+    this.serviceApi.getGallery().subscribe(data => this.galleryImages = data);
+  }
+
+  onGalleryFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.isUploadingGallery = true;
+    this.serviceApi.uploadGalleryImage(file).subscribe({
+      next: () => {
+        this.isUploadingGallery = false;
+        this.fetchGallery();
+      },
+      error: () => {
+        this.isUploadingGallery = false;
+        alert('Upload failed.');
+      }
+    });
+    input.value = '';
+  }
+
+  deleteGalleryImage(id: number): void {
+    if (!confirm('Delete this gallery image?')) return;
+    this.serviceApi.deleteGalleryImage(id).subscribe(() => this.fetchGallery());
   }
 }
 

@@ -20,6 +20,14 @@ export interface ServiceFeedback {
   createdAt: string;
 }
 
+export interface GalleryImage {
+  id: number;
+  url: string;
+  title: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface CleanService {
   id: number;
   name: string;
@@ -41,6 +49,23 @@ export interface CleanService {
 @Injectable({ providedIn: 'root' })
 export class ServiceApiService {
   constructor(private http: HttpClient) {}
+
+  // Gallery
+  getGallery(): Observable<GalleryImage[]> {
+    return this.http.get<GalleryImage[]>('/api/gallery');
+  }
+
+  uploadGalleryImage(file: File, title: string = ''): Observable<GalleryImage> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    return this.http.post<GalleryImage>('/api/gallery', formData);
+  }
+
+  deleteGalleryImage(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/gallery/${id}`);
+  }
+
 
   getServices(): Observable<CleanService[]> {
     return this.http.get<CleanService[]>('/api/services');

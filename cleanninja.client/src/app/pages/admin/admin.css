@@ -4,7 +4,7 @@
 
 .tabs {
   margin-bottom: 30px;
-  border-bottom: 2px solid rgba(255,0,0,0.2);
+  border-bottom: 2px solid rgba(246, 129, 20, 0.2);
 }
 
 .tab-btn {
@@ -64,11 +64,12 @@
 }
 
 .badge {
-  background: rgba(255,0,0,0.2);
+  background: rgba(246, 129, 20, 0.15);
   color: var(--primary-color);
   font-size: 0.8rem;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: bold;
 }
 
 .booking-card p {
@@ -152,8 +153,8 @@
 
 .logout-btn {
   background: transparent;
-  border: 1px solid rgba(255,0,0,0.4);
-  color: #ff6b6b;
+  border: 1px solid rgba(246, 129, 20, 0.4);
+  color: var(--primary-color);
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -162,8 +163,8 @@
 }
 
 .logout-btn:hover {
-  background: rgba(255,0,0,0.1);
-  border-color: #ff0000;
+  background: rgba(246, 129, 20, 0.1);
+  border-color: var(--primary-color);
   color: #fff;
 }
 
@@ -312,7 +313,7 @@
 .media-upload-btn {
   width: 110px;
   height: 80px;
-  border: 2px dashed rgba(255,0,0,0.3);
+  border: 2px dashed rgba(246, 129, 20, 0.3);
   border-radius: 8px;
   display: flex;
   align-items: center;

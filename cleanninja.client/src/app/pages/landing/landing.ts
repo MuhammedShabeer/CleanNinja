@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SeoService } from '../../services/seo.service';
 import { ContentService } from '../../services/content.service';
-import { ServiceApiService, CleanService, ServiceFeedback } from '../../services/service-api.service';
+import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
 
 @Component({
   selector: 'app-landing',
@@ -12,7 +12,9 @@ import { ServiceApiService, CleanService, ServiceFeedback } from '../../services
 export class Landing implements OnInit {
   public tagline: string = '';
   public services: CleanService[] = [];
+  public gallery: GalleryImage[] = [];
   public instagramHandle: string = '';
+  public backendUrl: string = 'http://localhost:5021'; // Should be in config
 
   // Feedback form state
   public openFeedbackForms: { [id: number]: boolean } = {};
@@ -31,6 +33,9 @@ export class Landing implements OnInit {
           this.instagramHandle = this.contentService.getValue('InstagramHandle', '@clean_ninja_official');
           const schema = this.seoService.getLocalBusinessSchema({ WhatsAppContact: this.contentService.getValue('WhatsAppContact') });
           this.seoService.setJsonLd(schema);
+      });
+      this.serviceApi.getGallery().subscribe(g => {
+          this.gallery = g;
       });
       this.serviceApi.getServices().subscribe(s => {
           this.services = s;
@@ -64,5 +69,11 @@ export class Landing implements OnInit {
   avgRating(feedbacks: ServiceFeedback[]): number {
       if (!feedbacks || feedbacks.length === 0) return 0;
       return Math.round(feedbacks.reduce((s, f) => s + f.rating, 0) / feedbacks.length);
+  }
+
+  getMediaUrl(url: string | undefined): string {
+      if (!url) return 'assets/images/placeholder.png';
+      if (url.startsWith('http')) return url;
+      return `${this.backendUrl}${url}`;
   }
 }
