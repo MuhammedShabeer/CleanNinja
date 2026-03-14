@@ -1,7 +1,7 @@
 <header class="app-header">
   <div class="container header-container">
     <div class="logo">
-      <a routerLink="/">Clean Ninja</a>
+      <a routerLink="/"><img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja Logo" style="height: 50px; vertical-align: middle;"></a>
     </div>
     <nav class="nav-links">
       <a routerLink="/">Home</a>
@@ -12,3 +12,18 @@
 <main class="app-main">
   <router-outlet></router-outlet>
 </main>
+
+<!-- PWA Install Banner -->
+<div *ngIf="showInstallButton" class="pwa-install-banner">
+  <div class="pwa-install-content">
+    <img src="assets/images/icon-192x192.png" alt="Clean Ninja" class="pwa-icon">
+    <div class="pwa-text">
+      <strong>Install Clean Ninja</strong>
+      <span>Add to your home screen for the best experience</span>
+    </div>
+  </div>
+  <div class="pwa-actions">
+    <button (click)="showInstallButton = false" class="pwa-dismiss">✕</button>
+    <button (click)="installPwa()" class="btn-primary pwa-install-btn">Install</button>
+  </div>
+</div>

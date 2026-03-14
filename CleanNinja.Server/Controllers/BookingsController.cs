@@ -51,5 +51,31 @@ namespace CleanNinja.Server.Controllers
 
             return NoContent();
         }
+
+        // PUT: api/bookings/5/assign/3
+        [HttpPut("{id}/assign/{employeeId}")]
+        public async Task<IActionResult> AssignEmployee(int id, int employeeId)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null) return NotFound();
+
+            var employee = await _context.Employees.FindAsync(employeeId);
+            if (employee == null) return NotFound();
+
+            booking.AssignedEmployeeId = employeeId;
+            booking.AssignedEmployeeName = employee.Name;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // GET: api/bookings/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings()
+        {
+            return await _context.Bookings
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

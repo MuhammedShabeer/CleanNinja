@@ -1,11 +1,22 @@
 <div class="admin-page container">
-  <h1 class="page-title">Admin Dashboard</h1>
-
-  <div class="tabs">
-    <button class="tab-btn" [class.active]="activeTab === 'bookings'" (click)="switchTab('bookings')">Pending Bookings</button>
-    <button class="tab-btn" [class.active]="activeTab === 'content'" (click)="switchTab('content')">Site Content</button>
+  <!-- Header -->
+  <div class="admin-header">
+    <h1 class="page-title">Admin Dashboard</h1>
+    <div class="admin-meta">
+      <span>👋 {{ adminName }}</span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
   </div>
 
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'bookings'" (click)="switchTab('bookings')">📋 Bookings</button>
+    <button class="tab-btn" [class.active]="activeTab === 'employees'" (click)="switchTab('employees')">👷 Employees</button>
+    <button class="tab-btn" [class.active]="activeTab === 'services'" (click)="activeTab = 'services'">🛠️ Services</button>
+    <button class="tab-btn" [class.active]="activeTab === 'content'" (click)="switchTab('content')">⚙️ Content</button>
+  </div>
+
+  <!-- Bookings Tab -->
   <div class="tab-content" [hidden]="activeTab !== 'bookings'">
     <div class="bookings-layout">
       <div class="map-container glass-card">
@@ -16,15 +27,139 @@
         <div class="booking-card glass-card" *ngFor="let b of pendingBookings">
           <div class="b-details">
             <h3>{{ b.customerName }} <span class="badge">{{ b.servicePackage }}</span></h3>
-            <p>Ph: {{ b.phone }} | Date: {{ b.createdAt | date:'short' }}</p>
+            <p>📞 {{ b.phone }} | 📅 {{ b.createdAt | date:'short' }}</p>
+            <p style="margin: 4px 0; color: #aaa; font-size: 0.85rem;">📍 {{ b.address || 'No address' }} | 🔄 {{ b.frequency || 'Once' }}</p>
+            <p *ngIf="b.assignedEmployeeName" class="assigned-badge">👷 Assigned: <strong>{{ b.assignedEmployeeName }}</strong></p>
           </div>
-          <button class="btn-primary btn-approve" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">Approve & WhatsApp</button>
+          <div class="b-actions">
+            <select class="assign-select" (change)="assignEmployee(b.id, +$any($event.target).value)" [value]="b.assignedEmployeeId || ''">
+              <option value="">Assign Employee...</option>
+              <option *ngFor="let e of employees" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
+            </select>
+            <button class="btn-primary btn-approve" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">Approve & WhatsApp</button>
+          </div>
         </div>
         <p *ngIf="pendingBookings.length === 0" class="empty-state">No pending bookings right now.</p>
       </div>
     </div>
   </div>
 
+  <!-- Employees Tab -->
+  <div class="tab-content" [hidden]="activeTab !== 'employees'">
+    <div class="content-editor glass-card">
+      <h2>Add Employee</h2>
+      <div class="employee-form">
+        <input type="text" [(ngModel)]="newEmployee.name" placeholder="Full Name" />
+        <input type="text" [(ngModel)]="newEmployee.phone" placeholder="Phone" />
+        <input type="text" [(ngModel)]="newEmployee.role" placeholder="Role (e.g. Car Wash)" />
+        <button class="btn-primary" (click)="addEmployee()">+ Add</button>
+      </div>
+    </div>
+    <div class="employee-list">
+      <div class="employee-card glass-card" *ngFor="let e of employees">
+        <div>
+          <strong>{{ e.name }}</strong>
+          <span class="badge" style="margin-left:8px;">{{ e.role }}</span>
+          <p style="margin:4px 0 0 0; color:#aaa; font-size:0.85rem;">📞 {{ e.phone }}</p>
+        </div>
+        <button class="logout-btn" (click)="removeEmployee(e.id)">Remove</button>
+      </div>
+      <p *ngIf="employees.length === 0" class="empty-state">No employees added yet.</p>
+    </div>
+  </div>
+
+  <!-- Services Tab -->
+  <div class="tab-content" [hidden]="activeTab !== 'services'">
+    <div class="content-editor glass-card">
+      <h2>Add New Service</h2>
+      <div class="employee-form">
+        <input type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Car Wash)" />
+        <input type="text" [(ngModel)]="newService.description" placeholder="Short Description" />
+        <input type="text" [(ngModel)]="newService.icon" placeholder="Icon emoji (e.g. 🚗)" style="max-width:80px;" />
+        <input type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" style="max-width:100px;" />
+        <button class="btn-primary" (click)="addService()">+ Add Service</button>
+      </div>
+    </div>
+
+    <div class="service-list">
+      <div class="service-card glass-card" *ngFor="let s of services">
+        <!-- View mode -->
+        <div *ngIf="editingService?.id !== s.id">
+          <div class="service-card-header">
+            <span class="service-icon">{{ s.icon }}</span>
+            <div>
+              <h3>{{ s.name }} <span *ngIf="s.isHighlighted" class="highlight-badge">⭐ Featured</span></h3>
+              <p>{{ s.description }}</p>
+              <div class="service-price-row" *ngIf="s.price">
+                <span *ngIf="s.discountedPrice" class="price-original">£{{ s.price }}</span>
+                <span class="price-current">£{{ s.discountedPrice ?? s.price }}</span>
+              </div>
+            </div>
+            <div class="service-actions">
+              <button class="highlight-toggle-btn" [class.active]="s.isHighlighted" (click)="toggleHighlight(s)"
+                [title]="s.isHighlighted ? 'Remove highlight' : 'Mark as Featured'">
+                {{ s.isHighlighted ? '⭐ Featured' : '☆ Feature' }}
+              </button>
+              <button class="logout-btn" (click)="editingService = {id:s.id, name:s.name, description:s.description, icon:s.icon, sortOrder:s.sortOrder, isActive:s.isActive, isHighlighted:s.isHighlighted, createdAt:s.createdAt, media:s.media, feedbacks:s.feedbacks, price:s.price, discountedPrice:s.discountedPrice, weeklyPrice:s.weeklyPrice, monthlyPrice:s.monthlyPrice, yearlyPrice:s.yearlyPrice}">Edit</button>
+              <button class="logout-btn" (click)="deleteService(s.id)">Delete</button>
+            </div>
+          </div>
+          <!-- Media gallery -->
+          <div class="media-gallery">
+            <div class="media-item" *ngFor="let m of s.media">
+              <img *ngIf="m.fileType === 'image'" [src]="m.url" [alt]="m.fileName" />
+              <video *ngIf="m.fileType === 'video'" [src]="m.url" controls></video>
+              <button class="media-delete-btn" (click)="deleteMedia(s.id, m.id)">✕</button>
+            </div>
+            <label class="media-upload-btn" [class.uploading]="isUploadingMedia[s.id]">
+              <span *ngIf="!isUploadingMedia[s.id]">+ Add Photo/Video</span>
+              <span *ngIf="isUploadingMedia[s.id]">Uploading...</span>
+              <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Edit mode -->
+        <div *ngIf="editingService?.id === s.id" class="service-edit-form">
+          <input type="text" [(ngModel)]="$any(editingService).name" placeholder="Name" />
+          <input type="text" [(ngModel)]="$any(editingService).description" placeholder="Description" />
+          <input type="text" [(ngModel)]="$any(editingService).icon" placeholder="Icon" style="max-width:80px;" />
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <input type="number" [(ngModel)]="$any(editingService).price" placeholder="Price (£)" style="max-width:120px;" />
+            <input type="number" [(ngModel)]="$any(editingService).discountedPrice" placeholder="Discounted (£)" style="max-width:120px;" />
+            <input type="number" [(ngModel)]="$any(editingService).weeklyPrice" placeholder="Weekly (£)" style="max-width:120px;" />
+            <input type="number" [(ngModel)]="$any(editingService).monthlyPrice" placeholder="Monthly (£)" style="max-width:120px;" />
+            <input type="number" [(ngModel)]="$any(editingService).yearlyPrice" placeholder="Yearly (£)" style="max-width:120px;" />
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="btn-primary" (click)="saveService($any(editingService))">Save</button>
+            <button class="logout-btn" (click)="editingService = null">Cancel</button>
+          </div>
+          <!-- Feedback moderation -->
+          <div class="feedback-admin" *ngIf="$any(editingService).feedbacks?.length > 0 || true">
+            <h4 style="color:#ccc;margin:16px 0 8px;">📝 Customer Reviews for This Service</h4>
+            <div *ngFor="let fb of loadedFeedbacks[s.id]" class="feedback-mod-item">
+              <div>
+                <strong>{{ fb.customerName }}</strong>
+                <span class="star-display">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
+                <span class="feedback-status" [style.color]="fb.isApproved ? '#4caf50' : '#ff9800'">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
+                <p style="margin:4px 0;color:#aaa;font-size:0.85rem;">{{ fb.comment }}</p>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button *ngIf="!fb.isApproved" class="btn-primary" style="padding:4px 10px;font-size:0.8rem;" (click)="approveFeedback(fb.id, s.id)">Approve</button>
+                <button class="logout-btn" style="padding:4px 10px;font-size:0.8rem;" (click)="deleteFeedback(fb.id, s.id)">Delete</button>
+              </div>
+            </div>
+            <p *ngIf="!loadedFeedbacks[s.id]?.length" style="color:#777;font-size:0.85rem;">No reviews yet.</p>
+            <button class="logout-btn" style="margin-top:8px;" (click)="loadFeedback(s.id)">🔄 Refresh Reviews</button>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="services.length === 0" class="empty-state">No services yet. Add one above!</p>
+    </div>
+  </div>
+
+  <!-- Content Tab -->
   <div class="tab-content" [hidden]="activeTab !== 'content'">
     <div class="content-editor glass-card">
       <h2>Edit Dynamic Content</h2>

@@ -1,0 +1,34 @@
+<div class="login-page">
+  <div class="login-card glass-card">
+    <div class="login-logo">
+      <img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja" />
+    </div>
+    <h2>{{ mode === 'login' ? 'Admin Login' : 'Create Admin Account' }}</h2>
+
+    <form (ngSubmit)="submit()">
+      <div class="form-group" *ngIf="mode === 'register'">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="name" name="name" placeholder="John Smith" required />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" name="email" placeholder="admin@cleanninja.uk" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button type="submit" class="btn-primary" style="width:100%;" [disabled]="isLoading">
+        {{ isLoading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Register') }}
+      </button>
+    </form>
+
+    <div class="login-toggle">
+      <span *ngIf="mode === 'login'">No account? <a (click)="mode='register'" href="#">Register</a></span>
+      <span *ngIf="mode === 'register'">Already have an account? <a (click)="mode='login'" href="#">Login</a></span>
+    </div>
+  </div>
+</div>

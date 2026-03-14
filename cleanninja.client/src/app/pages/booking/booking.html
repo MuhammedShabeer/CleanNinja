@@ -1,58 +1,92 @@
 <div class="booking-page container">
-  <h1 class="page-title text-center">Book Your Service</h1>
+  <h1 class="page-title text-center">Book a Service</h1>
 
+  <!-- Success State -->
   <div *ngIf="submitSuccess" class="success-message text-center">
-    <h2>🎉 Booking Received!</h2>
+    <div class="success-icon">🎉</div>
+    <h2>Booking Received!</h2>
     <p>We'll be in touch shortly to confirm your service.</p>
     <a routerLink="/" class="btn-primary" style="display:inline-block; margin-top:20px;">Return Home</a>
   </div>
 
-  <div *ngIf="!submitSuccess" class="booking-grid">
-    <div class="packages-column">
-      <h2>1. Select a Package</h2>
-      
-      <div class="package-card glass-card" [class.selected]="selectedPackage === 'Silver'" (click)="selectPackage('Silver')">
-        <div class="package-header">
-          <h3>Silver Package</h3>
-          <span class="price">£{{ silverPrice }}</span>
+  <div *ngIf="!submitSuccess" class="booking-layout">
+
+    <!-- Step 1: Choose Service -->
+    <div class="step-section">
+      <h2 class="step-title"><span class="step-num">1</span> Choose a Service</h2>
+      <div class="services-grid">
+        <div
+          class="service-card glass-card"
+          *ngFor="let s of services"
+          [class.selected]="selectedService?.id === s.id"
+          (click)="selectService(s)">
+
+          <!-- First media thumbnail -->
+          <div class="service-thumb-wrap" *ngIf="s.media && s.media.length > 0">
+            <img *ngIf="s.media[0].fileType === 'image'" [src]="s.media[0].url" [alt]="s.name" class="service-thumb" />
+            <video *ngIf="s.media[0].fileType === 'video'" [src]="s.media[0].url" autoplay muted loop class="service-thumb"></video>
+          </div>
+          <div class="service-no-media" *ngIf="!s.media || s.media.length === 0">
+            <span>{{ s.icon }}</span>
+          </div>
+
+          <div class="service-info">
+            <h3>{{ s.icon }} {{ s.name }}</h3>
+            <p>{{ s.description }}</p>
+            <div class="price-row" *ngIf="s.price">
+              <span *ngIf="s.discountedPrice" class="price-original">£{{ s.price | number:'1.2-2' }}</span>
+              <span class="price-current">£{{ (s.discountedPrice ?? s.price) | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div class="selected-check" *ngIf="selectedService?.id === s.id">✓ Selected</div>
         </div>
-        <ul class="features-list">
-          <li *ngFor="let f of silverFeatures">✓ {{ f }}</li>
-        </ul>
       </div>
 
-      <div class="package-card glass-card gold" [class.selected]="selectedPackage === 'Gold'" (click)="selectPackage('Gold')">
-        <div class="package-header">
-          <h3>Gold Package</h3>
-          <span class="price">£{{ goldPrice }}</span>
-        </div>
-        <ul class="features-list">
-          <li *ngFor="let f of goldFeatures">✓ {{ f }}</li>
-        </ul>
-      </div>
+      <!-- Loading state -->
+      <p *ngIf="services.length === 0" class="loading-hint">Loading services...</p>
     </div>
 
-    <div class="form-column">
-      <h2>2. Pin Location & Details</h2>
-      <div class="map-container">
-        <div id="booking-map" class="map-view"></div>
-        <p class="map-hint">Drag marker or click map to set location.</p>
-      </div>
+    <!-- Step 2: Your Details -->
+    <div class="step-section">
+      <h2 class="step-title"><span class="step-num">2</span> Your Details</h2>
+      <form class="booking-form glass-card" (submit)="submitBooking($event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" />
+        </div>
+        <div class="form-group">
+          <label>Address / Location</label>
+          <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" />
+        </div>
+        <div class="form-group">
+          <label>Service Frequency</label>
+          <select [(ngModel)]="selectedFrequency" name="frequency" class="form-control">
+            <option value="Once">One-time Service</option>
+            <option value="Every 2 Days">Once in 2 Days</option>
+            <option value="Weekly">Weekly Service</option>
+            <option value="Monthly">Monthly Service</option>
+            <option value="Yearly">Yearly Service</option>
+          </select>
+        </div>
 
-      <form class="booking-form" (submit)="submitBooking($event)">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe">
+        <div class="selected-summary" *ngIf="selectedService">
+          <span>Booking: <strong>{{ selectedService.name }}</strong> ({{ selectedFrequency }})</span>
+          <span>
+            — <strong class="price-highlight">£{{ totalPrice | number:'1.2-2' }}</strong>
+            <small *ngIf="selectedFrequency !== 'Once'" style="opacity: 0.8; font-size: 0.8rem;"> / Monthly Total</small>
+          </span>
         </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000">
-        </div>
-        
-        <button type="submit" class="btn-primary btn-submit" [disabled]="isSubmitting || !selectedPackage">
+
+        <button type="submit" class="btn-primary btn-submit" [disabled]="isSubmitting || !selectedService">
           {{ isSubmitting ? 'Submitting...' : 'Confirm Booking' }}
         </button>
       </form>
     </div>
+
   </div>
 </div>

@@ -9,9 +9,10 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { Landing } from './pages/landing/landing';
 import { Booking } from './pages/booking/booking';
 import { Admin } from './pages/admin/admin';
+import { Login } from './pages/login/login';
 
 @NgModule({
-  declarations: [App, Landing, Booking, Admin],
+  declarations: [App, Landing, Booking, Admin, Login],
   imports: [
     BrowserModule,
     HttpClientModule,
