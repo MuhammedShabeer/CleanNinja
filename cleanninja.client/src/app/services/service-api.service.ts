@@ -49,6 +49,7 @@ export interface CleanService {
 @Injectable({ providedIn: 'root' })
 export class ServiceApiService {
   constructor(private http: HttpClient) {}
+  private baseUrl = ''; // Relative paths by default
 
   // Gallery
   getGallery(): Observable<GalleryImage[]> {

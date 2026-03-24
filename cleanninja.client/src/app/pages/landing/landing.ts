@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { SeoService } from '../../services/seo.service';
 import { ContentService } from '../../services/content.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
@@ -9,13 +9,17 @@ import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '
   styleUrls: ['./landing.css'],
   standalone: false
 })
-export class Landing implements OnInit {
+export class Landing implements OnInit, OnDestroy {
   public tagline: string = '';
   public services: CleanService[] = [];
   public gallery: GalleryImage[] = [];
   public instagramHandle: string = '';
-  public backendUrl: string = 'http://localhost:5021'; // Should be in config
+  public backendUrl: string = ''; // Relative paths for media resolution
 
+  // Carousel State
+  public testimonials: ServiceFeedback[] = [];
+  public currentSlide: number = 0;
+  private autoSlideInterval: any;
   // Feedback form state
   public openFeedbackForms: { [id: number]: boolean } = {};
   public feedbackDrafts: { [id: number]: { customerName: string; rating: number; comment: string } } = {};
@@ -24,7 +28,8 @@ export class Landing implements OnInit {
   constructor(
       private seoService: SeoService,
       private contentService: ContentService,
-      private serviceApi: ServiceApiService
+      private serviceApi: ServiceApiService,
+      private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -36,15 +41,61 @@ export class Landing implements OnInit {
       });
       this.serviceApi.getGallery().subscribe(g => {
           this.gallery = g;
+          this.cdr.detectChanges();
       });
       this.serviceApi.getServices().subscribe(s => {
           this.services = s;
+          this.testimonials = []; // Clear and aggregate
           s.forEach(svc => {
               this.feedbackDrafts[svc.id] = { customerName: '', rating: 5, comment: '' };
               this.openFeedbackForms[svc.id] = false;
               this.feedbackSuccess[svc.id] = false;
+
+              // Aggregate approved feedbacks for the main carousel
+              if (svc.feedbacks) {
+                this.testimonials.push(...svc.feedbacks.filter(f => f.isApproved));
+              }
           });
+
+          // Add default testimonials if none exist yet
+          if (this.testimonials.length === 0) {
+            this.testimonials = [
+              { id: 0, serviceId: 0, customerName: 'John Doe', rating: 5, comment: 'Best bin cleaning service in Liverpool. They are on time, professional and the results are amazing. Highly recommended!', isApproved: true, createdAt: '' },
+              { id: 0, serviceId: 0, customerName: 'Sarah Smith', rating: 5, comment: 'My car looks brand new! The interior detailing is second to none. Ninja speed and quality!', isApproved: true, createdAt: '' },
+              { id: 0, serviceId: 0, customerName: 'Mike Wilson', rating: 5, comment: 'Great value for money. The mobile service is so convenient. Five stars!', isApproved: true, createdAt: '' }
+            ];
+          }
+
+          this.startAutoSlide();
+          this.cdr.detectChanges();
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+  }
+
+  private startAutoSlide(): void {
+    this.autoSlideInterval = setInterval(() => {
+      this.nextSlide();
+    }, 5000);
+  }
+
+  public nextSlide(): void {
+    this.currentSlide = (this.currentSlide + 1) % this.testimonials.length;
+  }
+
+  public prevSlide(): void {
+    this.currentSlide = (this.currentSlide - 1 + this.testimonials.length) % this.testimonials.length;
+  }
+
+  public setSlide(index: number): void {
+    this.currentSlide = index;
+    // Reset interval if user interacts
+    clearInterval(this.autoSlideInterval);
+    this.startAutoSlide();
   }
 
   toggleFeedbackForm(serviceId: number): void {

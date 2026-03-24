@@ -1,5 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -7,12 +9,23 @@ import { SwUpdate } from '@angular/service-worker';
   standalone: false
 })
 export class App implements OnInit {
+  public showBrandedHeader: boolean = true;
   public deferredPrompt: any;
   public showInstallButton: boolean = false;
 
-  constructor(private swUpdate: SwUpdate) {}
+  constructor(
+    private swUpdate: SwUpdate,
+    private router: Router
+  ) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.updateVisibility(event.urlAfterRedirects);
+    });
+  }
 
   ngOnInit(): void {
+    this.updateVisibility(this.router.url);
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates.subscribe(evt => {
         switch (evt.type) {
@@ -22,7 +35,6 @@ export class App implements OnInit {
           case 'VERSION_READY':
             console.log(`Current app version: ${evt.currentVersion.hash}`);
             console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
-            // Force reload to apply update
             if (confirm('A new version of Clean Ninja is available. Reload now to update?')) {
               window.location.reload();
             }
@@ -36,22 +48,16 @@ export class App implements OnInit {
   }
 
   @HostListener('window:beforeinstallprompt', ['$event'])
-  onbeforeinstallprompt(e: Event) {
-    // Prevent the mini-infobar from appearing on mobile
+  onbeforeinstallprompt(e: any) {
     e.preventDefault();
-    // Stash the event so it can be triggered later.
     this.deferredPrompt = e;
-    // Update UI notify the user they can install the PWA
     this.showInstallButton = true;
   }
 
   public installPwa(): void {
-    // Hide the app provided install promotion
     this.showInstallButton = false;
-    // Show the install prompt
     if (this.deferredPrompt) {
       this.deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
       this.deferredPrompt.userChoice.then((choiceResult: any) => {
         if (choiceResult.outcome === 'accepted') {
           console.log('User accepted the install prompt');
@@ -61,5 +67,10 @@ export class App implements OnInit {
         this.deferredPrompt = null;
       });
     }
+  }
+
+  private updateVisibility(url: string): void {
+    // Hide branded header/banner on admin routes
+    this.showBrandedHeader = !url.includes('/admin');
   }
 }

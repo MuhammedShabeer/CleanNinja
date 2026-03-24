@@ -1,208 +1,329 @@
-<div class="admin-page container">
-  <!-- Header -->
-  <div class="admin-header">
-    <h1 class="page-title">Admin Dashboard</h1>
-    <div class="admin-meta">
-      <span>👋 {{ adminName }}</span>
-      <button class="logout-btn" (click)="logout()">Logout</button>
-    </div>
-  </div>
+<div class="admin-theme">
+<c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" id="sidebar" colorScheme="dark">
+  <c-sidebar-brand class="d-none d-md-flex">
+    <img src="favicon.png" height="32" class="me-2">
+    <span>CLEAN NINJA</span>
+  </c-sidebar-brand>
+  <c-sidebar-nav>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'bookings'" (click)="activeTab = 'bookings'">
+        <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'employees'" (click)="activeTab = 'employees'">
+        <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'services'" (click)="activeTab = 'services'">
+        <svg cIcon name="cilSettings" class="nav-icon"></svg> Services
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'gallery'" (click)="activeTab = 'gallery'">
+        <svg cIcon name="cilImage" class="nav-icon"></svg> Gallery
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'content'" (click)="activeTab = 'content'">
+        <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
+      </a>
+    </c-nav-item>
+  </c-sidebar-nav>
+</c-sidebar>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn" [class.active]="activeTab === 'bookings'" (click)="switchTab('bookings')">📋 Bookings</button>
-    <button class="tab-btn" [class.active]="activeTab === 'employees'" (click)="switchTab('employees')">👷 Employees</button>
-    <button class="tab-btn" [class.active]="activeTab === 'services'" (click)="activeTab = 'services'">🛠️ Services</button>
-    <button class="tab-btn" [class.active]="activeTab === 'gallery'" (click)="activeTab = 'gallery'">📸 Gallery</button>
-    <button class="tab-btn" [class.active]="activeTab === 'content'" (click)="switchTab('content')">⚙️ Content</button>
-  </div>
+<div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent" [class.sidebar-hidden]="!sidebarVisible">
+  <c-header class="mb-4 d-print-none" position="sticky">
+    <c-container fluid>
+      <button cHeaderToggler class="ps-1" (click)="sidebarVisible = !sidebarVisible">
+        <svg cIcon name="cilMenu" size="lg"></svg>
+      </button>
+      <c-header-nav class="d-none d-md-flex me-auto">
+        <c-nav-item>
+          <span class="fw-semibold">Admin Dashboard</span>
+        </c-nav-item>
+      </c-header-nav>
+      <c-header-nav class="ms-3">
+        <span class="me-3 d-none d-sm-inline">👋 <strong>{{ adminName }}</strong></span>
+        <button cButton color="danger" variant="outline" size="sm" (click)="logout()">
+          <svg cIcon name="cilAccountLogout" class="me-2"></svg> Logout
+        </button>
+      </c-header-nav>
+    </c-container>
+  </c-header>
 
-  <!-- Bookings Tab -->
-  <div class="tab-content" [hidden]="activeTab !== 'bookings'">
-    <div class="bookings-layout">
-      <div class="map-container glass-card">
-        <div id="admin-map" class="map-view"></div>
-      </div>
-      <div class="bookings-list">
-        <h2>Pending Requests ({{ pendingBookings.length }})</h2>
-        <div class="booking-card glass-card" *ngFor="let b of pendingBookings">
-          <div class="b-details">
-            <h3>{{ b.customerName }} <span class="badge">{{ b.servicePackage }}</span></h3>
-            <p>📞 {{ b.phone }} | 📅 {{ b.createdAt | date:'short' }}</p>
-            <p style="margin: 4px 0; color: #aaa; font-size: 0.85rem;">📍 {{ b.address || 'No address' }} | 🔄 {{ b.frequency || 'Once' }}</p>
-            <p *ngIf="b.assignedEmployeeName" class="assigned-badge">👷 Assigned: <strong>{{ b.assignedEmployeeName }}</strong></p>
-          </div>
-          <div class="b-actions">
-            <select class="assign-select" (change)="assignEmployee(b.id, +$any($event.target).value)" [value]="b.assignedEmployeeId || ''">
-              <option value="">Assign Employee...</option>
-              <option *ngFor="let e of employees" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
-            </select>
-            <button class="btn-primary btn-approve" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">Approve & WhatsApp</button>
-          </div>
-        </div>
-        <p *ngIf="pendingBookings.length === 0" class="empty-state">No pending bookings right now.</p>
-      </div>
-    </div>
-  </div>
+  <div class="body flex-grow-1 px-3">
+    <c-container breakpoint="lg">
 
-  <!-- Employees Tab -->
-  <div class="tab-content" [hidden]="activeTab !== 'employees'">
-    <div class="content-editor glass-card">
-      <h2>Add Employee</h2>
-      <div class="employee-form">
-        <input type="text" [(ngModel)]="newEmployee.name" placeholder="Full Name" />
-        <input type="text" [(ngModel)]="newEmployee.phone" placeholder="Phone" />
-        <input type="text" [(ngModel)]="newEmployee.role" placeholder="Role (e.g. Car Wash)" />
-        <button class="btn-primary" (click)="addEmployee()">+ Add</button>
-      </div>
-    </div>
-    <div class="employee-list">
-      <div class="employee-card glass-card" *ngFor="let e of employees">
-        <div>
-          <strong>{{ e.name }}</strong>
-          <span class="badge" style="margin-left:8px;">{{ e.role }}</span>
-          <p style="margin:4px 0 0 0; color:#aaa; font-size:0.85rem;">📞 {{ e.phone }}</p>
-        </div>
-        <button class="logout-btn" (click)="removeEmployee(e.id)">Remove</button>
-      </div>
-      <p *ngIf="employees.length === 0" class="empty-state">No employees added yet.</p>
-    </div>
-  </div>
 
-  <!-- Services Tab -->
-  <div class="tab-content" [hidden]="activeTab !== 'services'">
-    <div class="content-editor glass-card">
-      <h2>Add New Service</h2>
-      <div class="employee-form">
-        <input type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Car Wash)" />
-        <input type="text" [(ngModel)]="newService.description" placeholder="Short Description" />
-        <input type="text" [(ngModel)]="newService.icon" placeholder="Icon emoji (e.g. 🚗)" style="max-width:80px;" />
-        <input type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" style="max-width:100px;" />
-        <button class="btn-primary" (click)="addService()">+ Add Service</button>
-      </div>
+    <!-- Bookings Tab -->
+    <div [hidden]="activeTab !== 'bookings'">
+      <c-row>
+        <c-col [md]="12">
+          <c-card>
+            <c-card-header>
+              <strong>Pending Requests</strong> ({{ pendingBookings.length }})
+            </c-card-header>
+            <c-card-body>
+              <c-row>
+                <c-col [md]="6" [lg]="4" *ngFor="let b of pendingBookings" class="mb-3">
+                  <c-card class="h-100 shadow-sm border-start-primary">
+                    <c-card-body>
+                      <h5 class="card-title">{{ b.customerName }} <span cBadge color="info" class="ms-2">{{ b.servicePackage }}</span></h5>
+                      <p class="small text-medium-emphasis mb-1">📞 {{ b.phone }}</p>
+                      <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }}</p>
+                      <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
+                      
+                      <div *ngIf="b.assignedEmployeeName" class="mb-3">
+                        <span cBadge color="success">👷 Assigned: {{ b.assignedEmployeeName }}</span>
+                      </div>
+
+                      <div class="d-grid gap-2">
+                        <select cSelect (change)="assignEmployee(b.id, +$any($event.target).value)" [value]="b.assignedEmployeeId || ''">
+                          <option value="">Assign Employee...</option>
+                          <option *ngFor="let e of employees" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
+                        </select>
+                        <button cButton color="primary" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">
+                          <svg cIcon name="cilSave" class="me-2"></svg> Approve & WhatsApp
+                        </button>
+                      </div>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
+              <p *ngIf="pendingBookings.length === 0" class="text-center py-4 text-medium-emphasis">No pending bookings right now.</p>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
     </div>
 
-    <div class="service-list">
-      <div class="service-card glass-card" *ngFor="let s of services">
-        <!-- View mode -->
-        <div *ngIf="editingService?.id !== s.id">
-          <div class="service-card-header">
-            <span class="service-icon">{{ s.icon }}</span>
-            <div>
-              <h3>{{ s.name }} <span *ngIf="s.isHighlighted" class="highlight-badge">⭐ Featured</span></h3>
-              <p>{{ s.description }}</p>
-              <div class="service-price-row" *ngIf="s.price">
-                <span *ngIf="s.discountedPrice" class="price-original">£{{ s.price }}</span>
-                <span class="price-current">£{{ s.discountedPrice ?? s.price }}</span>
+    <!-- Employees Tab -->
+    <div [hidden]="activeTab !== 'employees'">
+      <c-row>
+        <c-col [md]="4">
+          <c-card class="mb-4">
+            <c-card-header><strong>Add Employee</strong></c-card-header>
+            <c-card-body>
+              <div class="mb-3">
+                <label cLabel>Full Name</label>
+                <input cFormControl type="text" [(ngModel)]="newEmployee.name" placeholder="Full Name" />
               </div>
-            </div>
-            <div class="service-actions">
-              <button class="highlight-toggle-btn" [class.active]="s.isHighlighted" (click)="toggleHighlight(s)"
-                [title]="s.isHighlighted ? 'Remove highlight' : 'Mark as Featured'">
-                {{ s.isHighlighted ? '⭐ Featured' : '☆ Feature' }}
+              <div class="mb-3">
+                <label cLabel>Phone</label>
+                <input cFormControl type="text" [(ngModel)]="newEmployee.phone" placeholder="Phone" />
+              </div>
+              <div class="mb-3">
+                <label cLabel>Role</label>
+                <input cFormControl type="text" [(ngModel)]="newEmployee.role" placeholder="Role (e.g. Car Wash)" />
+              </div>
+              <button cButton color="primary" class="w-100" (click)="addEmployee()">
+                <svg cIcon name="cilPlus" class="me-2"></svg> Add Employee
               </button>
-              <button class="logout-btn" (click)="editingService = {id:s.id, name:s.name, description:s.description, icon:s.icon, sortOrder:s.sortOrder, isActive:s.isActive, isHighlighted:s.isHighlighted, createdAt:s.createdAt, media:s.media, feedbacks:s.feedbacks, price:s.price, discountedPrice:s.discountedPrice, weeklyPrice:s.weeklyPrice, monthlyPrice:s.monthlyPrice, yearlyPrice:s.yearlyPrice}">Edit</button>
-              <button class="logout-btn" (click)="deleteService(s.id)">Delete</button>
-            </div>
-          </div>
-          <!-- Media gallery -->
-          <div class="media-gallery">
-            <div class="media-item" *ngFor="let m of s.media">
-              <img *ngIf="m.fileType === 'image'" [src]="m.url" [alt]="m.fileName" />
-              <video *ngIf="m.fileType === 'video'" [src]="m.url" controls></video>
-              <button class="media-delete-btn" (click)="deleteMedia(s.id, m.id)">✕</button>
-            </div>
-            <label class="media-upload-btn" [class.uploading]="isUploadingMedia[s.id]">
-              <span *ngIf="!isUploadingMedia[s.id]">+ Add Photo/Video</span>
-              <span *ngIf="isUploadingMedia[s.id]">Uploading...</span>
-              <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
-            </label>
-          </div>
-        </div>
+            </c-card-body>
+          </c-card>
+        </c-col>
+        <c-col [md]="8">
+          <c-card>
+            <c-card-header><strong>Current Staff</strong> ({{ employees.length }})</c-card-header>
+            <c-card-body>
+              <table cTable hover responsive [striped]="true">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let e of employees">
+                    <td><strong>{{ e.name }}</strong></td>
+                    <td><span cBadge color="secondary">{{ e.role }}</span></td>
+                    <td>📞 {{ e.phone }}</td>
+                    <td>
+                      <button cButton color="danger" variant="outline" size="sm" (click)="removeEmployee(e.id)">
+                        <svg cIcon name="cilTrash"></svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p *ngIf="employees.length === 0" class="text-center py-3 text-medium-emphasis">No employees added yet.</p>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+    </div>
 
-        <!-- Edit mode -->
-        <div *ngIf="editingService?.id === s.id" class="service-edit-form">
-          <input type="text" [(ngModel)]="$any(editingService).name" placeholder="Name" />
-          <input type="text" [(ngModel)]="$any(editingService).description" placeholder="Description" />
-          <input type="text" [(ngModel)]="$any(editingService).icon" placeholder="Icon" style="max-width:80px;" />
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <input type="number" [(ngModel)]="$any(editingService).price" placeholder="Price (£)" style="max-width:120px;" />
-            <input type="number" [(ngModel)]="$any(editingService).discountedPrice" placeholder="Discounted (£)" style="max-width:120px;" />
-            <input type="number" [(ngModel)]="$any(editingService).weeklyPrice" placeholder="Weekly (£)" style="max-width:120px;" />
-            <input type="number" [(ngModel)]="$any(editingService).monthlyPrice" placeholder="Monthly (£)" style="max-width:120px;" />
-            <input type="number" [(ngModel)]="$any(editingService).yearlyPrice" placeholder="Yearly (£)" style="max-width:120px;" />
+    <!-- Services Tab -->
+    <div [hidden]="activeTab !== 'services'">
+      <c-row>
+        <c-col [md]="12" class="mb-4">
+          <c-card>
+            <c-card-header><strong>Add New Service</strong></c-card-header>
+            <c-card-body>
+              <c-row class="g-3">
+                <c-col [md]="4">
+                  <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Car Wash)" />
+                </c-col>
+                <c-col [md]="4">
+                  <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Short Description" />
+                </c-col>
+                <c-col [md]="2">
+                  <input cFormControl type="text" [(ngModel)]="newService.icon" placeholder="Icon (e.g. 🚗)" />
+                </c-col>
+                <c-col [md]="2">
+                  <button cButton color="primary" class="w-100" (click)="addService()">
+                    <svg cIcon name="cilPlus" class="me-2"></svg> Add
+                  </button>
+                </c-col>
+              </c-row>
+            </c-card-body>
+          </c-card>
+        </c-col>
+
+        <c-col [md]="12">
+          <c-row>
+            <c-col [md]="6" *ngFor="let s of services" class="mb-4">
+              <c-card class="h-100 shadow-sm">
+                <c-card-header class="d-flex justify-content-between align-items-center">
+                  <strong>{{ s.name }}</strong>
+                  <div class="d-flex gap-2">
+                    <button cButton color="warning" size="sm" (click)="toggleHighlight(s)">
+                      <svg cIcon [name]="s.isHighlighted ? 'cilStar' : 'cilStar'"></svg> 
+                      {{ s.isHighlighted ? 'Unfeature' : 'Feature' }}
+                    </button>
+                    <button cButton color="info" size="sm" (click)="editingService = s">
+                      <svg cIcon name="cilSave"></svg> Edit
+                    </button>
+                    <button cButton color="danger" size="sm" (click)="deleteService(s.id)">
+                      <svg cIcon name="cilTrash"></svg>
+                    </button>
+                  </div>
+                </c-card-header>
+                <c-card-body>
+                  <!-- View mode -->
+                  <div *ngIf="editingService?.id !== s.id">
+                    <p class="text-medium-emphasis">{{ s.description }}</p>
+                    <div class="mb-3">
+                      <span cBadge color="success" class="me-2" *ngIf="s.price">£{{ s.price }}</span>
+                      <span cBadge color="info" *ngIf="s.isHighlighted">⭐ Featured</span>
+                    </div>
+                    
+                    <div class="d-flex gap-2 overflow-auto pb-2">
+                      <div *ngFor="let m of s.media" class="position-relative">
+                        <img *ngIf="m.fileType === 'image'" [src]="m.url" width="60" height="60" class="rounded shadow-sm" />
+                        <button class="btn-close position-absolute top-0 end-0 bg-white" style="padding: 2px;" (click)="deleteMedia(s.id, m.id)"></button>
+                      </div>
+                      <label cButton color="secondary" variant="outline" size="sm" class="d-flex align-items-center justify-content-center p-0" style="width: 60px; height: 60px;">
+                         <span *ngIf="!isUploadingMedia[s.id]">+</span>
+                         <span *ngIf="isUploadingMedia[s.id]" class="spinner-border spinner-border-sm"></span>
+                         <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Edit mode -->
+                  <div *ngIf="editingService?.id === s.id">
+                    <div class="mb-3">
+                      <label cLabel>Name</label>
+                      <input cFormControl type="text" [(ngModel)]="s.name" />
+                    </div>
+                    <div class="mb-3">
+                      <label cLabel>Description</label>
+                      <textarea cFormControl [(ngModel)]="s.description" rows="2"></textarea>
+                    </div>
+                    <c-row class="mb-3">
+                      <c-col [sm]="6">
+                        <label cLabel>Price (£)</label>
+                        <input cFormControl type="number" [(ngModel)]="s.price" />
+                      </c-col>
+                      <c-col [sm]="6">
+                        <label cLabel>Discounted (£)</label>
+                        <input cFormControl type="number" [(ngModel)]="s.discountedPrice" />
+                      </c-col>
+                    </c-row>
+                    <div class="d-flex gap-2">
+                      <button cButton color="success" (click)="saveService(s)">Save</button>
+                      <button cButton color="secondary" (click)="editingService = null">Cancel</button>
+                    </div>
+                  </div>
+                </c-card-body>
+              </c-card>
+            </c-col>
+          </c-row>
+        </c-col>
+      </c-row>
+    </div>
+
+
+
+    <!-- Gallery Tab -->
+    <div [hidden]="activeTab !== 'gallery'">
+      <c-card class="mb-4">
+        <c-card-header><strong>📸 Work Gallery Management</strong></c-card-header>
+        <c-card-body>
+          <div class="text-center py-4 border rounded mb-4 bg-light">
+             <label cButton color="primary" class="position-relative">
+               <span *ngIf="!isUploadingGallery"><svg cIcon name="cilPlus" class="me-2"></svg> Upload New Photo</span>
+               <span *ngIf="isUploadingGallery"><span class="spinner-border spinner-border-sm me-2"></span> Uploading...</span>
+               <input type="file" accept="image/*" hidden (change)="onGalleryFileSelected($event)" [disabled]="isUploadingGallery" />
+             </label>
+             <p class="mt-2 text-medium-emphasis small">Showcase your before & after results on the landing page.</p>
           </div>
-          <div style="display:flex;gap:8px;margin-top:8px;">
-            <button class="btn-primary" (click)="saveService($any(editingService))">Save</button>
-            <button class="logout-btn" (click)="editingService = null">Cancel</button>
-          </div>
-          <!-- Feedback moderation -->
-          <div class="feedback-admin" *ngIf="$any(editingService).feedbacks?.length > 0 || true">
-            <h4 style="color:#ccc;margin:16px 0 8px;">📝 Customer Reviews for This Service</h4>
-            <div *ngFor="let fb of loadedFeedbacks[s.id]" class="feedback-mod-item">
-              <div>
-                <strong>{{ fb.customerName }}</strong>
-                <span class="star-display">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
-                <span class="feedback-status" [style.color]="fb.isApproved ? '#4caf50' : '#ff9800'">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
-                <p style="margin:4px 0;color:#aaa;font-size:0.85rem;">{{ fb.comment }}</p>
+
+          <c-row class="g-3">
+            <c-col [xs]="6" [sm]="4" [md]="3" [lg]="2" *ngFor="let img of galleryImages">
+              <div class="position-relative ratio ratio-1x1 shadow-sm rounded overflow-hidden bg-light">
+                <img [src]="img.url" alt="Work Gallery" loading="lazy" />
+                <div class="btn-delete-wrap">
+                  <button cButton color="danger" size="sm" (click)="deleteGalleryImage(img.id)" title="Delete Image">
+                    <svg cIcon name="cilTrash"></svg>
+                  </button>
+                </div>
               </div>
-              <div style="display:flex;gap:6px;">
-                <button *ngIf="!fb.isApproved" class="btn-primary" style="padding:4px 10px;font-size:0.8rem;" (click)="approveFeedback(fb.id, s.id)">Approve</button>
-                <button class="logout-btn" style="padding:4px 10px;font-size:0.8rem;" (click)="deleteFeedback(fb.id, s.id)">Delete</button>
-              </div>
-            </div>
-            <p *ngIf="!loadedFeedbacks[s.id]?.length" style="color:#777;font-size:0.85rem;">No reviews yet.</p>
-            <button class="logout-btn" style="margin-top:8px;" (click)="loadFeedback(s.id)">🔄 Refresh Reviews</button>
-          </div>
-        </div>
-      </div>
-      <p *ngIf="services.length === 0" class="empty-state">No services yet. Add one above!</p>
+            </c-col>
+          </c-row>
+          <p *ngIf="galleryImages.length === 0" class="text-center py-5 text-medium-emphasis">No gallery images yet. Start uploading!</p>
+        </c-card-body>
+      </c-card>
     </div>
-  </div>
 
-
-
-  <!-- Gallery Tab -->
-  <div class="tab-content" [hidden]="activeTab !== 'gallery'">
-    <div class="content-editor glass-card">
-      <h2>📸 Work Gallery Management</h2>
-      <p>Upload photos of your work ("Before & After") to showcase on the landing page.</p>
-      
-      <div class="gallery-upload-box">
-        <label class="btn-primary" style="display:inline-block;cursor:pointer;">
-          <span *ngIf="!isUploadingGallery">➕ Upload New Photo</span>
-          <span *ngIf="isUploadingGallery">⏳ Uploading...</span>
-          <input type="file" accept="image/*" hidden (change)="onGalleryFileSelected($event)" [disabled]="isUploadingGallery" />
-        </label>
-      </div>
-
-      <div class="admin-gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:20px;margin-top:30px;">
-        <div class="gallery-item glass-card" *ngFor="let img of galleryImages" style="position:relative;aspect-ratio:1/1;">
-          <img [src]="img.url" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />
-          <button class="media-delete-btn" (click)="deleteGalleryImage(img.id)" 
-            style="position:absolute;top:5px;right:5px;background:rgba(255,0,0,0.8);color:white;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;">
-            ✕
-          </button>
-        </div>
-      </div>
-      <p *ngIf="galleryImages.length === 0" class="empty-state">No gallery images yet. Start uploading!</p>
+    <!-- Content Tab -->
+    <div [hidden]="activeTab !== 'content'">
+      <c-card>
+        <c-card-header><strong>Edit Site Content</strong></c-card-header>
+        <c-card-body>
+          <table cTable hover responsive striped>
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of contentItems">
+                <td>{{ item.section }}</td>
+                <td><code>{{ item.key }}</code></td>
+                <td>
+                  <textarea cFormControl [(ngModel)]="item.value" rows="2"></textarea>
+                </td>
+                <td>
+                  <button cButton color="primary" size="sm" (click)="saveContentItem(item)">
+                    <svg cIcon name="cilSave"></svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
     </div>
-  </div>
-
-  <!-- Content Tab -->
-  <div class="tab-content" [hidden]="activeTab !== 'content'">
-    <div class="content-editor glass-card">
-      <h2>Edit Dynamic Content</h2>
-      <p>Ensure JSON formatting for arrays like Features and Services.</p>
-      <div class="content-grid">
-        <div class="content-item" *ngFor="let item of contentItems">
-          <label>{{ item.section }} - <strong>{{ item.key }}</strong></label>
-          <div class="input-group">
-            <textarea [(ngModel)]="item.value" rows="2"></textarea>
-            <button class="btn-primary" (click)="saveContentItem(item)">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  </c-container>
+</div>
+</div>
 </div>

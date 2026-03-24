@@ -1,29 +1,34 @@
-<header class="app-header">
-  <div class="container header-container">
-    <div class="logo">
-      <a routerLink="/"><img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja Logo" style="height: 50px; vertical-align: middle; filter: hue-rotate(30deg) saturate(1.5);"></a>
+<div class="landing-theme" *ngIf="showBrandedHeader">
+  <header class="app-header">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+      <div class="logo">
+        <a routerLink="/"><img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja Logo" style="height: 60px; vertical-align: middle; filter: hue-rotate(30deg) saturate(1.5);"></a>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/">Home</a>
+        <a routerLink="/booking" class="btn-primary">Book Now</a>
+      </nav>
     </div>
-    <nav class="nav-links">
-      <a routerLink="/">Home</a>
-      <a routerLink="/booking" class="btn-primary" style="padding: 8px 16px;">Book Now</a>
-    </nav>
-  </div>
-</header>
-<main class="app-main">
+  </header>
+</div>
+
+<main class="app-main" [class.landing-theme]="showBrandedHeader" [class.admin-theme]="!showBrandedHeader">
   <router-outlet></router-outlet>
 </main>
 
-<!-- PWA Install Banner -->
-<div *ngIf="showInstallButton" class="pwa-install-banner">
-  <div class="pwa-install-content">
-    <img src="assets/images/icon-192x192.png" alt="Clean Ninja" class="pwa-icon" style="filter: hue-rotate(30deg) saturate(1.5);">
-    <div class="pwa-text">
-      <strong>Install Clean Ninja</strong>
-      <span>Add to your home screen for the best experience</span>
+<!-- PWA Install Banner - Only for landing/booking -->
+<div class="landing-theme" *ngIf="showBrandedHeader && showInstallButton">
+  <div class="pwa-install-banner">
+    <div class="pwa-install-content">
+      <img src="assets/images/icon-192x192.png" alt="Clean Ninja" class="pwa-icon">
+      <div class="pwa-text">
+        <strong>Install Clean Ninja</strong>
+        <span>Add to your home screen for the best experience</span>
+      </div>
     </div>
-  </div>
-  <div class="pwa-actions">
-    <button (click)="showInstallButton = false" class="pwa-dismiss">✕</button>
-    <button (click)="installPwa()" class="btn-primary pwa-install-btn">Install</button>
+    <div class="pwa-actions">
+      <button (click)="showInstallButton = false" class="pwa-dismiss">✕</button>
+      <button (click)="installPwa()" class="btn-primary pwa-install-btn">Install</button>
+    </div>
   </div>
 </div>

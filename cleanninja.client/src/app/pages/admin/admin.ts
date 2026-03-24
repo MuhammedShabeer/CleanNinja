@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ContentService, SiteContent } from '../../services/content.service';
 import { AuthService } from '../../services/auth.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
 import { Router } from '@angular/router';
-import * as L from 'leaflet';
+import { IconSetService } from '@coreui/icons-angular';
+import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar } from '@coreui/icons';
 
 @Component({
   selector: 'app-admin',
@@ -12,8 +13,9 @@ import * as L from 'leaflet';
   styleUrls: ['./admin.css'],
   standalone: false
 })
-export class Admin implements OnInit, AfterViewInit {
+export class Admin implements OnInit {
   public activeTab: 'bookings' | 'employees' | 'services' | 'content' | 'gallery' = 'bookings';
+  public sidebarVisible: boolean = true;
   public pendingBookings: any[] = [];
   public employees: any[] = [];
   public contentItems: SiteContent[] = [];
@@ -34,16 +36,18 @@ export class Admin implements OnInit, AfterViewInit {
   public galleryImages: GalleryImage[] = [];
   public isUploadingGallery: boolean = false;
 
-  private map: any;
-  private markers: L.Marker[] = [];
 
   constructor(
     private http: HttpClient,
     private contentService: ContentService,
     private authService: AuthService,
     private serviceApi: ServiceApiService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    public iconSet: IconSetService
+  ) {
+    this.iconSet.icons = { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar };
+  }
 
   ngOnInit(): void {
     this.adminName = this.authService.getAdminName();
@@ -55,59 +59,34 @@ export class Admin implements OnInit, AfterViewInit {
       this.contentItems = JSON.parse(JSON.stringify(items));
       const waItem = this.contentItems.find(c => c.key === 'WhatsAppContact');
       if (waItem) this.whatsAppContact = waItem.value;
+      this.cdr.detectChanges();
     });
   }
 
-  ngAfterViewInit(): void {
-    this.initMap();
-  }
 
   switchTab(tab: 'bookings' | 'employees' | 'content'): void {
     this.activeTab = tab;
-    if (tab === 'bookings') {
-      setTimeout(() => { this.map.invalidateSize(); }, 100);
-    }
   }
 
   private authHeaders(): HttpHeaders {
     return new HttpHeaders({ 'Authorization': `Bearer ${this.authService.getToken()}` });
   }
 
-  private initMap(): void {
-    const iconDefault = L.icon({
-      iconRetinaUrl: 'assets/marker-icon-2x.png',
-      iconUrl: 'assets/marker-icon.png',
-      shadowUrl: 'assets/marker-shadow.png',
-      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], tooltipAnchor: [16, -28], shadowSize: [41, 41]
-    });
-    L.Marker.prototype.options.icon = iconDefault;
-    this.map = L.map('admin-map').setView([53.4084, -2.9916], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(this.map);
-  }
 
   fetchBookings(): void {
     this.http.get<any[]>('/api/bookings/pending').subscribe(data => {
       this.pendingBookings = data;
-      this.updateMapMarkers();
+      this.cdr.detectChanges();
     });
   }
 
   fetchEmployees(): void {
     this.http.get<any[]>('/api/employees').subscribe(data => {
       this.employees = data;
+      this.cdr.detectChanges();
     });
   }
 
-  updateMapMarkers(): void {
-    if (!this.map) return;
-    this.markers.forEach(m => this.map.removeLayer(m));
-    this.markers = [];
-    this.pendingBookings.forEach(b => {
-      const marker = L.marker([b.latitude, b.longitude]).addTo(this.map)
-        .bindPopup(`<b>${b.customerName}</b><br>${b.servicePackage}<br>${b.phone}${b.assignedEmployeeName ? '<br>👷 ' + b.assignedEmployeeName : ''}`);
-      this.markers.push(marker);
-    });
-  }
 
   approveBooking(id: number, phone: string, name: string, packageType: string): void {
     this.http.put(`/api/bookings/${id}/approve`, {}).subscribe(() => {
@@ -152,7 +131,10 @@ export class Admin implements OnInit, AfterViewInit {
 
   // ── Services ──────────────────────────────────────────
   fetchServices(): void {
-    this.serviceApi.getServices().subscribe(data => this.services = data);
+    this.serviceApi.getServices().subscribe(data => {
+      this.services = data;
+      this.cdr.detectChanges();
+    });
   }
 
   addService(): void {
@@ -214,7 +196,10 @@ export class Admin implements OnInit, AfterViewInit {
 
   // ── Gallery ──────────────────────────────────────────
   fetchGallery(): void {
-    this.serviceApi.getGallery().subscribe(data => this.galleryImages = data);
+    this.serviceApi.getGallery().subscribe(data => {
+      this.galleryImages = data;
+      this.cdr.detectChanges();
+    });
   }
 
   onGalleryFileSelected(event: Event): void {

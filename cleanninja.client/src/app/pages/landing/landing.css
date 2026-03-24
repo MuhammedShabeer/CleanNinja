@@ -66,8 +66,13 @@
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 40px;
+  gap: 60px; /* Increased gap for floating badges */
   margin-bottom: 100px;
+}
+
+.service-card-wrapper {
+  position: relative;
+  z-index: 1;
 }
 
 .service-card {
@@ -75,42 +80,48 @@
   position: relative;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background: var(--card-bg);
-  padding: 40px 30px;
+  aspect-ratio: 1 / 1.1;
+  padding: 60px 40px; /* Increased padding for hexagonal shape */
   z-index: 1;
-  overflow: visible;
+  overflow: visible; /* CRITICAL: ALLOW BADGE TO POP OUT */
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1.1;
+  border: 1px solid rgba(246, 129, 20, 0.3) !important;
 }
 
-/* Hexagonal hover effect */
-.service-card::before {
+.service-card::after {
   content: '';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--primary-color);
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  background: linear-gradient(135deg, rgba(246, 129, 20, 0.1), transparent);
+  pointer-events: none;
   z-index: -1;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.4s ease;
-}
-
-.service-card:hover::before {
-  opacity: 0.1;
-  transform: scale(1.1);
 }
 
 .service-card:hover {
-  transform: translateY(-15px);
-  border-color: var(--primary-color);
+  transform: translateY(-10px) scale(1.05);
+  background: rgba(246, 129, 20, 0.1);
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 10px 30px rgba(246, 129, 20, 0.2);
 }
 
 .service-card h3 {
   color: #fff;
-  font-size: 1.5rem;
-  margin-bottom: 15px;
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  font-family: var(--heading-font);
 }
 
 .service-card p {
-  color: #aaa;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
 }
 
 .social-section {
@@ -368,15 +379,28 @@
 
 .featured-badge {
   position: absolute;
-  top: 15px;
-  right: -5px;
+  top: -20px; /* Float above the entire wrapper */
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--primary-color);
-  color: white;
-  padding: 5px 15px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  border-radius: 4px 0 0 4px;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border-radius: 50px; /* Modern pill shape */
+  box-shadow: 0 8px 15px rgba(246, 129, 20, 0.4);
+  font-family: var(--heading-font);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 100;
+  white-space: nowrap;
+  animation: badgePulse 2s infinite ease-in-out;
+}
+
+@keyframes badgePulse {
+  0%   { transform: translateX(-50%) scale(1); }
+  50%  { transform: translateX(-50%) scale(1.05); box-shadow: 0 8px 25px rgba(246, 129, 20, 0.6); }
+  100% { transform: translateX(-50%) scale(1); }
 }
 
 /* ── About Section ───────────────── */
@@ -423,23 +447,64 @@
 }
 
 /* ── Testimonials ───────────────── */
-.testimonials-slider {
-  display: flex;
-  gap: 30px;
-  overflow-x: auto;
-  padding: 40px 10px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+.testimonials-container {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 0 60px;
 }
 
-.testimonials-slider::-webkit-scrollbar { display: none; }
+.testimonials-slider {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  width: 100%;
+}
 
 .testimonial-card {
-  min-width: 350px;
-  flex: 1;
-  scroll-snap-align: center;
-  padding: 40px;
+  min-width: 100%;
+  flex: 0 0 100%;
+  padding: 50px;
   position: relative;
+  box-sizing: border-box;
+}
+
+.author-avatar {
+  width: 50px;
+  height: 50px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(246, 129, 20, 0.4);
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.dot.active {
+  background: var(--primary-color);
+  transform: scale(1.3);
+  box-shadow: 0 0 10px var(--primary-color);
 }
 
 .testimonial-card::after {
@@ -531,4 +596,20 @@
   .hero-title { font-size: 3rem; }
   .about-grid, .contact-grid { grid-template-columns: 1fr; }
   .usp-list { grid-template-columns: 1fr; }
+
+  /* Gallery Mobile Refinements */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+    gap: 12px;
+    padding: 10px;
+  }
+  .gallery-card:nth-child(n) {
+    grid-row: span 1 !important;
+    grid-column: span 1 !important;
+  }
+  .gallery-card {
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+  }
 }

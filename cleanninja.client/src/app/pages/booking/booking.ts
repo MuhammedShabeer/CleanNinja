@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ServiceApiService, CleanService } from '../../services/service-api.service';
 
@@ -21,7 +21,8 @@ export class Booking implements OnInit {
 
   constructor(
     private serviceApi: ServiceApiService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   get totalPrice(): number {
@@ -42,7 +43,10 @@ export class Booking implements OnInit {
   }
 
   ngOnInit(): void {
-    this.serviceApi.getServices().subscribe(s => this.services = s);
+    this.serviceApi.getServices().subscribe(s => {
+      this.services = s;
+      this.cdr.detectChanges();
+    });
   }
 
   selectService(s: CleanService): void {
