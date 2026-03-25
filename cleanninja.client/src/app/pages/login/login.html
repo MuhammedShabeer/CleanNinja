@@ -21,7 +21,7 @@
 
       <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-      <button type="submit" class="btn-primary" style="width:100%;" [disabled]="isLoading">
+      <button type="submit" class="btn-primary btn" style="width:100%;" [disabled]="isLoading">
         {{ isLoading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Register') }}
       </button>
     </form>

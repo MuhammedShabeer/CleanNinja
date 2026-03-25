@@ -5,7 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
 import { Router } from '@angular/router';
 import { IconSetService } from '@coreui/icons-angular';
-import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar } from '@coreui/icons';
+import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo } from '@coreui/icons';
 
 @Component({
   selector: 'app-admin',
@@ -17,17 +17,18 @@ export class Admin implements OnInit {
   public activeTab: 'bookings' | 'employees' | 'services' | 'content' | 'gallery' = 'bookings';
   public sidebarVisible: boolean = true;
   public pendingBookings: any[] = [];
+  public previousBookings: any[] = [];
   public employees: any[] = [];
   public contentItems: SiteContent[] = [];
   public whatsAppContact: string = '+447578334674';
   public adminName: string = '';
 
   // New employee form
-  public newEmployee = { name: '', phone: '', role: '' };
+  public newEmployee: any = { name: '', phone: '', role: '', isActive: true };
 
   // Services management
   public services: CleanService[] = [];
-  public newService = { name: '', description: '', icon: '🔧', sortOrder: 0 };
+  public newService: any = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
   public loadedFeedbacks: { [serviceId: number]: ServiceFeedback[] } = {};
@@ -46,7 +47,7 @@ export class Admin implements OnInit {
     private cdr: ChangeDetectorRef,
     public iconSet: IconSetService
   ) {
-    this.iconSet.icons = { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar };
+    this.iconSet.icons = { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo };
   }
 
   ngOnInit(): void {
@@ -55,8 +56,13 @@ export class Admin implements OnInit {
     this.fetchEmployees();
     this.fetchServices();
     this.fetchGallery();
-    this.contentService.getContent().subscribe(items => {
-      this.contentItems = JSON.parse(JSON.stringify(items));
+    
+    // Explicitly refresh content to ensure it's loaded in Admin
+    this.contentService.refreshContent().subscribe(items => {
+      // Filter out old Service-related keys
+      const excludedKeys = ['Services', 'SilverPackagePrice', 'SilverPackageFeatures', 'GoldPackagePrice', 'GoldPackageFeatures'];
+      this.contentItems = JSON.parse(JSON.stringify(items)).filter((item: any) => !excludedKeys.includes(item.key));
+      
       const waItem = this.contentItems.find(c => c.key === 'WhatsAppContact');
       if (waItem) this.whatsAppContact = waItem.value;
       this.cdr.detectChanges();
@@ -64,7 +70,7 @@ export class Admin implements OnInit {
   }
 
 
-  switchTab(tab: 'bookings' | 'employees' | 'content'): void {
+  switchTab(tab: 'bookings' | 'employees' | 'services' | 'gallery' | 'content'): void {
     this.activeTab = tab;
   }
 
@@ -74,8 +80,9 @@ export class Admin implements OnInit {
 
 
   fetchBookings(): void {
-    this.http.get<any[]>('/api/bookings/pending').subscribe(data => {
-      this.pendingBookings = data;
+    this.http.get<any[]>('/api/bookings/all').subscribe(data => {
+      this.pendingBookings = data.filter(b => b.status === 'Pending');
+      this.previousBookings = data.filter(b => b.status !== 'Pending');
       this.cdr.detectChanges();
     });
   }
@@ -108,7 +115,7 @@ export class Admin implements OnInit {
       alert('Please fill all employee fields.'); return;
     }
     this.http.post('/api/employees', this.newEmployee).subscribe(() => {
-      this.newEmployee = { name: '', phone: '', role: '' };
+      this.newEmployee = { name: '', phone: '', role: '', isActive: true };
       this.fetchEmployees();
     });
   }
@@ -116,6 +123,11 @@ export class Admin implements OnInit {
   removeEmployee(id: number): void {
     if (!confirm('Remove this employee?')) return;
     this.http.delete(`/api/employees/${id}`).subscribe(() => this.fetchEmployees());
+  }
+  
+  toggleEmployeeActive(employee: any): void {
+      const updated = { ...employee, isActive: !employee.isActive };
+      this.http.put(`/api/employees/${employee.id}`, updated).subscribe(() => this.fetchEmployees());
   }
 
   saveContentItem(item: SiteContent): void {
@@ -139,8 +151,10 @@ export class Admin implements OnInit {
 
   addService(): void {
     if (!this.newService.name.trim()) { alert('Service name is required.'); return; }
+    // Ensure default active state for new services
+    this.newService.isActive = true;
     this.serviceApi.createService(this.newService).subscribe(() => {
-      this.newService = { name: '', description: '', icon: '🔧', sortOrder: 0 };
+      this.newService = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
       this.fetchServices();
     });
   }

@@ -44,7 +44,7 @@
     <div class="service-card-wrapper" *ngFor="let service of services">
       <div *ngIf="service.isHighlighted" class="featured-badge">⭐ MOST POPULAR</div>
       <div class="glass-card service-card" [class.is-highlighted]="service.isHighlighted">
-        <div class="service-icon-wrap" style="color: var(--primary-color);">{{ service.icon }}</div>
+        <div class="service-icon-wrap" style="color: var(--primary-color);" [innerHTML]="service.icon"></div>
         <h3 style="font-size: 1.8rem;">{{ service.name }}</h3>
         <p style="margin-bottom: 20px;">{{ service.description }}</p>
 

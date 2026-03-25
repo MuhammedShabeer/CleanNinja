@@ -1,64 +1,65 @@
 <div class="admin-theme">
-<c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" id="sidebar" colorScheme="dark">
-  <c-sidebar-brand class="d-none d-md-flex">
-    <img src="favicon.png" height="32" class="me-2">
-    <span>CLEAN NINJA</span>
+<c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" [unfoldable]="false" id="sidebar" colorScheme="dark">
+  <c-sidebar-brand class="d-md-flex align-items-center justify-content-center py-4 px-3 border-bottom border-secondary border-opacity-10 d-sm-flex">
+    <img src="favicon.png" height="32" class="me-2 rounded shadow-sm">
+    <span class="fw-bold tracking-wider">CLEAN NINJA</span>
   </c-sidebar-brand>
   <c-sidebar-nav>
     <c-nav-item>
-      <a cNavLink [active]="activeTab === 'bookings'" (click)="activeTab = 'bookings'">
+      <a cNavLink [active]="activeTab === 'bookings'" href="javascript:void(0)" (click)="switchTab('bookings')">
         <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
       </a>
     </c-nav-item>
     <c-nav-item>
-      <a cNavLink [active]="activeTab === 'employees'" (click)="activeTab = 'employees'">
+      <a cNavLink [active]="activeTab === 'employees'" href="javascript:void(0)" (click)="switchTab('employees')">
         <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees
       </a>
     </c-nav-item>
     <c-nav-item>
-      <a cNavLink [active]="activeTab === 'services'" (click)="activeTab = 'services'">
+      <a cNavLink [active]="activeTab === 'services'" href="javascript:void(0)" (click)="switchTab('services')">
         <svg cIcon name="cilSettings" class="nav-icon"></svg> Services
       </a>
     </c-nav-item>
     <c-nav-item>
-      <a cNavLink [active]="activeTab === 'gallery'" (click)="activeTab = 'gallery'">
+      <a cNavLink [active]="activeTab === 'gallery'" href="javascript:void(0)" (click)="switchTab('gallery')">
         <svg cIcon name="cilImage" class="nav-icon"></svg> Gallery
       </a>
     </c-nav-item>
     <c-nav-item>
-      <a cNavLink [active]="activeTab === 'content'" (click)="activeTab = 'content'">
+      <a cNavLink [active]="activeTab === 'content'" href="javascript:void(0)" (click)="switchTab('content')">
         <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
       </a>
     </c-nav-item>
   </c-sidebar-nav>
 </c-sidebar>
 
-<div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent" [class.sidebar-hidden]="!sidebarVisible">
-  <c-header class="mb-4 d-print-none" position="sticky">
-    <div class="header-main w-100">
-      <c-container fluid class="d-flex align-items-center">
-        <button cHeaderToggler class="ps-1 me-3" (click)="sidebarVisible = !sidebarVisible">
-          <svg cIcon name="cilMenu" size="lg"></svg>
-        </button>
-        <c-header-nav class="d-none d-md-flex me-auto">
-          <c-nav-item>
-            <span class="fw-semibold text-dark">Admin Dashboard</span>
-          </c-nav-item>
-        </c-header-nav>
-        <c-header-nav class="ms-3 align-items-center">
-          <span class="me-3 d-none d-sm-inline">👋 <strong>{{ adminName }}</strong></span>
-          <button cButton color="danger" variant="ghost" size="sm" (click)="logout()" title="Logout">
+<div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent">
+  <c-header class="mb-4 d-print-none shadow-sm" position="sticky">
+    <div class="header-main w-100 bg-white">
+      <c-container fluid class="d-flex align-items-center justify-content-between h-100">
+        <div class="d-flex align-items-center">
+            <button cHeaderToggler class="ps-1 me-3 border-0 bg-transparent" (click)="sidebarVisible = !sidebarVisible">
+              <svg cIcon name="cilMenu" size="lg"></svg>
+            </button>
+            <span class="fw-semibold text-dark fs-5">Dash<span class="d-none d-sm-inline">board</span></span>
+        </div>
+        
+        <div class="d-flex align-items-center">
+          <span class="me-3 d-none d-md-inline text-muted small">Welcome, <strong>{{ adminName }}</strong></span>
+          <button cButton color="danger" variant="ghost" size="sm" (click)="logout()" title="Logout" class="rounded-pill">
             <svg cIcon name="cilAccountLogout" size="lg"></svg>
           </button>
-        </c-header-nav>
+        </div>
       </c-container>
     </div>
-    <div class="header-divider"></div>
-    <div class="header-breadcrumb w-100">
+    <div class="header-divider h-1px bg-light"></div>
+    <div class="header-breadcrumb w-100 bg-white py-2">
       <c-container fluid>
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb m-0 ms-2">
-            <li class="breadcrumb-item text-secondary">Home</li>
+          <ol class="breadcrumb m-0 ms-2 small fw-medium">
+            <li class="breadcrumb-item text-secondary align-items-center d-flex">
+                <svg cIcon name="cilInfo" size="sm" class="me-1"></svg> Home
+            </li>
             <li class="breadcrumb-item active" aria-current="page">{{ activeTab | titlecase }}</li>
           </ol>
         </nav>
@@ -72,7 +73,7 @@
 
     <!-- Bookings Tab -->
     <div [hidden]="activeTab !== 'bookings'">
-      <c-row>
+      <c-row class="mb-4">
         <c-col [md]="12">
           <c-card>
             <c-card-header>
@@ -85,17 +86,15 @@
                     <c-card-body>
                       <h5 class="card-title">{{ b.customerName }} <span cBadge color="info" class="ms-2">{{ b.servicePackage }}</span></h5>
                       <p class="small text-medium-emphasis mb-1">📞 {{ b.phone }}</p>
-                      <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }}</p>
+                      <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }} <span cBadge color="secondary" class="ms-1" *ngIf="b.frequency">{{ b.frequency }}</span></p>
                       <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
                       
-                      <div *ngIf="b.assignedEmployeeName" class="mb-3">
-                        <span cBadge color="success">👷 Assigned: {{ b.assignedEmployeeName }}</span>
-                      </div>
-
-                      <div class="d-grid gap-2">
+                      <div class="d-grid gap-2 mt-3">
                         <select cSelect (change)="assignEmployee(b.id, +$any($event.target).value)" [value]="b.assignedEmployeeId || ''">
                           <option value="">Assign Employee...</option>
-                          <option *ngFor="let e of employees" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
+                          <ng-container *ngFor="let e of employees">
+                            <option *ngIf="e.isActive" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
+                          </ng-container>
                         </select>
                         <button cButton color="primary" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">
                           <svg cIcon name="cilSave" class="me-2"></svg> Approve & WhatsApp
@@ -106,6 +105,42 @@
                 </c-col>
               </c-row>
               <p *ngIf="pendingBookings.length === 0" class="text-center py-4 text-medium-emphasis">No pending bookings right now.</p>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+      
+      <!-- Previous Orders -->
+      <c-row>
+        <c-col [md]="12">
+          <c-card>
+            <c-card-header>
+              <strong>Past Orders</strong> ({{ previousBookings.length }})
+            </c-card-header>
+            <c-card-body>
+              <table cTable hover responsive [striped]="true">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Package</th>
+                    <th>Phone</th>
+                    <th>Date</th>
+                    <th>Assigned Ninja</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pb of previousBookings">
+                    <td><strong>{{ pb.customerName }}</strong></td>
+                    <td>{{ pb.servicePackage }}</td>
+                    <td>{{ pb.phone }}</td>
+                    <td>{{ pb.createdAt | date:'shortDate' }} <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span></td>
+                    <td>{{ pb.assignedEmployeeName || 'Unassigned' }}</td>
+                    <td><span cBadge color="success">{{ pb.status }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <p *ngIf="previousBookings.length === 0" class="text-center py-3 text-medium-emphasis">No past orders found.</p>
             </c-card-body>
           </c-card>
         </c-col>
@@ -139,7 +174,7 @@
         </c-col>
         <c-col [md]="8">
           <c-card>
-            <c-card-header><strong>Current Staff</strong> ({{ employees.length }})</c-card-header>
+            <c-card-header><strong>Current Ninja Staff</strong> ({{ employees.length }})</c-card-header>
             <c-card-body>
               <table cTable hover responsive [striped]="true">
                 <thead>
@@ -147,6 +182,7 @@
                     <th>Name</th>
                     <th>Role</th>
                     <th>Phone</th>
+                    <th>Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -155,6 +191,11 @@
                     <td><strong>{{ e.name }}</strong></td>
                     <td><span cBadge color="secondary">{{ e.role }}</span></td>
                     <td>📞 {{ e.phone }}</td>
+                    <td>
+                      <button cButton size="sm" [color]="e.isActive ? 'success' : 'secondary'" (click)="toggleEmployeeActive(e)">
+                        {{ e.isActive ? 'Active' : 'Inactive' }}
+                      </button>
+                    </td>
                     <td>
                       <button cButton color="danger" variant="outline" size="sm" (click)="removeEmployee(e.id)">
                         <svg cIcon name="cilTrash"></svg>
@@ -173,23 +214,25 @@
     <!-- Services Tab -->
     <div [hidden]="activeTab !== 'services'">
       <c-row>
+        <!-- Add New Service -->
         <c-col [md]="12" class="mb-4">
           <c-card>
             <c-card-header><strong>Add New Service</strong></c-card-header>
             <c-card-body>
               <c-row class="g-3">
                 <c-col [md]="4">
-                  <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Car Wash)" />
+                  <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Full Valet)" />
                 </c-col>
                 <c-col [md]="4">
-                  <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Short Description" />
+                  <!-- Use text input for small strings or comma separated features -->
+                  <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Description or Features (comma separated)" />
                 </c-col>
                 <c-col [md]="2">
-                  <input cFormControl type="text" [(ngModel)]="newService.icon" placeholder="Icon (e.g. 🚗)" />
+                  <input cFormControl type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" />
                 </c-col>
                 <c-col [md]="2">
                   <button cButton color="primary" class="w-100" (click)="addService()">
-                    <svg cIcon name="cilPlus" class="me-2"></svg> Add
+                    <svg cIcon name="cilPlus" class="me-2"></svg> Create
                   </button>
                 </c-col>
               </c-row>
@@ -200,13 +243,15 @@
         <c-col [md]="12">
           <c-row>
             <c-col [md]="6" *ngFor="let s of services" class="mb-4">
-              <c-card class="h-100 shadow-sm">
-                <c-card-header class="d-flex justify-content-between align-items-center">
-                  <strong>{{ s.name }}</strong>
+              <c-card class="h-100 shadow-sm border-0 border-top border-4" [class.border-warning]="s.isHighlighted" [class.border-secondary]="!s.isActive">
+                <c-card-header class="d-flex justify-content-between align-items-center bg-white border-bottom-0 pb-0">
+                  <strong class="fs-5">{{ s.name }}</strong>
                   <div class="d-flex gap-2">
+                    <button cButton size="sm" [color]="s.isActive ? 'success' : 'secondary'" (click)="s.isActive = !s.isActive; saveService(s)">
+                      {{ s.isActive ? 'Active' : 'Inactive' }}
+                    </button>
                     <button cButton color="warning" size="sm" (click)="toggleHighlight(s)">
-                      <svg cIcon [name]="s.isHighlighted ? 'cilStar' : 'cilStar'"></svg> 
-                      {{ s.isHighlighted ? 'Unfeature' : 'Feature' }}
+                      <svg cIcon [name]="s.isHighlighted ? 'cilStar' : 'cilStar'"></svg>
                     </button>
                     <button cButton color="info" size="sm" (click)="editingService = s">
                       <svg cIcon name="cilSave"></svg> Edit
@@ -219,47 +264,74 @@
                 <c-card-body>
                   <!-- View mode -->
                   <div *ngIf="editingService?.id !== s.id">
-                    <p class="text-medium-emphasis">{{ s.description }}</p>
-                    <div class="mb-3">
-                      <span cBadge color="success" class="me-2" *ngIf="s.price">£{{ s.price }}</span>
-                      <span cBadge color="info" *ngIf="s.isHighlighted">⭐ Featured</span>
+                    <p class="text-medium-emphasis mb-3">{{ s.description }}</p>
+                    <div class="mb-3 d-flex flex-wrap gap-2">
+                      <span cBadge color="primary" *ngIf="s.price">Standard: £{{ s.price }}</span>
+                      <span cBadge color="danger" *ngIf="s.discountedPrice">Discount: £{{ s.discountedPrice }}</span>
+                      <span cBadge color="info" *ngIf="s.weeklyPrice">Weekly: £{{ s.weeklyPrice }}</span>
+                      <span cBadge color="info" *ngIf="s.monthlyPrice">Monthly: £{{ s.monthlyPrice }}</span>
                     </div>
                     
-                    <div class="d-flex gap-2 overflow-auto pb-2">
-                      <div *ngFor="let m of s.media" class="position-relative">
-                        <img *ngIf="m.fileType === 'image'" [src]="m.url" width="60" height="60" class="rounded shadow-sm" />
-                        <button class="btn-close position-absolute top-0 end-0 bg-white" style="padding: 2px;" (click)="deleteMedia(s.id, m.id)"></button>
+                    <div class="d-flex align-items-center gap-3 mt-3 border-top pt-3">
+                      <div class="bg-light p-2 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; color: var(--primary-color);" [innerHTML]="s.icon"></div>
+                      <div class="flex-grow-1 overflow-auto d-flex gap-2">
+                        <div *ngFor="let m of s.media" class="position-relative">
+                          <img *ngIf="m.fileType === 'image'" [src]="m.url" width="50" height="50" class="rounded shadow-sm" />
+                          <button class="btn-close position-absolute top-0 end-0 bg-white" style="padding: 2px;" (click)="deleteMedia(s.id, m.id)"></button>
+                        </div>
+                        <label cButton color="secondary" variant="outline" size="sm" class="d-flex align-items-center justify-content-center fw-bold p-0" style="width: 50px; height: 50px;">
+                           <span *ngIf="!isUploadingMedia[s.id]">+ Media</span>
+                           <span *ngIf="isUploadingMedia[s.id]" class="spinner-border spinner-border-sm"></span>
+                           <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
+                        </label>
                       </div>
-                      <label cButton color="secondary" variant="outline" size="sm" class="d-flex align-items-center justify-content-center p-0" style="width: 60px; height: 60px;">
-                         <span *ngIf="!isUploadingMedia[s.id]">+</span>
-                         <span *ngIf="isUploadingMedia[s.id]" class="spinner-border spinner-border-sm"></span>
-                         <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
-                      </label>
                     </div>
                   </div>
 
                   <!-- Edit mode -->
-                  <div *ngIf="editingService?.id === s.id">
+                  <div *ngIf="editingService?.id === s.id" class="bg-light p-3 rounded">
                     <div class="mb-3">
-                      <label cLabel>Name</label>
+                      <label cLabel>Service Name</label>
                       <input cFormControl type="text" [(ngModel)]="s.name" />
                     </div>
                     <div class="mb-3">
-                      <label cLabel>Description</label>
+                      <label cLabel>Description (or Comma separated Features)</label>
                       <textarea cFormControl [(ngModel)]="s.description" rows="2"></textarea>
                     </div>
-                    <c-row class="mb-3">
+                    <div class="mb-3">
+                      <label cLabel>SVG Icon Code</label>
+                      <textarea cFormControl [(ngModel)]="s.icon" rows="3" placeholder="<svg>...</svg>"></textarea>
+                      <div class="form-text mt-1 text-muted">Paste raw SVG code here. Note: Use `currentColor` for fill/stroke.</div>
+                    </div>
+                    
+                    <c-row class="mb-3 g-2">
+                        <c-col [sm]="4">
+                          <label cLabel class="small text-muted">Sort Order</label>
+                          <input cFormControl type="number" [(ngModel)]="s.sortOrder" />
+                        </c-col>
+                    </c-row>
+
+                    <h6 class="mt-4 border-bottom pb-2">Pricing Structure</h6>
+                    <c-row class="mb-4 g-2">
                       <c-col [sm]="6">
-                        <label cLabel>Price (£)</label>
+                        <label cLabel>Standard Price (£)</label>
                         <input cFormControl type="number" [(ngModel)]="s.price" />
                       </c-col>
                       <c-col [sm]="6">
                         <label cLabel>Discounted (£)</label>
                         <input cFormControl type="number" [(ngModel)]="s.discountedPrice" />
                       </c-col>
+                      <c-col [sm]="6">
+                        <label cLabel>Weekly Sub (£)</label>
+                        <input cFormControl type="number" [(ngModel)]="s.weeklyPrice" />
+                      </c-col>
+                      <c-col [sm]="6">
+                        <label cLabel>Monthly Sub (£)</label>
+                        <input cFormControl type="number" [(ngModel)]="s.monthlyPrice" />
+                      </c-col>
                     </c-row>
                     <div class="d-flex gap-2">
-                      <button cButton color="success" (click)="saveService(s)">Save</button>
+                      <button cButton color="success" class="flex-grow-1" (click)="saveService(s)">Save Settings</button>
                       <button cButton color="secondary" (click)="editingService = null">Cancel</button>
                     </div>
                   </div>
