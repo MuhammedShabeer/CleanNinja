@@ -15,5 +15,8 @@ namespace CleanNinja.Server.Data
         public DbSet<ServiceMedia> ServiceMedia { get; set; } = null!;
         public DbSet<GalleryImage> GalleryImages { get; set; } = null!;
         public DbSet<ServiceFeedback> ServiceFeedbacks { get; set; } = null!;
+        public DbSet<Work> Works { get; set; } = null!;
+        public DbSet<ScheduledWork> ScheduledWorks { get; set; } = null!;
+        public DbSet<Expense> Expenses { get; set; } = null!;
     }
 }

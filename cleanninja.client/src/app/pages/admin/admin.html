@@ -6,8 +6,28 @@
   </c-sidebar-brand>
   <c-sidebar-nav>
     <c-nav-item>
+      <a cNavLink [active]="activeTab === 'dashboard'" href="javascript:void(0)" (click)="switchTab('dashboard')">
+        <svg cIcon name="cilSpeedometer" class="nav-icon"></svg> Dashboard
+      </a>
+    </c-nav-item>
+    <c-nav-item>
       <a cNavLink [active]="activeTab === 'bookings'" href="javascript:void(0)" (click)="switchTab('bookings')">
         <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'works'" href="javascript:void(0)" (click)="switchTab('works')">
+        <svg cIcon name="cilTask" class="nav-icon"></svg> Works
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'schedules'" href="javascript:void(0)" (click)="switchTab('schedules')">
+        <svg cIcon name="cilCalendar" class="nav-icon"></svg> Schedules
+      </a>
+    </c-nav-item>
+    <c-nav-item>
+      <a cNavLink [active]="activeTab === 'revenue'" href="javascript:void(0)" (click)="switchTab('revenue')">
+        <svg cIcon name="cilDollar" class="nav-icon"></svg> Revenue
       </a>
     </c-nav-item>
     <c-nav-item>
@@ -408,7 +428,261 @@
         </c-card-body>
       </c-card>
     </div>
+
+    <!-- ══════════════ DASHBOARD TAB ══════════════ -->
+    <div [hidden]="activeTab !== 'dashboard'">
+      <div class="row g-4 mb-4">
+        <div class="col-6 col-md-3">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-warning fs-1 fw-bold">{{ revenueSummary.pendingCount }}</div>
+              <div class="text-muted small">Pending Works</div>
+            </c-card-body>
+          </c-card>
+        </div>
+        <div class="col-6 col-md-3">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-success fs-1 fw-bold">{{ revenueSummary.completedCount }}</div>
+              <div class="text-muted small">Completed Works</div>
+            </c-card-body>
+          </c-card>
+        </div>
+        <div class="col-6 col-md-3">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-primary fs-1 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
+              <div class="text-muted small">Total Earnings</div>
+            </c-card-body>
+          </c-card>
+        </div>
+        <div class="col-6 col-md-3">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-danger fs-1 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
+              <div class="text-muted small">Total Expenses</div>
+            </c-card-body>
+          </c-card>
+        </div>
+      </div>
+      <c-card class="border-0 shadow-sm">
+        <c-card-header><strong>Net Profit</strong></c-card-header>
+        <c-card-body>
+          <div class="display-6 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
+            £{{ revenueSummary.netProfit | number:'1.2-2' }}
+          </div>
+        </c-card-body>
+      </c-card>
+    </div>
+
+    <!-- ══════════════ WORKS TAB ══════════════ -->
+    <div [hidden]="activeTab !== 'works'">
+      <c-card class="mb-4 border-0 shadow-sm">
+        <c-card-header><strong>Add New Work</strong></c-card-header>
+        <c-card-body>
+          <div class="row g-2">
+            <div class="col-md-3"><input cFormControl placeholder="Customer Name" [(ngModel)]="newWork.customerName"></div>
+            <div class="col-md-2"><input cFormControl placeholder="Phone" [(ngModel)]="newWork.phone"></div>
+            <div class="col-md-3"><input cFormControl placeholder="Service / Package" [(ngModel)]="newWork.servicePackage"></div>
+            <div class="col-md-3"><input cFormControl placeholder="Address" [(ngModel)]="newWork.address"></div>
+            <div class="col-md-1"><button cButton color="success" (click)="addWork()"><svg cIcon name="cilPlus"></svg></button></div>
+          </div>
+        </c-card-body>
+      </c-card>
+
+      <!-- Complete work modal overlay -->
+      <div *ngIf="completingWork" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
+        <c-card style="width:400px">
+          <c-card-header><strong>Complete Work — {{ completingWork.customerName }}</strong></c-card-header>
+          <c-card-body>
+            <label cLabel>Revenue Earned (£)</label>
+            <input cFormControl type="number" [(ngModel)]="completeRevenue" class="mb-2">
+            <label cLabel>Notes (optional)</label>
+            <textarea cFormControl rows="2" [(ngModel)]="completeNotes"></textarea>
+          </c-card-body>
+          <c-card-footer class="d-flex gap-2">
+            <button cButton color="success" (click)="submitCompleteWork()"><svg cIcon name="cilCheckCircle"></svg> Save</button>
+            <button cButton color="secondary" variant="outline" (click)="completingWork=null">Cancel</button>
+          </c-card-footer>
+        </c-card>
+      </div>
+
+      <c-card class="border-0 shadow-sm">
+        <c-card-header><strong>All Works</strong></c-card-header>
+        <c-card-body>
+          <div *ngIf="works.length === 0" class="text-muted text-center py-3">No works yet.</div>
+          <table *ngIf="works.length > 0" cTable hover responsive striped>
+            <thead>
+              <tr>
+                <th>Customer</th><th>Package</th><th>Employee</th><th>Status</th><th>Revenue</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let w of works">
+                <td>{{ w.customerName }}<br><small class="text-muted">{{ w.phone }}</small></td>
+                <td>{{ w.servicePackage }}</td>
+                <td>
+                  <select cSelect [(ngModel)]="w.assignedEmployeeId" (change)="assignWorkEmployee(w.id, w.assignedEmployeeId)" style="width:130px">
+                    <option [value]="null">Unassigned</option>
+                    <option *ngFor="let e of employees" [value]="e.id">{{ e.name }}</option>
+                  </select>
+                </td>
+                <td>
+                  <span class="badge" [class.bg-success]="w.status === 'Completed'" [class.bg-warning]="w.status === 'InProgress'" [class.bg-secondary]="w.status === 'Pending'">
+                    {{ w.status }}
+                  </span>
+                </td>
+                <td>{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</td>
+                <td class="d-flex gap-1 flex-wrap">
+                  <button *ngIf="w.status === 'Pending'" cButton color="info" size="sm" (click)="acceptWork(w.id)">Accept</button>
+                  <button *ngIf="w.status !== 'Completed'" cButton color="success" size="sm" (click)="openCompleteWork(w)">Complete</button>
+                  <button cButton color="danger" size="sm" variant="outline" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
+    </div>
+
+    <!-- ══════════════ SCHEDULES TAB ══════════════ -->
+    <div [hidden]="activeTab !== 'schedules'">
+      <c-card class="mb-4 border-0 shadow-sm">
+        <c-card-header><strong>Add New Schedule</strong></c-card-header>
+        <c-card-body>
+          <div class="row g-2">
+            <div class="col-md-3"><input cFormControl placeholder="Title" [(ngModel)]="newSchedule.title"></div>
+            <div class="col-md-2"><input cFormControl placeholder="Customer Name" [(ngModel)]="newSchedule.customerName"></div>
+            <div class="col-md-2"><input cFormControl placeholder="Phone" [(ngModel)]="newSchedule.phone"></div>
+            <div class="col-md-2"><input cFormControl placeholder="Service" [(ngModel)]="newSchedule.servicePackage"></div>
+            <div class="col-md-2"><input cFormControl type="datetime-local" [(ngModel)]="newSchedule.scheduledDate"></div>
+            <div class="col-md-1"><button cButton color="success" (click)="addSchedule()"><svg cIcon name="cilPlus"></svg></button></div>
+          </div>
+          <input cFormControl placeholder="Notes (optional)" [(ngModel)]="newSchedule.notes" class="mt-2">
+        </c-card-body>
+      </c-card>
+
+      <div class="row g-3">
+        <div *ngIf="schedules.length === 0" class="text-muted text-center py-3">No schedules yet.</div>
+        <div class="col-md-4" *ngFor="let s of schedules">
+          <c-card [class.border-success]="s.isCompleted" [class.border-warning]="!s.isCompleted" class="shadow-sm h-100">
+            <c-card-header class="d-flex justify-content-between align-items-center">
+              <strong>{{ s.title }}</strong>
+              <span class="badge" [class.bg-success]="s.isCompleted" [class.bg-warning]="!s.isCompleted">{{ s.isCompleted ? 'Done' : 'Upcoming' }}</span>
+            </c-card-header>
+            <c-card-body class="small">
+              <p class="mb-1"><strong>Customer:</strong> {{ s.customerName }}</p>
+              <p class="mb-1"><strong>Date:</strong> {{ s.scheduledDate | date:'medium' }}</p>
+              <p *ngIf="s.servicePackage" class="mb-1"><strong>Service:</strong> {{ s.servicePackage }}</p>
+              <p *ngIf="s.notes" class="mb-0 text-muted">{{ s.notes }}</p>
+            </c-card-body>
+            <c-card-footer class="d-flex gap-2">
+              <button *ngIf="!s.isCompleted" cButton color="success" size="sm" (click)="completeSchedule(s.id)"><svg cIcon name="cilCheckCircle"></svg> Mark Done</button>
+              <button cButton color="danger" size="sm" variant="outline" (click)="deleteSchedule(s.id)"><svg cIcon name="cilTrash"></svg></button>
+            </c-card-footer>
+          </c-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ REVENUE TAB ══════════════ -->
+    <div [hidden]="activeTab !== 'revenue'">
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-success fs-2 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
+              <div class="text-muted">Total Earned</div>
+            </c-card-body>
+          </c-card>
+        </div>
+        <div class="col-md-4">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="text-danger fs-2 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
+              <div class="text-muted">Total Expenses</div>
+            </c-card-body>
+          </c-card>
+        </div>
+        <div class="col-md-4">
+          <c-card class="text-center border-0 shadow-sm h-100">
+            <c-card-body>
+              <div class="fs-2 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
+                £{{ revenueSummary.netProfit | number:'1.2-2' }}
+              </div>
+              <div class="text-muted">Net Profit</div>
+            </c-card-body>
+          </c-card>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Per-work earnings table -->
+        <div class="col-md-7">
+          <c-card class="border-0 shadow-sm">
+            <c-card-header><strong>Earnings per Work</strong></c-card-header>
+            <c-card-body>
+              <div *ngIf="!revenueSummary.works || revenueSummary.works.length === 0" class="text-muted text-center py-3">No completed works yet.</div>
+              <table *ngIf="revenueSummary.works && revenueSummary.works.length > 0" cTable hover responsive striped>
+                <thead><tr><th>Customer</th><th>Package</th><th>Employee</th><th>Earned</th><th>Date</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let w of revenueSummary.works">
+                    <td>{{ w.customerName }}</td>
+                    <td>{{ w.servicePackage }}</td>
+                    <td>{{ w.assignedEmployeeName || '—' }}</td>
+                    <td class="text-success fw-bold">£{{ w.revenue | number:'1.2-2' }}</td>
+                    <td>{{ w.completedAt | date:'shortDate' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </c-card-body>
+          </c-card>
+        </div>
+
+        <!-- Expenses -->
+        <div class="col-md-5">
+          <c-card class="border-0 shadow-sm mb-3">
+            <c-card-header><strong>Add Expense</strong></c-card-header>
+            <c-card-body>
+              <input cFormControl placeholder="Description" [(ngModel)]="newExpense.description" class="mb-2">
+              <div class="row g-2 mb-2">
+                <div class="col-6"><input cFormControl type="number" placeholder="Amount (£)" [(ngModel)]="newExpense.amount"></div>
+                <div class="col-6">
+                  <select cSelect [(ngModel)]="newExpense.category">
+                    <option value="General">General</option>
+                    <option value="Supplies">Supplies</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Staff">Staff</option>
+                  </select>
+                </div>
+              </div>
+              <input cFormControl type="date" [(ngModel)]="newExpense.date" class="mb-2">
+              <button cButton color="danger" class="w-100" (click)="addExpense()"><svg cIcon name="cilPlus"></svg> Add Expense</button>
+            </c-card-body>
+          </c-card>
+
+          <c-card class="border-0 shadow-sm">
+            <c-card-header><strong>Expense List</strong></c-card-header>
+            <c-card-body>
+              <div *ngIf="expenses.length === 0" class="text-muted text-center py-2">No expenses recorded.</div>
+              <div *ngFor="let ex of expenses" class="d-flex justify-content-between align-items-center border-bottom py-2">
+                <div>
+                  <div class="fw-semibold">{{ ex.description }}</div>
+                  <small class="text-muted">{{ ex.category }} · {{ ex.date | date:'shortDate' }}</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-danger fw-bold">£{{ ex.amount | number:'1.2-2' }}</span>
+                  <button cButton color="danger" size="sm" variant="outline" (click)="deleteExpense(ex.id)"><svg cIcon name="cilTrash"></svg></button>
+                </div>
+              </div>
+            </c-card-body>
+          </c-card>
+        </div>
+      </div>
+    </div>
+
   </c-container>
 </div>
 </div>
 </div>
+

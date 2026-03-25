@@ -5,7 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
 import { Router } from '@angular/router';
 import { IconSetService } from '@coreui/icons-angular';
-import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo } from '@coreui/icons';
+import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo, cilSpeedometer, cilBriefcase, cilCalendar, cilDollar, cilTask } from '@coreui/icons';
 
 @Component({
   selector: 'app-admin',
@@ -14,7 +14,7 @@ import { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, c
   standalone: false
 })
 export class Admin implements OnInit {
-  public activeTab: 'bookings' | 'employees' | 'services' | 'content' | 'gallery' = 'bookings';
+  public activeTab: 'dashboard' | 'bookings' | 'employees' | 'services' | 'content' | 'gallery' | 'works' | 'schedules' | 'revenue' = 'dashboard';
   public sidebarVisible: boolean = true;
   public pendingBookings: any[] = [];
   public previousBookings: any[] = [];
@@ -37,6 +37,22 @@ export class Admin implements OnInit {
   public galleryImages: GalleryImage[] = [];
   public isUploadingGallery: boolean = false;
 
+  // Works
+  public works: any[] = [];
+  public newWork: any = { customerName: '', phone: '', servicePackage: '', address: '', revenue: 0 };
+  public completingWork: any = null;
+  public completeRevenue: number = 0;
+  public completeNotes: string = '';
+
+  // Schedules
+  public schedules: any[] = [];
+  public newSchedule: any = { title: '', customerName: '', phone: '', servicePackage: '', scheduledDate: '', notes: '' };
+
+  // Revenue
+  public revenueSummary: any = { totalEarned: 0, totalExpenses: 0, netProfit: 0, pendingCount: 0, completedCount: 0, works: [] };
+  public expenses: any[] = [];
+  public newExpense: any = { description: '', amount: 0, category: 'General', date: new Date().toISOString().slice(0,10), notes: '' };
+
 
   constructor(
     private http: HttpClient,
@@ -47,7 +63,7 @@ export class Admin implements OnInit {
     private cdr: ChangeDetectorRef,
     public iconSet: IconSetService
   ) {
-    this.iconSet.icons = { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo };
+    this.iconSet.icons = { cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, cilInfo, cilSpeedometer, cilBriefcase, cilCalendar, cilDollar, cilTask };
   }
 
   ngOnInit(): void {
@@ -56,6 +72,9 @@ export class Admin implements OnInit {
     this.fetchEmployees();
     this.fetchServices();
     this.fetchGallery();
+    this.fetchWorks();
+    this.fetchSchedules();
+    this.fetchRevenueSummary();
     
     // Explicitly refresh content to ensure it's loaded in Admin
     this.contentService.refreshContent().subscribe(items => {
@@ -70,8 +89,12 @@ export class Admin implements OnInit {
   }
 
 
-  switchTab(tab: 'bookings' | 'employees' | 'services' | 'gallery' | 'content'): void {
+  switchTab(tab: 'dashboard' | 'bookings' | 'employees' | 'services' | 'gallery' | 'content' | 'works' | 'schedules' | 'revenue'): void {
     this.activeTab = tab;
+    if (tab === 'revenue') { this.fetchRevenueSummary(); this.fetchExpenses(); }
+    if (tab === 'works') this.fetchWorks();
+    if (tab === 'schedules') this.fetchSchedules();
+    if (tab === 'dashboard') this.fetchRevenueSummary();
   }
 
   private authHeaders(): HttpHeaders {
@@ -238,6 +261,115 @@ export class Admin implements OnInit {
   deleteGalleryImage(id: number): void {
     if (!confirm('Delete this gallery image?')) return;
     this.serviceApi.deleteGalleryImage(id).subscribe(() => this.fetchGallery());
+  }
+
+  // ── Works ──────────────────────────────────────────
+  fetchWorks(): void {
+    this.http.get<any[]>('/api/works').subscribe(data => {
+      this.works = data;
+      this.cdr.detectChanges();
+    });
+  }
+
+  addWork(): void {
+    if (!this.newWork.customerName.trim()) { alert('Customer name is required.'); return; }
+    this.http.post('/api/works', this.newWork).subscribe(() => {
+      this.newWork = { customerName: '', phone: '', servicePackage: '', address: '', revenue: 0 };
+      this.fetchWorks();
+    });
+  }
+
+  acceptWork(id: number): void {
+    this.http.put(`/api/works/${id}/accept`, {}).subscribe(() => this.fetchWorks());
+  }
+
+  createWorkFromBooking(bookingId: number): void {
+    this.http.post(`/api/works/from-booking/${bookingId}`, {}).subscribe(() => {
+      this.fetchWorks();
+      this.fetchBookings();
+    });
+  }
+
+  assignWorkEmployee(workId: number, employeeId: number): void {
+    if (!employeeId) return;
+    this.http.put(`/api/works/${workId}/assign/${employeeId}`, {}).subscribe(() => this.fetchWorks());
+  }
+
+  openCompleteWork(work: any): void {
+    this.completingWork = work;
+    this.completeRevenue = work.revenue || 0;
+    this.completeNotes = '';
+  }
+
+  submitCompleteWork(): void {
+    if (!this.completingWork) return;
+    this.http.put(`/api/works/${this.completingWork.id}/complete`, { revenue: this.completeRevenue, notes: this.completeNotes }).subscribe(() => {
+      this.completingWork = null;
+      this.fetchWorks();
+      this.fetchRevenueSummary();
+    });
+  }
+
+  deleteWork(id: number): void {
+    if (!confirm('Delete this work?')) return;
+    this.http.delete(`/api/works/${id}`).subscribe(() => this.fetchWorks());
+  }
+
+  // ── Schedules ──────────────────────────────────────────
+  fetchSchedules(): void {
+    this.http.get<any[]>('/api/schedules').subscribe(data => {
+      this.schedules = data;
+      this.cdr.detectChanges();
+    });
+  }
+
+  addSchedule(): void {
+    if (!this.newSchedule.title.trim() || !this.newSchedule.scheduledDate) { alert('Title and date are required.'); return; }
+    this.http.post('/api/schedules', this.newSchedule).subscribe(() => {
+      this.newSchedule = { title: '', customerName: '', phone: '', servicePackage: '', scheduledDate: '', notes: '' };
+      this.fetchSchedules();
+    });
+  }
+
+  completeSchedule(id: number): void {
+    this.http.put(`/api/schedules/${id}/complete`, {}).subscribe(() => this.fetchSchedules());
+  }
+
+  deleteSchedule(id: number): void {
+    if (!confirm('Delete this schedule?')) return;
+    this.http.delete(`/api/schedules/${id}`).subscribe(() => this.fetchSchedules());
+  }
+
+  // ── Revenue ──────────────────────────────────────────
+  fetchRevenueSummary(): void {
+    this.http.get<any>('/api/revenue/summary').subscribe(data => {
+      this.revenueSummary = data;
+      this.cdr.detectChanges();
+    });
+  }
+
+  fetchExpenses(): void {
+    this.http.get<any[]>('/api/revenue/expenses').subscribe(data => {
+      this.expenses = data;
+      this.cdr.detectChanges();
+    });
+  }
+
+  addExpense(): void {
+    if (!this.newExpense.description.trim() || !this.newExpense.amount) { alert('Description and amount are required.'); return; }
+    this.http.post('/api/revenue/expenses', this.newExpense).subscribe(() => {
+      this.newExpense = { description: '', amount: 0, category: 'General', date: new Date().toISOString().slice(0,10), notes: '' };
+      this.fetchExpenses();
+      this.fetchRevenueSummary();
+    });
+  }
+
+  deleteExpense(id: number): void {
+    if (!confirm('Delete this expense?')) return;
+    this.http.delete(`/api/revenue/expenses/${id}`).subscribe(() => {
+      this.fetchExpenses();
+      this.fetchRevenueSummary();
+    });
   }
 }
 

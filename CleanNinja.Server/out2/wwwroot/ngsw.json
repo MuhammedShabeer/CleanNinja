@@ -1,0 +1,107 @@
+{
+  "configVersion": 1,
+  "timestamp": 1774481711977,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/favicon.png",
+        "/index.html",
+        "/main-L4OBN4CK.js",
+        "/manifest.webmanifest",
+        "/styles-AXPT3GLS.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/assets/images/CleanNinja.jpeg",
+        "/assets/images/CleanNinjaNew.png",
+        "/assets/images/CleanNinjaWB.png",
+        "/assets/images/CleanNinjaWB.webp",
+        "/assets/images/icon-192x192.png",
+        "/assets/images/icon-512x512.png",
+        "/assets/images/liverpool_map.png",
+        "/assets/layers-2x.png",
+        "/assets/layers.png",
+        "/assets/marker-icon-2x.png",
+        "/assets/marker-icon.png",
+        "/assets/marker-shadow.png",
+        "/icons/icon-128x128.png",
+        "/icons/icon-144x144.png",
+        "/icons/icon-152x152.png",
+        "/icons/icon-192x192.png",
+        "/icons/icon-384x384.png",
+        "/icons/icon-512x512.png",
+        "/icons/icon-72x72.png",
+        "/icons/icon-96x96.png",
+        "/media/layers-2x-TBM42ERR.png",
+        "/media/layers-55W3Q4RM.png",
+        "/media/marker-icon-2V3QKKVC.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/assets/images/CleanNinja.jpeg": "4e8ec44dbf208a53aad75737dc9c33c01abb7be5",
+    "/assets/images/CleanNinjaNew.png": "69fcb55316f13834b6d451e500ab6cd77176b7a3",
+    "/assets/images/CleanNinjaWB.png": "2d908fde82f00380946686d35752840e7ac10629",
+    "/assets/images/CleanNinjaWB.webp": "2c3121e5ad03216bef8a625d65420869583a8567",
+    "/assets/images/icon-192x192.png": "ba529860dec77584d1edceca05ce7e0f61902281",
+    "/assets/images/icon-512x512.png": "db822d0ae7eef34f97ddf36cfbe3c7fecc9f6d61",
+    "/assets/images/liverpool_map.png": "282e6ba4cd0643e3212f7266f504575c2706c7ac",
+    "/assets/layers-2x.png": "152a162333e46d24f9d89f566312fc0c64011dee",
+    "/assets/layers.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
+    "/assets/marker-icon-2x.png": "cf3a536596b1f58e0ac805404183c8e6d6bdacb5",
+    "/assets/marker-icon.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
+    "/assets/marker-shadow.png": "7b6a8df63930381e96604e705168d0527d6b82bc",
+    "/favicon.png": "2d908fde82f00380946686d35752840e7ac10629",
+    "/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
+    "/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
+    "/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
+    "/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
+    "/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
+    "/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
+    "/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
+    "/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
+    "/index.html": "fb08e33e1ed6877e2c78f9df56e8de2b77edb287",
+    "/main-L4OBN4CK.js": "7dd08cb5505b088800768ebe0dfb26d2307fca04",
+    "/manifest.webmanifest": "255a55e5439d4251373ea28bee3d2db2ad7a02b2",
+    "/media/layers-2x-TBM42ERR.png": "152a162333e46d24f9d89f566312fc0c64011dee",
+    "/media/layers-55W3Q4RM.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
+    "/media/marker-icon-2V3QKKVC.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
+    "/styles-AXPT3GLS.css": "1e4ecb37b379c4a9f07f618de01efd97bcd709a7"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
