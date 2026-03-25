@@ -295,10 +295,75 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .admin-theme {
-  --primary-color: #0d6efd; /* Standard Blue */
-  background-color: #f8f9fa; /* Light background for admin */
-  color: #333 !important;
+  --primary-color: #0d6efd; 
+  --cui-body-bg: #f3f4f7 !important; /* CoreUI 5.5 Body Color */
+  --cui-sidebar-bg: #212631 !important; /* CoreUI 5.5 Sidebar Color */
+  --cui-header-bg: #ffffff !important;
+  --cui-card-border-radius: 6px !important;
+  
+  background-color: var(--cui-body-bg);
+  color: #212529 !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.admin-theme .wrapper {
+  background-color: #f3f4f7 !important; /* FORCED CoreUI 5.5 Body Color */
+}
+
+/* Sidebar Specifics */
+.admin-theme c-sidebar {
+  background-color: #212631 !important;
+  border-right: none !important;
+}
+
+/* Header Specifics */
+.admin-theme c-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #dbdfe6 !important;
+  box-shadow: none !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.admin-theme .header-main {
+  height: 64px;
+  display: flex !important;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.admin-theme .header-divider {
+    height: 1px;
+    background-color: #dbdfe6;
+    width: 100%;
+}
+
+.admin-theme .header-breadcrumb {
+    height: 48px;
+    display: flex !important;
+    align-items: center;
+    padding: 0 1rem;
+    background-color: #ffffff;
+}
+
+.admin-theme .breadcrumb-item {
+    font-size: 0.875rem;
+}
+
+/* Card Refinements - "Flat" look from demo */
+.admin-theme .card {
+  border-radius: var(--cui-card-border-radius) !important;
+  border: 1px solid #d8dbe0 !important;
+  box-shadow: none !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.admin-theme .card-header {
+  background-color: #fff !important;
+  border-bottom: 1px solid #d8dbe0 !important;
+  font-weight: 600;
+  padding: 0.75rem 1.25rem !important;
 }
 
 .admin-theme h1, .admin-theme h2, .admin-theme h3, 
@@ -306,7 +371,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
   text-transform: none;
   letter-spacing: normal;
-  color: #333;
+  color: #212529;
 }
 
 /* GALLERY FIX: Ensure images display correctly and buttons don't stretch */

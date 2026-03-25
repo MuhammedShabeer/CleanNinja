@@ -35,22 +35,35 @@
 
 <div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent" [class.sidebar-hidden]="!sidebarVisible">
   <c-header class="mb-4 d-print-none" position="sticky">
-    <c-container fluid>
-      <button cHeaderToggler class="ps-1" (click)="sidebarVisible = !sidebarVisible">
-        <svg cIcon name="cilMenu" size="lg"></svg>
-      </button>
-      <c-header-nav class="d-none d-md-flex me-auto">
-        <c-nav-item>
-          <span class="fw-semibold">Admin Dashboard</span>
-        </c-nav-item>
-      </c-header-nav>
-      <c-header-nav class="ms-3">
-        <span class="me-3 d-none d-sm-inline">👋 <strong>{{ adminName }}</strong></span>
-        <button cButton color="danger" variant="outline" size="sm" (click)="logout()">
-          <svg cIcon name="cilAccountLogout" class="me-2"></svg> Logout
+    <div class="header-main w-100">
+      <c-container fluid class="d-flex align-items-center">
+        <button cHeaderToggler class="ps-1 me-3" (click)="sidebarVisible = !sidebarVisible">
+          <svg cIcon name="cilMenu" size="lg"></svg>
         </button>
-      </c-header-nav>
-    </c-container>
+        <c-header-nav class="d-none d-md-flex me-auto">
+          <c-nav-item>
+            <span class="fw-semibold text-dark">Admin Dashboard</span>
+          </c-nav-item>
+        </c-header-nav>
+        <c-header-nav class="ms-3 align-items-center">
+          <span class="me-3 d-none d-sm-inline">👋 <strong>{{ adminName }}</strong></span>
+          <button cButton color="danger" variant="ghost" size="sm" (click)="logout()" title="Logout">
+            <svg cIcon name="cilAccountLogout" size="lg"></svg>
+          </button>
+        </c-header-nav>
+      </c-container>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-breadcrumb w-100">
+      <c-container fluid>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb m-0 ms-2">
+            <li class="breadcrumb-item text-secondary">Home</li>
+            <li class="breadcrumb-item active" aria-current="page">{{ activeTab | titlecase }}</li>
+          </ol>
+        </nav>
+      </c-container>
+    </div>
   </c-header>
 
   <div class="body flex-grow-1 px-3">
