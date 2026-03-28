@@ -110,12 +110,13 @@
                       <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
                       
                       <div class="d-grid gap-2 mt-3">
-                        <select cSelect (change)="assignEmployee(b.id, +$any($event.target).value)" [value]="b.assignedEmployeeId || ''">
-                          <option value="">Assign Employee...</option>
-                          <ng-container *ngFor="let e of employees">
-                            <option *ngIf="e.isActive" [value]="e.id">{{ e.name }} ({{ e.role }})</option>
-                          </ng-container>
-                        </select>
+                        <div class="mt-2 text-center text-md-start">
+                          <button cButton color="secondary" size="sm" variant="outline" class="w-100 py-1 d-flex align-items-center justify-content-center" (click)="openAssignModal(b)">
+                            <svg cIcon name="cilPeople" class="me-1"></svg>
+                            {{ getAssignedNames(b) || 'Assign Ninja Team' }}
+                          </button>
+                        </div>
+
                         <button cButton color="primary" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">
                           <svg cIcon name="cilSave" class="me-2"></svg> Approve & WhatsApp
                         </button>
@@ -306,6 +307,33 @@
                         </label>
                       </div>
                     </div>
+
+                    <!-- Customer Reviews moderation -->
+                    <div class="mt-3 border-top pt-3">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="fw-semibold small text-muted">Customer Reviews</span>
+                        <button cButton size="sm" color="secondary" variant="outline" (click)="loadFeedback(s.id)">
+                          Load Reviews ({{ (loadedFeedbacks[s.id] || []).length }})
+                        </button>
+                      </div>
+                      <div *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length > 0">
+                        <div *ngFor="let fb of loadedFeedbacks[s.id]" class="border rounded p-2 mb-2 small" [class.bg-warning-subtle]="!fb.isApproved" [class.bg-success-subtle]="fb.isApproved">
+                          <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                              <strong>{{ fb.customerName }}</strong>
+                              <span class="ms-2">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
+                              <span class="ms-2 badge" [class.bg-warning]="!fb.isApproved" [class.bg-success]="fb.isApproved">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
+                            </div>
+                            <div class="d-flex gap-1">
+                              <button *ngIf="!fb.isApproved" cButton size="sm" color="success" (click)="approveFeedback(fb.id, s.id)">✓ Approve</button>
+                              <button cButton size="sm" color="danger" variant="outline" (click)="deleteFeedback(fb.id, s.id)"><svg cIcon name="cilTrash"></svg></button>
+                            </div>
+                          </div>
+                          <p class="mb-0 mt-1 text-muted">{{ fb.comment }}</p>
+                        </div>
+                      </div>
+                      <p *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length === 0" class="text-muted small mb-0">No reviews yet.</p>
+                    </div>
                   </div>
 
                   <!-- Edit mode -->
@@ -477,18 +505,7 @@
 
     <!-- ══════════════ WORKS TAB ══════════════ -->
     <div [hidden]="activeTab !== 'works'">
-      <c-card class="mb-4 border-0 shadow-sm">
-        <c-card-header><strong>Add New Work</strong></c-card-header>
-        <c-card-body>
-          <div class="row g-2">
-            <div class="col-md-3"><input cFormControl placeholder="Customer Name" [(ngModel)]="newWork.customerName"></div>
-            <div class="col-md-2"><input cFormControl placeholder="Phone" [(ngModel)]="newWork.phone"></div>
-            <div class="col-md-3"><input cFormControl placeholder="Service / Package" [(ngModel)]="newWork.servicePackage"></div>
-            <div class="col-md-3"><input cFormControl placeholder="Address" [(ngModel)]="newWork.address"></div>
-            <div class="col-md-1"><button cButton color="success" (click)="addWork()"><svg cIcon name="cilPlus"></svg></button></div>
-          </div>
-        </c-card-body>
-      </c-card>
+
 
       <!-- Complete work modal overlay -->
       <div *ngIf="completingWork" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
@@ -511,36 +528,51 @@
         <c-card-header><strong>All Works</strong></c-card-header>
         <c-card-body>
           <div *ngIf="works.length === 0" class="text-muted text-center py-3">No works yet.</div>
-          <table *ngIf="works.length > 0" cTable hover responsive striped>
-            <thead>
-              <tr>
-                <th>Customer</th><th>Package</th><th>Employee</th><th>Status</th><th>Revenue</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let w of works">
-                <td>{{ w.customerName }}<br><small class="text-muted">{{ w.phone }}</small></td>
-                <td>{{ w.servicePackage }}</td>
-                <td>
-                  <select cSelect [(ngModel)]="w.assignedEmployeeId" (change)="assignWorkEmployee(w.id, w.assignedEmployeeId)" style="width:130px">
-                    <option [value]="null">Unassigned</option>
-                    <option *ngFor="let e of employees" [value]="e.id">{{ e.name }}</option>
-                  </select>
-                </td>
-                <td>
-                  <span class="badge" [class.bg-success]="w.status === 'Completed'" [class.bg-warning]="w.status === 'InProgress'" [class.bg-secondary]="w.status === 'Pending'">
-                    {{ w.status }}
-                  </span>
-                </td>
-                <td>{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</td>
-                <td class="d-flex gap-1 flex-wrap">
-                  <button *ngIf="w.status === 'Pending'" cButton color="info" size="sm" (click)="acceptWork(w.id)">Accept</button>
-                  <button *ngIf="w.status !== 'Completed'" cButton color="success" size="sm" (click)="openCompleteWork(w)">Complete</button>
-                  <button cButton color="danger" size="sm" variant="outline" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div *ngIf="works.length > 0" class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width:20%">Customer</th>
+                  <th style="width:20%">Package</th>
+                  <th style="width:22%">Assigned Ninjas</th>
+                  <th style="width:12%">Status</th>
+                  <th style="width:10%">Revenue</th>
+                  <th style="width:16%">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let w of works">
+                  <td>
+                    <div class="fw-semibold">{{ w.customerName }}</div>
+                    <small class="text-muted">{{ w.phone }}</small>
+                  </td>
+                  <td>{{ w.servicePackage }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-1" (click)="openAssignModal(w)" style="max-width:200px">
+                      <svg cIcon name="cilPeople" size="sm" class="flex-shrink-0"></svg>
+                      <span class="text-truncate" style="font-size:0.78rem">{{ getAssignedNames(w) || 'Assign Ninjas...' }}</span>
+                    </button>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill text-white"
+                      [class.bg-success]="w.status === 'Completed'"
+                      [class.bg-warning]="w.status === 'InProgress' || w.status === 'Accepted'"
+                      [class.bg-secondary]="w.status === 'Pending'">
+                      {{ w.status }}
+                    </span>
+                  </td>
+                  <td class="fw-semibold">{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <button *ngIf="w.status === 'Pending'" class="btn btn-sm btn-info" (click)="acceptWork(w.id)">Accept</button>
+                      <button *ngIf="w.status !== 'Completed'" class="btn btn-sm btn-success" (click)="openCompleteWork(w)">Complete</button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </c-card-body>
       </c-card>
     </div>
@@ -682,6 +714,47 @@
     </div>
 
   </c-container>
+
+  <!-- Shared Ninja Assignment Modal -->
+  <div *ngIf="isAssignModalOpen" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
+    <c-card style="width:400px; max-height: 85vh;" class="shadow-lg border-0">
+      <c-card-header class="bg-primary text-white d-flex justify-content-between align-items-center p-3">
+        <div class="d-flex align-items-center">
+          <svg cIcon name="cilPeople" class="me-2 text-white-50"></svg>
+          <strong>Assign Team — {{ currentAssignWork?.customerName }}</strong>
+        </div>
+        <button class="btn-close btn-close-white" (click)="closeAssignModal()"></button>
+      </c-card-header>
+      <c-card-body style="overflow-y: auto;" class="p-4">
+        <p class="small text-muted mb-3 fw-semibold">SELECT THE NINJAS FOR THIS TEAM:</p>
+        <div *ngIf="employees.length === 0" class="text-center py-4 text-muted border rounded-3 bg-light">
+          No active Ninjas found. Please add Ninjas in the Employees tab.
+        </div>
+        <div *ngIf="employees.length > 0">
+          <label *ngFor="let e of employees; trackBy: trackByEmployeeId"
+            [for]="'modal-emp-' + e.id"
+            class="d-flex align-items-center gap-3 px-3 py-3 mb-1 rounded border cursor-pointer"
+            style="cursor:pointer"
+            [style.background]="(isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))) ? '#e8f4fd' : '#f8f9fa'">
+            <input type="checkbox" class="form-check-input flex-shrink-0 mt-0" style="width:1.2rem;height:1.2rem"
+              [id]="'modal-emp-' + e.id"
+              [checked]="isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))"
+              (change)="toggleEmployeeAssignment(currentAssignWork?.id, e.id, currentAssignWork?.assignedEmployees)">
+            <div>
+              <div class="fw-semibold">{{ e.name }}</div>
+              <small class="text-muted">{{ e.role }}</small>
+            </div>
+          </label>
+        </div>
+      </c-card-body>
+      <c-card-footer class="d-flex gap-2 bg-white p-3 border-top">
+        <button cButton color="primary" class="flex-grow-1 py-2 fw-bold" (click)="saveAssignment()">
+           <svg cIcon name="cilCheckCircle" class="me-1"></svg> Confirm Team
+        </button>
+        <button cButton color="secondary" variant="outline" class="px-4 py-2" (click)="closeAssignModal()">Cancel</button>
+      </c-card-footer>
+    </c-card>
+  </div>
 </div>
 </div>
 </div>

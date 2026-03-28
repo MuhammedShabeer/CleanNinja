@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using CleanNinja.Server.Models;
 
 namespace CleanNinja.Server.Data
@@ -15,8 +16,23 @@ namespace CleanNinja.Server.Data
         public DbSet<ServiceMedia> ServiceMedia { get; set; } = null!;
         public DbSet<GalleryImage> GalleryImages { get; set; } = null!;
         public DbSet<ServiceFeedback> ServiceFeedbacks { get; set; } = null!;
-        public DbSet<Work> Works { get; set; } = null!;
-        public DbSet<ScheduledWork> ScheduledWorks { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Booking>()
+                .HasMany(b => b.AssignedEmployees)
+                .WithMany(e => e.Bookings)
+                .UsingEntity<Dictionary<string, object>>(
+                    "BookingEmployee",
+                    j => j.HasOne<Employee>().WithMany().HasForeignKey("AssignedEmployeesId"),
+                    j => j.HasOne<Booking>().WithMany().HasForeignKey("BookingsId"),
+                    j =>
+                    {
+                        j.HasKey("BookingsId", "AssignedEmployeesId");
+                        j.ToTable("BookingEmployee");
+                    }
+                );
+        }
     }
 }

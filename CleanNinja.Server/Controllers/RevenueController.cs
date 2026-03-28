@@ -16,14 +16,14 @@ namespace CleanNinja.Server.Controllers
         [HttpGet("summary")]
         public async Task<ActionResult<object>> GetSummary()
         {
-            var completedWorks = await _context.Works
+            var completedBookings = await _context.Bookings
                 .Where(w => w.Status == "Completed")
                 .ToListAsync();
 
-            var totalEarned = completedWorks.Sum(w => w.Revenue);
+            var totalEarned = completedBookings.Sum(w => w.Revenue);
             var totalExpenses = await _context.Expenses.SumAsync(e => e.Amount);
-            var pendingCount = await _context.Works.CountAsync(w => w.Status == "Pending");
-            var completedCount = completedWorks.Count;
+            var pendingCount = await _context.Bookings.CountAsync(w => w.Status == "Pending" && w.ScheduledDate == null);
+            var completedCount = completedBookings.Count(w => w.ScheduledDate == null);
 
             return Ok(new
             {
@@ -32,7 +32,7 @@ namespace CleanNinja.Server.Controllers
                 netProfit = totalEarned - totalExpenses,
                 pendingCount,
                 completedCount,
-                works = completedWorks.Select(w => new
+                works = completedBookings.Where(w => w.ScheduledDate == null).Select(w => new
                 {
                     w.Id,
                     w.CustomerName,

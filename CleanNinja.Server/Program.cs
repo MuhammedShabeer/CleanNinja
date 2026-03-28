@@ -76,4 +76,21 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.ExecuteSqlRaw(@"
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BookingEmployee')
+        BEGIN
+            CREATE TABLE BookingEmployee (
+                BookingsId INT NOT NULL,
+                AssignedEmployeesId INT NOT NULL,
+                CONSTRAINT PK_BookingEmployee PRIMARY KEY (BookingsId, AssignedEmployeesId),
+                CONSTRAINT FK_BookingEmployee_Bookings FOREIGN KEY (BookingsId) REFERENCES Bookings (Id) ON DELETE CASCADE,
+                CONSTRAINT FK_BookingEmployee_Employees FOREIGN KEY (AssignedEmployeesId) REFERENCES Employees (Id) ON DELETE CASCADE
+            );
+        END
+    ");
+}
+
 app.Run();

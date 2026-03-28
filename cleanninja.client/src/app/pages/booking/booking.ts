@@ -14,7 +14,9 @@ export class Booking implements OnInit {
   public customerName: string = '';
   public phone: string = '';
   public address: string = '';
-  public selectedFrequency: string = 'Once'; // Default value
+  public selectedFrequency: string = 'Once';
+  public frequencyCount: number = 2; // must be > 1 for recurring
+  public scheduledDate: string = '';
 
   public isSubmitting: boolean = false;
   public submitSuccess: boolean = false;
@@ -25,20 +27,33 @@ export class Booking implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  get frequencyLabel(): string {
+    switch (this.selectedFrequency) {
+      case 'Every 2 Days': return `sessions (every 2 days)`;
+      case 'Weekly': return `weeks`;
+      case 'Monthly': return `months`;
+      case 'Yearly': return `years`;
+      default: return '';
+    }
+  }
+
   get totalPrice(): number {
     if (!this.selectedService) return 0;
     const basePrice = this.selectedService.discountedPrice ?? this.selectedService.price ?? 0;
-    
+    const count = (this.selectedFrequency !== 'Once' && this.frequencyCount > 1) ? this.frequencyCount : 1;
+
     switch (this.selectedFrequency) {
-      case 'Every 2 Days': 
-        return this.selectedService.monthlyPrice ?? (basePrice * 15); // Fallback to approx 15 visits
-      case 'Weekly': 
-        return this.selectedService.weeklyPrice ?? (basePrice * 4); // Fallback to 4 visits
-      case 'Monthly': 
-        return this.selectedService.monthlyPrice ?? basePrice;
-      case 'Yearly': 
-        return this.selectedService.yearlyPrice ?? basePrice;
-      default: return basePrice;
+      case 'Every 2 Days':
+        // Each session = single visit price; count = number of sessions
+        return (this.selectedService.discountedPrice ?? this.selectedService.price ?? 0) * count;
+      case 'Weekly':
+        return (this.selectedService.weeklyPrice ?? (basePrice * 4)) * count;
+      case 'Monthly':
+        return (this.selectedService.monthlyPrice ?? basePrice) * count;
+      case 'Yearly':
+        return (this.selectedService.yearlyPrice ?? basePrice) * count;
+      default:
+        return basePrice;
     }
   }
 
@@ -60,26 +75,37 @@ export class Booking implements OnInit {
       return;
     }
 
+    if (this.selectedFrequency !== 'Once' && (this.frequencyCount < 2)) {
+      alert('Frequency count must be greater than 1.');
+      return;
+    }
+
     this.isSubmitting = true;
-    const payload = {
+    const payload: any = {
       customerName: this.customerName,
       phone: this.phone,
-      servicePackage: `${this.selectedService.name} (${this.selectedFrequency})`,
+      servicePackage: `${this.selectedService.name} (${this.selectedFrequency}${this.selectedFrequency !== 'Once' ? ' x' + this.frequencyCount : ''})`,
       address: this.address,
       frequency: this.selectedFrequency,
+      frequencyCount: this.selectedFrequency !== 'Once' ? this.frequencyCount : 1,
       latitude: 0,
       longitude: 0
     };
+    if (this.selectedFrequency !== 'Once' && this.scheduledDate) {
+      payload.scheduledDate = this.scheduledDate;
+    }
 
     this.http.post('/api/bookings', payload).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.submitSuccess = true;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
         alert('Failed to submit booking. Please try again.');
         this.isSubmitting = false;
+        this.cdr.detectChanges();
       }
     });
   }

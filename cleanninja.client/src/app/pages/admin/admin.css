@@ -1,2 +1,202 @@
-/* Admin Dashboard - Pure CoreUI Styles */
+/* ============================================================
+   CLEAN NINJA ADMIN — Polished Clean Look
+   ============================================================ */
 
+/* ── CoreUI CSS Variable Overrides (force white cards) ── */
+:root,
+.admin-theme {
+  --cui-card-bg: #ffffff;
+  --cui-card-border-color: #e8ecf0;
+  --cui-card-cap-bg: #ffffff;
+  --cui-body-bg: #f0f2f5;
+  --cui-tertiary-bg: #f8f9fa;
+  --cui-border-color: #e8ecf0;
+  --cui-card-box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+/* ── Page Background ── */
+.admin-theme {
+  background: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* ── Cards: White Body, Clean Shadow ── */
+c-card,
+.card {
+  background: #fff !important;
+  border: 1px solid #e8ecf0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+  overflow: hidden;
+}
+
+c-card-body,
+.card-body {
+  background: #fff !important;
+  padding: 1.25rem !important;
+}
+
+c-card-header,
+.card-header {
+  background: #fff !important;
+  border-bottom: 1px solid #f0f2f5 !important;
+  padding: .875rem 1.25rem !important;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+c-card-footer,
+.card-footer {
+  background: #fafbfc !important;
+  border-top: 1px solid #f0f2f5 !important;
+  padding: .75rem 1.25rem !important;
+}
+
+/* ── KPI / Stat Cards ── */
+.kpi-card c-card-body,
+c-card.text-center c-card-body {
+  padding: 1.75rem 1rem !important;
+}
+
+c-card.text-center .fs-1,
+c-card.text-center .fs-2 {
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* ── Main Content Area ── */
+.admin-content {
+  padding: 1.5rem;
+  background: #f0f2f5;
+}
+
+c-container {
+  padding: 1.5rem !important;
+}
+
+/* ── Breadcrumb ── */
+c-breadcrumb-item a,
+.breadcrumb-item a {
+  color: #6c7a89;
+  text-decoration: none;
+}
+
+/* ── Header Bar ── */
+c-header,
+.header {
+  background: #fff !important;
+  border-bottom: 1px solid #e8ecf0 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04) !important;
+}
+
+/* ── Tables ── */
+table.table,
+[cTable] {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table thead tr {
+  background: #f8f9fa !important;
+}
+
+table thead th {
+  font-weight: 600;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #6c7a89;
+  border-bottom: 2px solid #e8ecf0 !important;
+  padding: .75rem 1rem !important;
+}
+
+table tbody td {
+  padding: .75rem 1rem !important;
+  vertical-align: middle;
+  border-bottom: 1px solid #f4f6f8 !important;
+  font-size: .9rem;
+}
+
+table tbody tr:hover {
+  background: #f8fafc !important;
+}
+
+/* ── Buttons ── */
+button[cButton],
+[cButton] {
+  border-radius: 6px !important;
+  font-size: .85rem !important;
+  font-weight: 500 !important;
+}
+
+/* ── Form Controls ── */
+input[cFormControl],
+textarea[cFormControl],
+select[cSelect] {
+  border: 1.5px solid #dde1e7 !important;
+  border-radius: 6px !important;
+  padding: .45rem .75rem !important;
+  font-size: .9rem !important;
+  background: #fff !important;
+  transition: border-color .2s;
+}
+
+input[cFormControl]:focus,
+textarea[cFormControl]:focus,
+select[cSelect]:focus {
+  border-color: #4a90d9 !important;
+  box-shadow: 0 0 0 3px rgba(74,144,217,.15) !important;
+  outline: none !important;
+}
+
+/* ── Status Badges ── */
+.badge {
+  font-size: .75rem !important;
+  padding: .3em .65em !important;
+  border-radius: 20px !important;
+  font-weight: 600 !important;
+}
+
+.badge.bg-success  { background: #d1fae5 !important; color: #065f46 !important; }
+.badge.bg-warning  { background: #fef3c7 !important; color: #92400e !important; }
+.badge.bg-secondary { background: #f1f5f9 !important; color: #64748b !important; }
+
+/* ── Schedule Cards ── */
+c-card.border-success { border-left: 4px solid #10b981 !important; }
+c-card.border-warning  { border-left: 4px solid #f59e0b !important; }
+
+/* ── Revenue / Dashboard numbers ── */
+.display-6 {
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* ── Sidebar tweaks ── */
+.sidebar {
+  box-shadow: 2px 0 8px rgba(0,0,0,.12) !important;
+}
+
+/* ── Scrollable table wrapper ── */
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ── Empty state messages ── */
+.text-muted.text-center.py-3 {
+  font-size: .9rem;
+  color: #9aa5b4 !important;
+}
+
+/* ── Modal overlay (complete work) ── */
+.position-fixed c-card {
+  box-shadow: 0 8px 32px rgba(0,0,0,.2) !important;
+  border-radius: 12px !important;
+}
+
+/* ── Spacing between sections ── */
+.row.g-4 > [class*="col"],
+.row.g-3 > [class*="col"] {
+  padding-bottom: 0;
+}

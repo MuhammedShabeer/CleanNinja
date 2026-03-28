@@ -44,6 +44,10 @@ export class Admin implements OnInit {
   public completeRevenue: number = 0;
   public completeNotes: string = '';
 
+  // Modal Assignment
+  public isAssignModalOpen: boolean = false;
+  public currentAssignWork: any = null;
+
   // Schedules
   public schedules: any[] = [];
   public newSchedule: any = { title: '', customerName: '', phone: '', servicePackage: '', scheduledDate: '', notes: '' };
@@ -68,6 +72,11 @@ export class Admin implements OnInit {
 
   ngOnInit(): void {
     this.adminName = this.authService.getAdminName();
+    
+    // Restore last active tab from localStorage
+    const savedTab = localStorage.getItem('adminActiveTab') as any;
+    if (savedTab) this.activeTab = savedTab;
+    
     this.fetchBookings();
     this.fetchEmployees();
     this.fetchServices();
@@ -91,10 +100,39 @@ export class Admin implements OnInit {
 
   switchTab(tab: 'dashboard' | 'bookings' | 'employees' | 'services' | 'gallery' | 'content' | 'works' | 'schedules' | 'revenue'): void {
     this.activeTab = tab;
+    localStorage.setItem('adminActiveTab', tab);
     if (tab === 'revenue') { this.fetchRevenueSummary(); this.fetchExpenses(); }
     if (tab === 'works') this.fetchWorks();
     if (tab === 'schedules') this.fetchSchedules();
     if (tab === 'dashboard') this.fetchRevenueSummary();
+  }
+
+  // Temporary selection storage to prevent immediate server updates if needed,
+  // or for better multi-select UI patterns.
+  public selectedEmployeeIds: { [bookingId: number]: number[] } = {};
+
+  isEmployeeAssigned(booking: any, employeeId: number): boolean {
+    if (!booking.assignedEmployees) return false;
+    return booking.assignedEmployees.some((e: any) => e.id === employeeId);
+  }
+
+  toggleEmployeeAssignment(bookingId: number, employeeId: number, currentAssigned: any[]): void {
+     // Initialize if not present
+     if (!this.selectedEmployeeIds[bookingId]) {
+        this.selectedEmployeeIds[bookingId] = (currentAssigned || []).map(e => e.id);
+     }
+
+     const index = this.selectedEmployeeIds[bookingId].indexOf(employeeId);
+     if (index > -1) {
+       this.selectedEmployeeIds[bookingId].splice(index, 1);
+     } else {
+       this.selectedEmployeeIds[bookingId].push(employeeId);
+     }
+  }
+
+  getAssignedNames(booking: any): string {
+    if (!booking || !booking.assignedEmployees || booking.assignedEmployees.length === 0) return '';
+    return booking.assignedEmployees.map((e: any) => e.name).join(', ');
   }
 
   private authHeaders(): HttpHeaders {
@@ -110,9 +148,14 @@ export class Admin implements OnInit {
     });
   }
 
+  trackByEmployeeId(index: number, employee: any): number {
+    return employee.id;
+  }
+
   fetchEmployees(): void {
     this.http.get<any[]>('/api/employees').subscribe(data => {
-      this.employees = data;
+      // Ensure absolute uniqueness by ID to prevent any UI repetition bugs
+      this.employees = Array.from(new Map(data.map(item => [item['id'], item])).values());
       this.cdr.detectChanges();
     });
   }
@@ -126,10 +169,11 @@ export class Admin implements OnInit {
     });
   }
 
-  assignEmployee(bookingId: number, employeeId: number): void {
-    if (!employeeId) return;
-    this.http.put(`/api/bookings/${bookingId}/assign/${employeeId}`, {}).subscribe(() => {
-      this.fetchBookings();
+  assignEmployee(bookingId: number, employeeIds: number[]): void {
+    if (!employeeIds || employeeIds.length === 0) return;
+    this.http.put(`/api/bookings/${bookingId}/assign`, employeeIds).subscribe({
+      next: () => this.fetchBookings(),
+      error: (err) => alert('Assignment error: ' + (err.error?.detail || err.message))
     });
   }
 
@@ -263,36 +307,60 @@ export class Admin implements OnInit {
     this.serviceApi.deleteGalleryImage(id).subscribe(() => this.fetchGallery());
   }
 
-  // ── Works ──────────────────────────────────────────
+  // ── Works (Bookings as Works) ────────────────────────────────────────────
   fetchWorks(): void {
-    this.http.get<any[]>('/api/works').subscribe(data => {
+    this.http.get<any[]>('/api/bookings/all').subscribe(data => {
       this.works = data;
       this.cdr.detectChanges();
     });
   }
 
-  addWork(): void {
-    if (!this.newWork.customerName.trim()) { alert('Customer name is required.'); return; }
-    this.http.post('/api/works', this.newWork).subscribe(() => {
-      this.newWork = { customerName: '', phone: '', servicePackage: '', address: '', revenue: 0 };
-      this.fetchWorks();
-    });
-  }
-
   acceptWork(id: number): void {
-    this.http.put(`/api/works/${id}/accept`, {}).subscribe(() => this.fetchWorks());
+    this.http.put(`/api/bookings/${id}/accept`, {}).subscribe(() => this.fetchWorks());
   }
 
-  createWorkFromBooking(bookingId: number): void {
-    this.http.post(`/api/works/from-booking/${bookingId}`, {}).subscribe(() => {
+  approveWorkWithWhatsApp(bookingId: number, phone: string, name: string, packageType: string): void {
+    this.http.put(`/api/bookings/${bookingId}/approve`, {}).subscribe(() => {
+      const waLink = `https://wa.me/${this.whatsAppContact.replace('+', '')}?text=Hi%20${encodeURIComponent(name)},%20your%20${encodeURIComponent(packageType)}%20booking%20is%20approved!`;
+      window.open(waLink, '_blank');
       this.fetchWorks();
-      this.fetchBookings();
     });
   }
 
-  assignWorkEmployee(workId: number, employeeId: number): void {
-    if (!employeeId) return;
-    this.http.put(`/api/works/${workId}/assign/${employeeId}`, {}).subscribe(() => this.fetchWorks());
+  openAssignModal(work: any): void {
+    this.currentAssignWork = work;
+    this.isAssignModalOpen = true;
+    
+    // Initialize temporary selection with current assigned ninjas
+    this.selectedEmployeeIds[work.id] = (work.assignedEmployees || []).map((e: any) => e.id);
+    this.cdr.detectChanges();
+  }
+
+  closeAssignModal(): void {
+    this.isAssignModalOpen = false;
+    this.currentAssignWork = null;
+  }
+
+  saveAssignment(): void {
+    if (!this.currentAssignWork) return;
+    const workId = this.currentAssignWork.id;
+    const employeeIds = this.selectedEmployeeIds[workId] || [];
+    
+    this.http.put(`/api/bookings/${workId}/assign`, employeeIds).subscribe({
+      next: () => {
+        this.fetchWorks();
+        this.closeAssignModal();
+      },
+      error: (err) => alert('Assignment error: ' + (err.error?.detail || err.message))
+    });
+  }
+
+  assignWorkEmployee(workId: number, employeeIds: number[]): void {
+    if (!employeeIds || employeeIds.length === 0) return;
+    this.http.put(`/api/bookings/${workId}/assign`, employeeIds).subscribe({
+      next: () => this.fetchWorks(),
+      error: (err) => alert('Assignment error: ' + (err.error?.detail || err.message))
+    });
   }
 
   openCompleteWork(work: any): void {
@@ -303,7 +371,7 @@ export class Admin implements OnInit {
 
   submitCompleteWork(): void {
     if (!this.completingWork) return;
-    this.http.put(`/api/works/${this.completingWork.id}/complete`, { revenue: this.completeRevenue, notes: this.completeNotes }).subscribe(() => {
+    this.http.put(`/api/bookings/${this.completingWork.id}/complete`, { revenue: this.completeRevenue, notes: this.completeNotes }).subscribe(() => {
       this.completingWork = null;
       this.fetchWorks();
       this.fetchRevenueSummary();
@@ -312,12 +380,12 @@ export class Admin implements OnInit {
 
   deleteWork(id: number): void {
     if (!confirm('Delete this work?')) return;
-    this.http.delete(`/api/works/${id}`).subscribe(() => this.fetchWorks());
+    this.http.delete(`/api/bookings/${id}`).subscribe(() => this.fetchWorks());
   }
 
-  // ── Schedules ──────────────────────────────────────────
+  // ── Schedules (Bookings with ScheduledDate) ──────────────────────────────────────────
   fetchSchedules(): void {
-    this.http.get<any[]>('/api/schedules').subscribe(data => {
+    this.http.get<any[]>('/api/bookings/schedules').subscribe(data => {
       this.schedules = data;
       this.cdr.detectChanges();
     });
@@ -325,19 +393,27 @@ export class Admin implements OnInit {
 
   addSchedule(): void {
     if (!this.newSchedule.title.trim() || !this.newSchedule.scheduledDate) { alert('Title and date are required.'); return; }
-    this.http.post('/api/schedules', this.newSchedule).subscribe(() => {
+    const payload = {
+      customerName: this.newSchedule.customerName || this.newSchedule.title,
+      phone: this.newSchedule.phone || '',
+      servicePackage: this.newSchedule.servicePackage || 'General',
+      address: this.newSchedule.address || '',
+      notes: this.newSchedule.notes || '',
+      scheduledDate: this.newSchedule.scheduledDate
+    };
+    this.http.post('/api/bookings/schedule', payload).subscribe(() => {
       this.newSchedule = { title: '', customerName: '', phone: '', servicePackage: '', scheduledDate: '', notes: '' };
       this.fetchSchedules();
     });
   }
 
   completeSchedule(id: number): void {
-    this.http.put(`/api/schedules/${id}/complete`, {}).subscribe(() => this.fetchSchedules());
+    this.http.put(`/api/bookings/${id}/schedule-complete`, {}).subscribe(() => this.fetchSchedules());
   }
 
   deleteSchedule(id: number): void {
     if (!confirm('Delete this schedule?')) return;
-    this.http.delete(`/api/schedules/${id}`).subscribe(() => this.fetchSchedules());
+    this.http.delete(`/api/bookings/${id}`).subscribe(() => this.fetchSchedules());
   }
 
   // ── Revenue ──────────────────────────────────────────

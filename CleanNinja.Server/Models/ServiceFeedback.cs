@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CleanNinja.Server.Models
 {
     public class ServiceFeedback
@@ -9,6 +11,7 @@ namespace CleanNinja.Server.Models
         public string Comment { get; set; } = string.Empty;
         public bool IsApproved { get; set; } = false; // Admin must approve
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [JsonIgnore]
         public Service? Service { get; set; }
     }
 }
