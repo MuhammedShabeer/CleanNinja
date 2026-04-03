@@ -23,8 +23,8 @@
 
           <!-- First media thumbnail -->
           <div class="service-thumb-wrap" *ngIf="s.media && s.media.length > 0">
-            <img *ngIf="s.media[0].fileType === 'image'" [src]="s.media[0].url" [alt]="s.name" class="service-thumb" />
-            <video *ngIf="s.media[0].fileType === 'video'" [src]="s.media[0].url" autoplay muted loop class="service-thumb"></video>
+            <img *ngIf="s.media[0].fileType === 'image'" [src]="getMediaUrl(s.media[0].url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="s.name" class="service-thumb" />
+            <video *ngIf="s.media[0].fileType === 'video'" [src]="getMediaUrl(s.media[0].url)" autoplay muted loop class="service-thumb"></video>
           </div>
           <div class="service-no-media" *ngIf="!s.media || s.media.length === 0">
             <span>{{ s.icon }}</span>
@@ -60,61 +60,89 @@
       </div>
 
       <form *ngIf="!submitSuccess" class="booking-form glass-card" (submit)="submitBooking($event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe" />
-        </div>
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" />
-        </div>
-        <div class="form-group">
-          <label>Address / Location</label>
-          <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" />
-        </div>
-        <div class="form-group">
-          <label>Service Frequency</label>
-          <select [(ngModel)]="selectedFrequency" name="frequency" class="form-control">
-            <option value="Once">One-time Service</option>
-            <option value="Every 2 Days">Once in 2 Days</option>
-            <option value="Weekly">Weekly Service</option>
-            <option value="Monthly">Monthly Service</option>
-            <option value="Yearly">Yearly Service</option>
-          </select>
-        </div>
-        <div class="form-group" *ngIf="selectedFrequency !== 'Once'">
-          <label>For how many {{ frequencyLabel }}? <span style="color:#e74c3c">*</span></label>
-          <input type="number"
-                 [(ngModel)]="frequencyCount"
-                 name="frequencyCount"
-                 class="form-control"
-                 [min]="2"
-                 placeholder="Min 2"
-                 required />
-          <small style="opacity:0.7;font-size:0.8rem;">Must be at least 2</small>
-        </div>
-        <div class="form-group" *ngIf="selectedFrequency !== 'Once'">
-          <label>Preferred Start Date</label>
-          <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" class="form-control" />
-        </div>
-
-        <div class="selected-summary" *ngIf="selectedService">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-            <span>
-              <strong>{{ selectedService.name }}</strong>
-              <span *ngIf="selectedFrequency !== 'Once'"> — {{ selectedFrequency }} × {{ frequencyCount }}</span>
-            </span>
-            <span>
-              <strong class="price-highlight">£{{ totalPrice | number:'1.2-2' }}</strong>
-              <small *ngIf="selectedFrequency !== 'Once'" style="opacity:0.75;font-size:0.8rem;display:block;">
-                ({{ frequencyCount }} × £{{ (totalPrice / frequencyCount) | number:'1.2-2' }} per {{ frequencyLabel.split(' ')[0] }})
-              </small>
-            </span>
+        <!-- Details -->
+        <div class="row g-3">
+          <div class="col-md-6 form-group">
+            <label class="fw-bold mb-2">Full Name</label>
+            <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe" class="form-control bg-dark text-white border-secondary" />
+          </div>
+          <div class="col-md-6 form-group">
+            <label class="fw-bold mb-2">Phone Number</label>
+            <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" class="form-control bg-dark text-white border-secondary" />
+          </div>
+          <div class="col-12 form-group">
+            <label class="fw-bold mb-2">Address / Location</label>
+            <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" class="form-control bg-dark text-white border-secondary" />
           </div>
         </div>
 
-        <button type="button" class="btn-primary btn-submit" (click)="submitBooking($event)" [disabled]="isSubmitting || !selectedService || (selectedFrequency !== 'Once' && frequencyCount < 2)">
-          {{ isSubmitting ? 'Submitting...' : 'Confirm Booking' }}
+        <hr class="my-4 border-secondary opacity-25">
+
+        <!-- Date & Slot Selection -->
+        <div class="row g-3" *ngIf="selectedService">
+          <div class="col-md-6 form-group">
+            <label class="fw-bold mb-2">Select Date</label>
+            <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" (change)="onDateChange()" class="form-control bg-dark text-white border-secondary" required />
+          </div>
+          <div class="col-md-6 form-group">
+            <label class="fw-bold mb-2">Select Time Slot</label>
+            <div *ngIf="isLoadingSlots" class="py-2 text-warning small"><span class="spinner-border spinner-border-sm me-2"></span>Checking availability...</div>
+            <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && scheduledDate" class="py-2 text-danger small">No slots available for this date.</div>
+            <div *ngIf="!isLoadingSlots && availableSlots.length > 0" class="slots-container d-flex flex-wrap gap-2 py-1">
+              <button type="button" 
+                *ngFor="let slot of availableSlots" 
+                (click)="selectSlot(slot)"
+                class="btn btn-sm"
+                [class.btn-primary]="selectedSlot === slot"
+                [class.btn-outline-secondary]="selectedSlot !== slot">
+                {{ slot | date:'shortTime' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4 border-secondary opacity-25">
+
+        <!-- Frequency -->
+        <div class="row g-3">
+          <div class="col-md-6 form-group">
+            <label class="fw-bold mb-2">Service Frequency</label>
+            <select [(ngModel)]="selectedFrequency" name="frequency" class="form-select bg-dark text-white border-secondary">
+              <option value="Once">One-time Service</option>
+              <option value="Every 2 Days">Once in 2 Days</option>
+              <option value="Weekly">Weekly Service</option>
+              <option value="Monthly">Monthly Service</option>
+            </select>
+          </div>
+          <div class="col-md-6 form-group" *ngIf="selectedFrequency !== 'Once'">
+            <label class="fw-bold mb-2">Occurrences ({{ frequencyLabel }})</label>
+            <div class="input-group">
+              <input type="number" [(ngModel)]="frequencyCount" name="frequencyCount" class="form-control bg-dark text-white border-secondary" [min]="2" required />
+              <span class="input-group-text bg-dark text-white-50 border-secondary small">sessions</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="selected-summary mt-4 p-3 rounded bg-white bg-opacity-10 border border-white border-opacity-10" *ngIf="selectedService">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h5 class="mb-0 text-white">{{ selectedService.name }}</h5>
+              <div class="small text-white-50" *ngIf="selectedSlot">
+                Scheduled for: {{ selectedSlot | date:'longDate' }} at {{ selectedSlot | date:'shortTime' }}
+                <span *ngIf="selectedFrequency !== 'Once'"> — Repeating {{ selectedFrequency }} x {{ frequencyCount }}</span>
+              </div>
+            </div>
+            <div class="text-end">
+              <h4 class="mb-0 text-primary fw-bold">£{{ totalPrice | number:'1.2-2' }}</h4>
+              <small *ngIf="selectedFrequency !== 'Once'" class="text-white-50 d-block">£{{ (totalPrice / frequencyCount) | number:'1.2-2' }} / session</small>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-lg w-100 mt-4 py-3 fw-bold" 
+          (click)="submitBooking($event)" 
+          [disabled]="isSubmitting || !selectedService || !selectedSlot || (selectedFrequency !== 'Once' && frequencyCount < 2)">
+          {{ isSubmitting ? 'Confirming Your Ninja...' : 'Confirm Booking' }}
         </button>
       </form>
     </div>

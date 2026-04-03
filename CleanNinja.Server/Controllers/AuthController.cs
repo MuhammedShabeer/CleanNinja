@@ -52,7 +52,7 @@ namespace CleanNinja.Server.Controllers
                 return Unauthorized(new { message = "Invalid email or password." });
 
             var token = GenerateToken(user);
-            return Ok(new { token, name = user.Name, email = user.Email });
+            return Ok(new { token, name = user.Name, email = user.Email, allowedMenus = user.AllowedMenus });
         }
 
         private string GenerateToken(AdminUser user)
@@ -65,7 +65,8 @@ namespace CleanNinja.Server.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.Name)
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim("AllowedMenus", user.AllowedMenus)
             };
 
             var token = new JwtSecurityToken(

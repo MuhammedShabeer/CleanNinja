@@ -1,0 +1,45 @@
+<c-card class="mb-4 shadow-sm border-0 overflow-hidden">
+  <c-card-header class="bg-dark text-white border-bottom border-white border-opacity-10 py-3">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <h5 class="mb-0 fw-bold"><svg cIcon name="cilCalendar" class="me-2"></svg> Ninja Schedule</h5>
+      <div class="d-flex align-items-center gap-3">
+        <button cHeaderToggler class="ps-1 border-0 bg-transparent text-white" (click)="changeMonth(-1)">
+          <svg cIcon name="cilMenu" style="transform:rotate(90deg)"></svg>
+        </button>
+        <h5 class="mb-0 fw-semibold">{{ currentCalendarDate | date:'MMMM yyyy' }}</h5>
+        <button cHeaderToggler class="ps-1 border-0 bg-transparent text-white" (click)="changeMonth(1)">
+          <svg cIcon name="cilMenu" style="transform:rotate(-90deg)"></svg>
+        </button>
+      </div>
+    </div>
+  </c-card-header>
+  <c-card-body class="p-0">
+    <div class="calendar-grid">
+      <div class="calendar-header-cell">Sun</div>
+      <div class="calendar-header-cell">Mon</div>
+      <div class="calendar-header-cell">Tue</div>
+      <div class="calendar-header-cell">Wed</div>
+      <div class="calendar-header-cell">Thu</div>
+      <div class="calendar-header-cell">Fri</div>
+      <div class="calendar-header-cell">Sat</div>
+
+      <div *ngFor="let day of calendarDays; let i = index" 
+        class="calendar-day-cell" 
+        [class.bg-light]="!day.day">
+        
+        <div *ngIf="day.day" class="d-flex justify-content-between align-items-start mb-1">
+          <span class="day-num">{{ day.day }}</span>
+        </div>
+
+        <div class="events-stack">
+          <div *ngFor="let ev of day.events" 
+            class="calendar-event" 
+            [title]="ev.booking?.customerName + ': ' + (ev.scheduledStart | date:'shortTime')"
+            [style.background]="ev.status === 'Completed' ? '#2ecc71' : '#3498db'">
+            <strong>{{ ev.scheduledStart | date:'HH:mm' }}</strong> {{ ev.booking?.customerName }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </c-card-body>
+</c-card>

@@ -1,0 +1,109 @@
+<!-- Complete work modal overlay -->
+<div *ngIf="completingWork" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
+  <c-card style="width:400px">
+    <c-card-header><strong>Complete Work — {{ completingWork.customerName }}</strong></c-card-header>
+    <c-card-body>
+      <label cLabel>Revenue Earned (£)</label>
+      <input cFormControl type="number" [(ngModel)]="completeRevenue" class="mb-2">
+      <label cLabel>Notes (optional)</label>
+      <textarea cFormControl rows="2" [(ngModel)]="completeNotes"></textarea>
+    </c-card-body>
+    <c-card-footer class="d-flex gap-2">
+      <button cButton color="success" (click)="submitCompleteWork()"><svg cIcon name="cilCheckCircle"></svg> Save</button>
+      <button cButton color="secondary" variant="outline" (click)="completingWork=null">Cancel</button>
+    </c-card-footer>
+  </c-card>
+</div>
+
+<c-card class="border-0 shadow-sm">
+  <c-card-header><strong>All Works</strong></c-card-header>
+  <c-card-body>
+    <div *ngIf="works.length === 0" class="text-muted text-center py-3">No works yet.</div>
+    <div *ngIf="works.length > 0" class="table-responsive">
+      <table class="table table-hover table-striped align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th style="width:20%">Customer</th>
+            <th style="width:20%">Package</th>
+            <th style="width:22%">Assigned Ninjas</th>
+            <th style="width:12%">Status</th>
+            <th style="width:10%">Revenue</th>
+            <th style="width:16%">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let w of works">
+            <td>
+              <div class="fw-semibold">{{ w.customerName }}</div>
+              <small class="text-muted">{{ w.phone }}</small>
+            </td>
+            <td>{{ w.servicePackage }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-1" (click)="openAssignModal(w)" style="max-width:200px">
+                <svg cIcon name="cilPeople" size="sm" class="flex-shrink-0"></svg>
+                <span class="text-truncate" style="font-size:0.78rem">{{ getAssignedNames(w) || 'Assign Ninjas...' }}</span>
+              </button>
+            </td>
+            <td>
+              <span class="badge rounded-pill text-white"
+                [class.bg-success]="w.status === 'Completed'"
+                [class.bg-warning]="w.status === 'InProgress' || w.status === 'Accepted'"
+                [class.bg-secondary]="w.status === 'Pending'">
+                {{ w.status }}
+              </span>
+            </td>
+            <td class="fw-semibold">{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</td>
+            <td>
+              <div class="d-flex gap-1">
+                <button *ngIf="w.status === 'Pending'" class="btn btn-sm btn-info" (click)="acceptWork(w.id)">Accept</button>
+                <button *ngIf="w.status !== 'Completed'" class="btn btn-sm btn-success" (click)="openCompleteWork(w)">Complete</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </c-card-body>
+</c-card>
+
+<!-- Shared Ninja Assignment Modal -->
+<div *ngIf="isAssignModalOpen" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
+  <c-card style="width:400px; max-height: 85vh;" class="shadow-lg border-0">
+    <c-card-header class="bg-primary text-white d-flex justify-content-between align-items-center p-3">
+      <div class="d-flex align-items-center">
+        <svg cIcon name="cilPeople" class="me-2 text-white-50"></svg>
+        <strong>Assign Team — {{ currentAssignWork?.customerName }}</strong>
+      </div>
+      <button class="btn-close btn-close-white" (click)="closeAssignModal()"></button>
+    </c-card-header>
+    <c-card-body style="overflow-y: auto;" class="p-4">
+      <p class="small text-muted mb-3 fw-semibold">SELECT THE NINJAS FOR THIS TEAM:</p>
+      <div *ngIf="employees.length === 0" class="text-center py-4 text-muted border rounded-3 bg-light">
+        No active Ninjas found. Please add Ninjas in the Employees tab.
+      </div>
+      <div *ngIf="employees.length > 0">
+        <label *ngFor="let e of employees; trackBy: trackByEmployeeId"
+          [for]="'modal-emp-' + e.id"
+          class="d-flex align-items-center gap-3 px-3 py-3 mb-1 rounded border cursor-pointer"
+          style="cursor:pointer"
+          [style.background]="(isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))) ? '#e8f4fd' : '#f8f9fa'">
+          <input type="checkbox" class="form-check-input flex-shrink-0 mt-0" style="width:1.2rem;height:1.2rem"
+            [id]="'modal-emp-' + e.id"
+            [checked]="isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))"
+            (change)="toggleEmployeeAssignment(currentAssignWork?.id, e.id, currentAssignWork?.assignedEmployees)">
+          <div>
+            <div class="fw-semibold">{{ e.name }}</div>
+            <small class="text-muted">{{ e.role }}</small>
+          </div>
+        </label>
+      </div>
+    </c-card-body>
+    <c-card-footer class="d-flex gap-2 bg-white p-3 border-top">
+      <button cButton color="primary" class="flex-grow-1 py-2 fw-bold" (click)="saveAssignment()">
+         <svg cIcon name="cilCheckCircle" class="me-1"></svg> Confirm Team
+      </button>
+      <button cButton color="secondary" variant="outline" class="px-4 py-2" (click)="closeAssignModal()">Cancel</button>
+    </c-card-footer>
+  </c-card>
+</div>

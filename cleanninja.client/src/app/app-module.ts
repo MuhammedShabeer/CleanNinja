@@ -13,7 +13,8 @@ import {
   ButtonModule,
   FormModule,
   DropdownModule,
-  ModalModule
+  ModalModule,
+  BadgeModule
 } from '@coreui/angular';
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 
@@ -23,10 +24,26 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { Landing } from './pages/landing/landing';
 import { Booking } from './pages/booking/booking';
 import { Admin } from './pages/admin/admin';
+import { AdminDashboard } from './pages/admin/dashboard/dashboard';
+import { AdminBookings } from './pages/admin/bookings/bookings';
+import { AdminWorks } from './pages/admin/works/works';
+import { AdminSchedules } from './pages/admin/schedules/schedules';
+import { AdminCalendar } from './pages/admin/calendar/calendar';
+import { AdminRevenue } from './pages/admin/revenue/revenue';
+import { AdminEmployees } from './pages/admin/employees/employees';
+import { AdminServices } from './pages/admin/services/services';
+import { AdminGallery } from './pages/admin/gallery/gallery';
+import { AdminContent } from './pages/admin/content/content';
+import { AdminUsers } from './pages/admin/users/users';
 import { Login } from './pages/login/login';
 
 @NgModule({
-  declarations: [App, Landing, Booking, Admin, Login],
+  declarations: [
+    App, Landing, Booking, Admin, Login,
+    AdminDashboard, AdminBookings, AdminWorks, AdminSchedules, AdminCalendar,
+    AdminRevenue, AdminEmployees, AdminServices, AdminGallery, AdminContent,
+    AdminUsers
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -44,6 +61,7 @@ import { Login } from './pages/login/login';
     DropdownModule,
     ModalModule,
     IconModule,
+    BadgeModule,
 
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),

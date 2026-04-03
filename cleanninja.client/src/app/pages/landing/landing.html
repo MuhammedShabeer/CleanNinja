@@ -57,7 +57,7 @@
 
         <!-- Media thumbnail -->
         <div class="service-media" *ngIf="service.media && service.media.length > 0" style="margin-top: 25px;">
-          <img [src]="getMediaUrl(service.media[0].url)" [alt]="service.name" class="service-thumb" style="border-radius: 12px;" />
+          <img [src]="getMediaUrl(service.media[0].url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="service.name" class="service-thumb" style="border-radius: 12px; width: 100%; height: 200px; object-fit: cover;" />
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
   
   <div class="gallery-grid" *ngIf="gallery.length > 0">
     <div class="gallery-card" *ngFor="let img of gallery">
-      <img [src]="getMediaUrl(img.url)" [alt]="img.title || 'Work Gallery'" class="gallery-img">
+      <img [src]="getMediaUrl(img.url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="img.title || 'Work Gallery'" class="gallery-img">
       <div class="gallery-overlay">
         <h4 class="overlay-title">{{ img.title || 'Premium Finish' }}</h4>
         <button class="view-btn-sm">View Project</button>

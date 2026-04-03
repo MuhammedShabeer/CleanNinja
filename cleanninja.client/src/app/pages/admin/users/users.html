@@ -1,0 +1,99 @@
+<c-container fluid class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark">Admin User Management</h3>
+    <button cButton color="primary" class="shadow-sm px-4" (click)="openAddModal()">
+      <svg cIcon name="cilPlus" class="me-2"></svg> Add Administrator
+    </button>
+  </div>
+
+  <c-card class="border-0 shadow-sm overflow-hidden mb-4">
+    <c-card-header class="bg-light border-0 py-3">
+      <strong>Active Administrators</strong>
+    </c-card-header>
+    <c-card-body class="p-0">
+      <div class="table-responsive">
+        <table cTable [hover]="true" [align]="'middle'" class="mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="px-4 py-3 border-0">Name</th>
+              <th class="py-3 border-0">Email</th>
+              <th class="py-3 border-0">Permissions</th>
+              <th class="py-3 border-0">Created</th>
+              <th class="px-4 py-3 border-0 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td class="px-4 fw-medium">{{ user.name }}</td>
+              <td class="text-muted">{{ user.email }}</td>
+              <td>
+                <c-badge color="info" *ngIf="user.allowedMenus === 'all'">Full Access</c-badge>
+                <c-badge color="secondary" class="ms-1" *ngIf="user.allowedMenus !== 'all'">Partial</c-badge>
+              </td>
+              <td class="text-muted small">{{ user.createdAt | date:'mediumDate' }}</td>
+              <td class="px-4 text-end">
+                <button cButton color="primary" variant="outline" size="sm" class="me-2" (click)="openEditModal(user)">Edit</button>
+                <button cButton color="danger" variant="outline" size="sm" (click)="deleteUser(user.id)">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="users.length === 0">
+              <td colspan="5" class="text-center py-5 text-muted">
+                <div class="mb-2"><svg cIcon name="cilInfo" size="xl"></svg></div>
+                No administrators found or loading...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </c-card-body>
+  </c-card>
+</c-container>
+
+<!-- Modal Overlay -->
+<div class="modal-backdrop fade show" *ngIf="showModal"></div>
+<div class="modal fade show d-block" *ngIf="showModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-dark text-white border-0 py-3">
+        <h5 class="modal-title">{{ isEdit ? 'Edit Administrator' : 'Add New Administrator' }}</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="showModal = false"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <h6 class="text-uppercase small fw-bold text-muted mb-3">Basic Information</h6>
+            <div class="mb-3">
+              <label class="form-label small text-muted">Full Name</label>
+              <input type="text" class="form-control" [(ngModel)]="currentUser.name" placeholder="Enter name">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-muted">Email Address</label>
+              <input type="email" class="form-control" [(ngModel)]="currentUser.email" placeholder="email@example.com">
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-muted">{{ isEdit ? 'Update Password (leave blank to keep)' : 'Initial Password' }}</label>
+              <input type="password" class="form-control" [(ngModel)]="currentUser.password" placeholder="••••••••">
+            </div>
+          </div>
+          <div class="col-md-6 border-start ps-4">
+            <h6 class="text-uppercase small fw-bold text-muted mb-3">Menu Permissions</h6>
+            <div class="row g-2">
+              <div class="col-6" *ngFor="let menu of availableMenus">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" [id]="menu.id" [(ngModel)]="selectedMenus[menu.id]">
+                  <label class="form-check-label small" [for]="menu.id">
+                    {{ menu.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 p-4 pt-0">
+        <button type="button" class="btn btn-light px-4" (click)="showModal = false">Cancel</button>
+        <button type="button" class="btn btn-primary px-5" (click)="saveUser()">Save Administrator</button>
+      </div>
+    </div>
+  </div>
+</div>

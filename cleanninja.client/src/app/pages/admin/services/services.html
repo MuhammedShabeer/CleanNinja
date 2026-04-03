@@ -1,0 +1,155 @@
+<c-row>
+  <!-- Add New Service -->
+  <c-col [md]="12" class="mb-4">
+    <c-card>
+      <c-card-header><strong>Add New Service</strong></c-card-header>
+      <c-card-body>
+        <c-row class="g-3">
+          <c-col [md]="4">
+            <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Full Valet)" />
+          </c-col>
+          <c-col [md]="4">
+            <!-- Use text input for small strings or comma separated features -->
+            <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Description or Features (comma separated)" />
+          </c-col>
+          <c-col [md]="2">
+            <input cFormControl type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" />
+          </c-col>
+          <c-col [md]="2">
+            <button cButton color="primary" class="w-100" (click)="addService()">
+              <svg cIcon name="cilPlus" class="me-2"></svg> Create
+            </button>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col [md]="12">
+    <c-row>
+      <c-col [md]="6" *ngFor="let s of services" class="mb-4">
+        <c-card class="h-100 shadow-sm border-0 border-top border-4" [class.border-warning]="s.isHighlighted" [class.border-secondary]="!s.isActive">
+          <c-card-header class="d-flex justify-content-between align-items-center bg-white border-bottom-0 pb-0">
+            <strong class="fs-5">{{ s.name }}</strong>
+            <div class="d-flex gap-2">
+              <button cButton size="sm" [color]="s.isActive ? 'success' : 'secondary'" (click)="s.isActive = !s.isActive; saveService(s)">
+                {{ s.isActive ? 'Active' : 'Inactive' }}
+              </button>
+              <button cButton color="warning" size="sm" (click)="toggleHighlight(s)">
+                <svg cIcon [name]="s.isHighlighted ? 'cilStar' : 'cilStar'"></svg>
+              </button>
+              <button cButton color="info" size="sm" (click)="editingService = s">
+                <svg cIcon name="cilSave"></svg> Edit
+              </button>
+              <button cButton color="danger" size="sm" (click)="deleteService(s.id)">
+                <svg cIcon name="cilTrash"></svg>
+              </button>
+            </div>
+          </c-card-header>
+          <c-card-body>
+            <!-- View mode -->
+            <div *ngIf="editingService?.id !== s.id">
+              <p class="text-medium-emphasis mb-3">{{ s.description }}</p>
+              <div class="mb-3 d-flex flex-wrap gap-2">
+                <span cBadge color="primary" *ngIf="s.price">Standard: £{{ s.price }}</span>
+                <span cBadge color="danger" *ngIf="s.discountedPrice">Discount: £{{ s.discountedPrice }}</span>
+                <span cBadge color="info" *ngIf="s.weeklyPrice">Weekly: £{{ s.weeklyPrice }}</span>
+                <span cBadge color="info" *ngIf="s.monthlyPrice">Monthly: £{{ s.monthlyPrice }}</span>
+              </div>
+              
+              <div class="d-flex align-items-center gap-3 mt-3 border-top pt-3">
+                <div class="bg-light p-2 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; color: var(--primary-color);" [innerHTML]="s.icon"></div>
+                <div class="flex-grow-1 overflow-auto d-flex gap-2">
+                  <div *ngFor="let m of s.media" class="position-relative">
+                    <img *ngIf="m.fileType === 'image'" [src]="m.url" width="50" height="50" class="rounded shadow-sm" />
+                    <button class="btn-close position-absolute top-0 end-0 bg-white" style="padding: 2px;" (click)="deleteMedia(s.id, m.id)"></button>
+                  </div>
+                  <label cButton color="secondary" variant="outline" size="sm" class="d-flex align-items-center justify-content-center fw-bold p-0" style="width: 50px; height: 50px;">
+                      <span *ngIf="!isUploadingMedia[s.id]">+ Media</span>
+                      <span *ngIf="isUploadingMedia[s.id]" class="spinner-border spinner-border-sm"></span>
+                      <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
+                  </label>
+                </div>
+              </div>
+
+              <!-- Customer Reviews moderation -->
+              <div class="mt-3 border-top pt-3">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <span class="fw-semibold small text-muted">Customer Reviews</span>
+                  <button cButton size="sm" color="secondary" variant="outline" (click)="loadFeedback(s.id)">
+                    Load Reviews ({{ (loadedFeedbacks[s.id] || []).length }})
+                  </button>
+                </div>
+                <div *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length > 0">
+                  <div *ngFor="let fb of loadedFeedbacks[s.id]" class="border rounded p-2 mb-2 small" [class.bg-warning-subtle]="!fb.isApproved" [class.bg-success-subtle]="fb.isApproved">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <strong>{{ fb.customerName }}</strong>
+                        <span class="ms-2">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
+                        <span class="ms-2 badge" [class.bg-warning]="!fb.isApproved" [class.bg-success]="fb.isApproved">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
+                      </div>
+                      <div class="d-flex gap-1">
+                        <button *ngIf="!fb.isApproved" cButton size="sm" color="success" (click)="approveFeedback(fb.id, s.id)">✓ Approve</button>
+                        <button cButton size="sm" color="danger" variant="outline" (click)="deleteFeedback(fb.id, s.id)"><svg cIcon name="cilTrash"></svg></button>
+                      </div>
+                    </div>
+                    <p class="mb-0 mt-1 text-muted">{{ fb.comment }}</p>
+                  </div>
+                </div>
+                <p *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length === 0" class="text-muted small mb-0">No reviews yet.</p>
+              </div>
+            </div>
+
+            <!-- Edit mode -->
+            <div *ngIf="editingService?.id === s.id" class="bg-light p-3 rounded">
+              <div class="mb-3">
+                <label cLabel>Service Name</label>
+                <input cFormControl type="text" [(ngModel)]="s.name" />
+              </div>
+              <div class="mb-3">
+                <label cLabel>Description (or Comma separated Features)</label>
+                <textarea cFormControl [(ngModel)]="s.description" rows="2"></textarea>
+              </div>
+              <div class="mb-3">
+                <label cLabel>SVG Icon Code</label>
+                <textarea cFormControl [(ngModel)]="s.icon" rows="3" placeholder="<svg>...</svg>"></textarea>
+                <div class="form-text mt-1 text-muted">Paste raw SVG code here. Note: Use `currentColor` for fill/stroke.</div>
+              </div>
+              
+              <c-row class="mb-3 g-2">
+                  <c-col [sm]="4">
+                    <label cLabel class="small text-muted">Sort Order</label>
+                    <input cFormControl type="number" [(ngModel)]="s.sortOrder" />
+                  </c-col>
+              </c-row>
+
+              <h6 class="mt-4 border-bottom pb-2">Pricing Structure</h6>
+              <c-row class="mb-4 g-2">
+                <c-col [sm]="6">
+                  <label cLabel>Standard Price (£)</label>
+                  <input cFormControl type="number" [(ngModel)]="s.price" />
+                </c-col>
+                <c-col [sm]="6">
+                  <label cLabel>Discounted (£)</label>
+                  <input cFormControl type="number" [(ngModel)]="s.discountedPrice" />
+                </c-col>
+                <c-col [sm]="6">
+                  <label cLabel>Weekly Sub (£)</label>
+                  <input cFormControl type="number" [(ngModel)]="s.weeklyPrice" />
+                </c-col>
+                <c-col [sm]="6">
+                  <label cLabel>Monthly Sub (£)</label>
+                  <input cFormControl type="number" [(ngModel)]="s.monthlyPrice" />
+                </c-col>
+              </c-row>
+              <div class="d-flex gap-2">
+                <button cButton color="success" class="flex-grow-1" (click)="saveService(s)">Save Settings</button>
+                <button cButton color="secondary" (click)="editingService = null">Cancel</button>
+              </div>
+            </div>
+          </c-card-body>
+        </c-card>
+      </c-col>
+    </c-row>
+  </c-col>
+</c-row>

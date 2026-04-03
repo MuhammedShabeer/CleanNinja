@@ -1,0 +1,36 @@
+<c-card class="mb-4 border-0 shadow-sm">
+  <c-card-header><strong>Add New Schedule</strong></c-card-header>
+  <c-card-body>
+    <div class="row g-2">
+      <div class="col-md-3"><input cFormControl placeholder="Title" [(ngModel)]="newSchedule.title"></div>
+      <div class="col-md-2"><input cFormControl placeholder="Customer Name" [(ngModel)]="newSchedule.customerName"></div>
+      <div class="col-md-2"><input cFormControl placeholder="Phone" [(ngModel)]="newSchedule.phone"></div>
+      <div class="col-md-2"><input cFormControl placeholder="Service" [(ngModel)]="newSchedule.servicePackage"></div>
+      <div class="col-md-2"><input cFormControl type="datetime-local" [(ngModel)]="newSchedule.scheduledDate"></div>
+      <div class="col-md-1"><button cButton color="success" (click)="addSchedule()"><svg cIcon name="cilPlus"></svg></button></div>
+    </div>
+    <input cFormControl placeholder="Notes (optional)" [(ngModel)]="newSchedule.notes" class="mt-2">
+  </c-card-body>
+</c-card>
+
+<div class="row g-3">
+  <div *ngIf="schedules.length === 0" class="text-muted text-center py-3">No schedules yet.</div>
+  <div class="col-md-4" *ngFor="let s of schedules">
+    <c-card [class.border-success]="s.isCompleted" [class.border-warning]="!s.isCompleted" class="shadow-sm h-100">
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>{{ s.title }}</strong>
+        <span class="badge" [class.bg-success]="s.isCompleted" [class.bg-warning]="!s.isCompleted">{{ s.isCompleted ? 'Done' : 'Upcoming' }}</span>
+      </c-card-header>
+      <c-card-body class="small">
+        <p class="mb-1"><strong>Customer:</strong> {{ s.customerName }}</p>
+        <p class="mb-1"><strong>Date:</strong> {{ s.scheduledDate | date:'medium' }}</p>
+        <p *ngIf="s.servicePackage" class="mb-1"><strong>Service:</strong> {{ s.servicePackage }}</p>
+        <p *ngIf="s.notes" class="mb-0 text-muted">{{ s.notes }}</p>
+      </c-card-body>
+      <c-card-footer class="d-flex gap-2">
+        <button *ngIf="!s.isCompleted" cButton color="success" size="sm" (click)="completeSchedule(s.id)"><svg cIcon name="cilCheckCircle"></svg> Mark Done</button>
+        <button cButton color="danger" size="sm" variant="outline" (click)="deleteSchedule(s.id)"><svg cIcon name="cilTrash"></svg></button>
+      </c-card-footer>
+    </c-card>
+  </div>
+</div>

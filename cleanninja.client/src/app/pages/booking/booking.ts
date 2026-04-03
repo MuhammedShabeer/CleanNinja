@@ -17,9 +17,13 @@ export class Booking implements OnInit {
   public selectedFrequency: string = 'Once';
   public frequencyCount: number = 2; // must be > 1 for recurring
   public scheduledDate: string = '';
+  public availableSlots: string[] = [];
+  public selectedSlot: string | null = null;
+  public isLoadingSlots: boolean = false;
 
   public isSubmitting: boolean = false;
   public submitSuccess: boolean = false;
+  public backendUrl: string = ''; // Relative path by default
 
   constructor(
     private serviceApi: ServiceApiService,
@@ -66,6 +70,33 @@ export class Booking implements OnInit {
 
   selectService(s: CleanService): void {
     this.selectedService = s;
+    if (this.scheduledDate) this.fetchAvailableSlots();
+  }
+
+  onDateChange(): void {
+    this.fetchAvailableSlots();
+  }
+
+  fetchAvailableSlots(): void {
+    if (!this.selectedService || !this.scheduledDate) return;
+    this.isLoadingSlots = true;
+    this.selectedSlot = null;
+    this.http.get<string[]>(`/api/bookings/available-slots?serviceId=${this.selectedService.id}&date=${this.scheduledDate}`)
+      .subscribe({
+        next: (slots) => {
+          this.availableSlots = slots;
+          this.isLoadingSlots = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.isLoadingSlots = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  selectSlot(slot: string): void {
+    this.selectedSlot = slot;
   }
 
   submitBooking(event: Event): void {
@@ -91,8 +122,10 @@ export class Booking implements OnInit {
       latitude: 0,
       longitude: 0
     };
-    if (this.selectedFrequency !== 'Once' && this.scheduledDate) {
-      payload.scheduledDate = this.scheduledDate;
+    if (this.scheduledDate && this.selectedSlot) {
+      // Create a full DateTime from date and slot
+      // Slot is ISO string from server
+      payload.scheduledDate = this.selectedSlot;
     }
 
     this.http.post('/api/bookings', payload).subscribe({
@@ -108,5 +141,11 @@ export class Booking implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  getMediaUrl(url: string | undefined): string {
+    if (!url) return 'assets/images/service_placeholder.png';
+    if (url.startsWith('http')) return url;
+    return `${this.backendUrl}${url}`;
   }
 }

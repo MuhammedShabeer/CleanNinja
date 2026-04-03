@@ -11,6 +11,7 @@ namespace CleanNinja.Server.Models
         public bool IsActive { get; set; } = true;
         public bool IsHighlighted { get; set; } = false;
         public int SortOrder { get; set; } = 0;
+        public int DefaultDurationMinutes { get; set; } = 60;
         public decimal? Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
         public decimal? WeeklyPrice { get; set; }

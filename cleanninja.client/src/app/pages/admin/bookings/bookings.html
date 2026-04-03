@@ -1,0 +1,154 @@
+<c-row class="mb-4">
+  <c-col [md]="12">
+    <c-card>
+      <c-card-header>
+        <strong>Pending Requests</strong> ({{ pendingBookings.length }})
+      </c-card-header>
+      <c-card-body>
+        <c-row>
+          <c-col [md]="6" [lg]="4" *ngFor="let b of pendingBookings" class="mb-3">
+            <c-card class="h-100 shadow-sm border-start-primary">
+              <c-card-body>
+                <h5 class="card-title">{{ b.customerName }} <span cBadge color="info" class="ms-2">{{ b.servicePackage }}</span></h5>
+                <p class="small text-medium-emphasis mb-1">📞 {{ b.phone }}</p>
+                <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }} <span cBadge color="secondary" class="ms-1" *ngIf="b.frequency">{{ b.frequency }}</span></p>
+                <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
+                
+                <div class="d-grid gap-2 mt-3">
+                  <div class="mt-2 text-center text-md-start">
+                    <button cButton color="secondary" size="sm" variant="outline" class="w-100 py-1 d-flex align-items-center justify-content-center" (click)="openAssignModal(b)">
+                      <svg cIcon name="cilPeople" class="me-1"></svg>
+                      {{ getAssignedNames(b) || 'Assign Ninja Team' }}
+                    </button>
+                  </div>
+
+                  <button cButton color="primary" (click)="openApproveModal(b)">
+                    <svg cIcon name="cilCheckCircle" class="me-2"></svg> Accept Request
+                  </button>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+        <p *ngIf="pendingBookings.length === 0" class="text-center py-4 text-medium-emphasis">No pending bookings right now.</p>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<!-- Previous Orders -->
+<c-row>
+  <c-col [md]="12">
+    <c-card>
+      <c-card-header>
+        <strong>Past Orders</strong> ({{ previousBookings.length }})
+      </c-card-header>
+      <c-card-body>
+        <table cTable hover responsive [striped]="true">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Package</th>
+              <th>Phone</th>
+              <th>Date</th>
+              <th>Assigned Ninja</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pb of previousBookings">
+              <td><strong>{{ pb.customerName }}</strong></td>
+              <td>{{ pb.servicePackage }}</td>
+              <td>{{ pb.phone }}</td>
+              <td>{{ pb.createdAt | date:'shortDate' }} <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span></td>
+              <td>{{ pb.assignedEmployeeName || 'Unassigned' }}</td>
+              <td><span cBadge color="success">{{ pb.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="previousBookings.length === 0" class="text-center py-3 text-medium-emphasis">No past orders found.</p>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<!-- Approval Modal -->
+<div class="modal d-block" *ngIf="approvingBooking" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 10001;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card border border-white border-opacity-10 shadow-lg">
+      <div class="modal-header border-bottom border-white border-opacity-10 p-4">
+        <h5 class="modal-title fw-bold text-white">Approve Booking Request</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="approvingBooking = null"></button>
+      </div>
+      <div class="modal-body p-4 text-white">
+        <div class="p-3 mb-4 rounded bg-white bg-opacity-10 border border-white border-opacity-10">
+          <div class="small text-white-50 text-uppercase mb-1" style="font-size:0.7rem; letter-spacing:1px">Customer</div>
+          <div class="fw-bold mb-3">{{ approvingBooking.customerName }}</div>
+          <div class="small text-white-50 text-uppercase mb-1" style="font-size:0.7rem; letter-spacing:1px">Service</div>
+          <div class="fw-bold text-primary mb-3">{{ approvingBooking.servicePackage }}</div>
+          <div class="small text-white-50 text-uppercase mb-1" style="font-size:0.7rem; letter-spacing:1px">Requested Start</div>
+          <div class="fw-bold">{{ approvingBooking.scheduledDate | date:'fullDate' }}</div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="fw-bold mb-2">Duration Override (Minutes)</label>
+          <div class="input-group">
+            <input type="number" [(ngModel)]="overrideDuration" class="form-control bg-dark text-white border-secondary" required />
+            <span class="input-group-text bg-secondary text-white border-secondary">min</span>
+          </div>
+          <small class="text-white-50 mt-1 d-block opacity-75">Adjust the duration before scheduling.</small>
+        </div>
+
+        <div class="alert alert-info border-0 p-3 small d-flex align-items-center bg-info bg-opacity-10 text-info">
+          <svg cIcon name="cilInfo" class="me-3 flex-shrink-0" size="lg"></svg>
+          <div>Accepting this generates <strong>{{ approvingBooking.frequencyCount > 1 ? approvingBooking.frequencyCount : 'a single' }}</strong> work schedule item(s) on the calendar.</div>
+        </div>
+      </div>
+      <div class="modal-footer border-top border-white border-opacity-10 p-4">
+        <button cButton color="secondary" variant="ghost" class="text-white" (click)="approvingBooking = null">Cancel</button>
+        <button cButton color="primary" class="px-4 fw-bold py-2 shadow-sm" (click)="approveBooking()">Confirm & Schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shared Ninja Assignment Modal -->
+<div *ngIf="isAssignModalOpen" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
+  <c-card style="width:400px; max-height: 85vh;" class="shadow-lg border-0">
+    <c-card-header class="bg-primary text-white d-flex justify-content-between align-items-center p-3">
+      <div class="d-flex align-items-center">
+        <svg cIcon name="cilPeople" class="me-2 text-white-50"></svg>
+        <strong>Assign Team — {{ currentAssignWork?.customerName }}</strong>
+      </div>
+      <button class="btn-close btn-close-white" (click)="closeAssignModal()"></button>
+    </c-card-header>
+    <c-card-body style="overflow-y: auto;" class="p-4">
+      <p class="small text-muted mb-3 fw-semibold">SELECT THE NINJAS FOR THIS TEAM:</p>
+      <div *ngIf="employees.length === 0" class="text-center py-4 text-muted border rounded-3 bg-light">
+        No active Ninjas found. Please add Ninjas in the Employees tab.
+      </div>
+      <div *ngIf="employees.length > 0">
+        <label *ngFor="let e of employees; trackBy: trackByEmployeeId"
+          [for]="'modal-emp-' + e.id"
+          class="d-flex align-items-center gap-3 px-3 py-3 mb-1 rounded border cursor-pointer"
+          style="cursor:pointer"
+          [style.background]="(isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))) ? '#e8f4fd' : '#f8f9fa'">
+          <input type="checkbox" class="form-check-input flex-shrink-0 mt-0" style="width:1.2rem;height:1.2rem"
+            [id]="'modal-emp-' + e.id"
+            [checked]="isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))"
+            (change)="toggleEmployeeAssignment(currentAssignWork?.id, e.id, currentAssignWork?.assignedEmployees)">
+          <div>
+            <div class="fw-semibold">{{ e.name }}</div>
+            <small class="text-muted">{{ e.role }}</small>
+          </div>
+        </label>
+      </div>
+    </c-card-body>
+    <c-card-footer class="d-flex gap-2 bg-white p-3 border-top">
+      <button cButton color="primary" class="flex-grow-1 py-2 fw-bold" (click)="saveAssignment()">
+         <svg cIcon name="cilCheckCircle" class="me-1"></svg> Confirm Team
+      </button>
+      <button cButton color="secondary" variant="outline" class="px-4 py-2" (click)="closeAssignModal()">Cancel</button>
+    </c-card-footer>
+  </c-card>
+</div>

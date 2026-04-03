@@ -1,0 +1,42 @@
+<div class="row g-4 mb-4">
+  <div class="col-6 col-md-3">
+    <c-card class="text-center border-0 shadow-sm h-100">
+      <c-card-body>
+        <div class="text-warning fs-1 fw-bold">{{ revenueSummary.pendingCount }}</div>
+        <div class="text-muted small">Pending Works</div>
+      </c-card-body>
+    </c-card>
+  </div>
+  <div class="col-6 col-md-3">
+    <c-card class="text-center border-0 shadow-sm h-100">
+      <c-card-body>
+        <div class="text-success fs-1 fw-bold">{{ revenueSummary.completedCount }}</div>
+        <div class="text-muted small">Completed Works</div>
+      </c-card-body>
+    </c-card>
+  </div>
+  <div class="col-6 col-md-3">
+    <c-card class="text-center border-0 shadow-sm h-100">
+      <c-card-body>
+        <div class="text-primary fs-1 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
+        <div class="text-muted small">Total Earnings</div>
+      </c-card-body>
+    </c-card>
+  </div>
+  <div class="col-6 col-md-3">
+    <c-card class="text-center border-0 shadow-sm h-100">
+      <c-card-body>
+        <div class="text-danger fs-1 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
+        <div class="text-muted small">Total Expenses</div>
+      </c-card-body>
+    </c-card>
+  </div>
+</div>
+<c-card class="border-0 shadow-sm">
+  <c-card-header><strong>Net Profit</strong></c-card-header>
+  <c-card-body>
+    <div class="display-6 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
+      £{{ revenueSummary.netProfit | number:'1.2-2' }}
+    </div>
+  </c-card-body>
+</c-card>

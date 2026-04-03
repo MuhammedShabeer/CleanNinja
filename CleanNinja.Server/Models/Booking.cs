@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace CleanNinja.Server.Models
 {
@@ -13,13 +14,13 @@ namespace CleanNinja.Server.Models
         public int FrequencyCount { get; set; } = 1; // e.g. 3 months, 4 weeks
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public int DurationMinutes { get; set; } = 60;
 
         // Status flow: Pending → Accepted → Completed
         public string Status { get; set; } = "Pending";
 
-        public int? AssignedEmployeeId { get; set; }
-        public string? AssignedEmployeeName { get; set; }
         public ICollection<Employee> AssignedEmployees { get; set; } = new List<Employee>();
+        public List<WorkSchedule> WorkSchedules { get; set; } = new();
 
         // Work lifecycle
         public DateTime? StartedAt { get; set; }

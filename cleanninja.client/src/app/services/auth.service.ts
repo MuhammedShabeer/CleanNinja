@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private readonly TOKEN_KEY = 'cn_admin_token';
   private readonly NAME_KEY = 'cn_admin_name';
+  private readonly MENUS_KEY = 'cn_admin_menus';
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +16,7 @@ export class AuthService {
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
         localStorage.setItem(this.NAME_KEY, res.name);
+        localStorage.setItem(this.MENUS_KEY, res.allowedMenus || 'all');
       })
     );
   }
@@ -26,6 +28,11 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.NAME_KEY);
+    localStorage.removeItem(this.MENUS_KEY);
+  }
+
+  getAllowedMenus(): string {
+    return localStorage.getItem(this.MENUS_KEY) || 'all';
   }
 
   getToken(): string | null {

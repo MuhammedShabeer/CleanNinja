@@ -41,6 +41,7 @@ export interface CleanService {
   weeklyPrice?: number;
   monthlyPrice?: number;
   yearlyPrice?: number;
+  defaultDurationMinutes: number;
   createdAt: string;
   media: ServiceMedia[];
   feedbacks: ServiceFeedback[];

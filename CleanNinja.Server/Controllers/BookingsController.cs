@@ -10,10 +10,18 @@ namespace CleanNinja.Server.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Services.IAvailabilityService _availabilityService;
 
-        public BookingsController(AppDbContext context)
+        public BookingsController(AppDbContext context, Services.IAvailabilityService availabilityService)
         {
             _context = context;
+            _availabilityService = availabilityService;
+        }
+
+        [HttpGet("available-slots")]
+        public async Task<ActionResult<IEnumerable<DateTime>>> GetAvailableSlots([FromQuery] int serviceId, [FromQuery] DateTime date)
+        {
+            return await _availabilityService.GetAvailableSlotsAsync(serviceId, date);
         }
 
         // GET: api/bookings/pending
@@ -22,19 +30,28 @@ namespace CleanNinja.Server.Controllers
         {
             return await _context.Bookings
                 .Include(b => b.AssignedEmployees)
-                .Where(b => b.Status == "Pending" && (b.Frequency == null || b.Frequency == "Once") && b.ScheduledDate == null)
+                .Where(b => b.Status == "Pending")
                 .OrderByDescending(b => b.CreatedAt)
                 .ToListAsync();
         }
 
-        // GET: api/bookings/all — non-scheduled bookings = Works
+        // GET: api/bookings/all — list for Works tab
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Booking>>> GetAllBookings()
         {
             return await _context.Bookings
                 .Include(b => b.AssignedEmployees)
-                .Where(b => (b.Frequency == null || b.Frequency == "Once") && b.ScheduledDate == null)
                 .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+        }
+
+        // GET: api/bookings/calendar — fetch discrete schedules
+        [HttpGet("calendar")]
+        public async Task<ActionResult<IEnumerable<WorkSchedule>>> GetCalendarWork([FromQuery] DateTime start, [FromQuery] DateTime end)
+        {
+            return await _context.WorkSchedules
+                .Include(s => s.Booking)
+                .Where(s => s.ScheduledStart >= start && s.ScheduledStart <= end)
                 .ToListAsync();
         }
 
@@ -55,6 +72,14 @@ namespace CleanNinja.Server.Controllers
         {
             booking.Status = "Pending";
             booking.CreatedAt = DateTime.UtcNow;
+
+            // If duration not set, use default from service
+            if (booking.DurationMinutes <= 0)
+            {
+                var service = await _context.Services.FirstOrDefaultAsync(s => s.Name == booking.ServicePackage);
+                booking.DurationMinutes = service?.DefaultDurationMinutes ?? 60;
+            }
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetPendingBookings), new { id = booking.Id }, booking);
@@ -71,15 +96,56 @@ namespace CleanNinja.Server.Controllers
             return CreatedAtAction(nameof(GetSchedules), new { id = booking.Id }, booking);
         }
 
-        // PUT: api/bookings/5/approve — legacy, sends WhatsApp (kept for backward compat)
+        // PUT: api/bookings/5/approve — Finalizes and schedules blocks
         [HttpPut("{id}/approve")]
-        public async Task<IActionResult> ApproveBooking(int id)
+        public async Task<IActionResult> ApproveBooking(int id, [FromBody] ApproveBookingRequest? req)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings
+                .Include(b => b.WorkSchedules)
+                .FirstOrDefaultAsync(b => b.Id == id);
+            
             if (booking == null) return NotFound();
+
             booking.Status = "Accepted";
+            if (req?.OverrideDurationMinutes > 0)
+            {
+                booking.DurationMinutes = req.OverrideDurationMinutes.Value;
+            }
+
+            // Generate WorkSchedules
+            if (booking.ScheduledDate.HasValue)
+            {
+                GenerateSchedules(booking);
+            }
+
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        private void GenerateSchedules(Booking booking)
+        {
+            booking.WorkSchedules.Clear();
+            var start = booking.ScheduledDate!.Value;
+            int count = booking.FrequencyCount > 0 ? booking.FrequencyCount : 1;
+
+            for (int i = 0; i < count; i++)
+            {
+                DateTime currentStart;
+                if (booking.Frequency == "Weekly") currentStart = start.AddDays(i * 7);
+                else if (booking.Frequency == "Monthly") currentStart = start.AddMonths(i);
+                else if (booking.Frequency == "Two Days") currentStart = start.AddDays(i * 2);
+                else currentStart = start.AddDays(i); // Once or Daily
+
+                booking.WorkSchedules.Add(new WorkSchedule
+                {
+                    BookingId = booking.Id,
+                    ScheduledStart = currentStart,
+                    ScheduledEnd = currentStart.AddMinutes(booking.DurationMinutes),
+                    Status = "Pending"
+                });
+
+                if (booking.Frequency == "Once" || string.IsNullOrEmpty(booking.Frequency)) break;
+            }
         }
 
         // PUT: api/bookings/5/accept — accept without WhatsApp
@@ -122,8 +188,6 @@ namespace CleanNinja.Server.Controllers
                 if (employeeIds == null || employeeIds.Length == 0) 
                 {
                     booking.AssignedEmployees.Clear();
-                    booking.AssignedEmployeeName = "";
-                    booking.AssignedEmployeeId = null;
                 }
                 else 
                 {
@@ -137,8 +201,6 @@ namespace CleanNinja.Server.Controllers
                     {
                         booking.AssignedEmployees.Add(e);
                     }
-                    booking.AssignedEmployeeName = string.Join(", ", employees.Select(e => e.Name));
-                    booking.AssignedEmployeeId = employees.FirstOrDefault()?.Id;
                 }
 
                 await _context.SaveChangesAsync();
@@ -178,5 +240,10 @@ namespace CleanNinja.Server.Controllers
     {
         public decimal Revenue { get; set; }
         public string? Notes { get; set; }
+    }
+
+    public class ApproveBookingRequest
+    {
+        public int? OverrideDurationMinutes { get; set; }
     }
 }

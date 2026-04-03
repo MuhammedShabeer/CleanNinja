@@ -1,0 +1,27 @@
+<c-card class="mb-4">
+  <c-card-header><strong>📸 Work Gallery Management</strong></c-card-header>
+  <c-card-body>
+    <div class="text-center py-4 border rounded mb-4 bg-light">
+        <label cButton color="primary" class="position-relative">
+          <span *ngIf="!isUploadingGallery"><svg cIcon name="cilPlus" class="me-2"></svg> Upload New Photo</span>
+          <span *ngIf="isUploadingGallery"><span class="spinner-border spinner-border-sm me-2"></span> Uploading...</span>
+          <input type="file" accept="image/*" hidden (change)="onGalleryFileSelected($event)" [disabled]="isUploadingGallery" />
+        </label>
+        <p class="mt-2 text-medium-emphasis small">Showcase your before & after results on the landing page.</p>
+    </div>
+
+    <c-row class="g-3">
+      <c-col [xs]="6" [sm]="4" [md]="3" [lg]="2" *ngFor="let img of galleryImages">
+        <div class="position-relative ratio ratio-1x1 shadow-sm rounded overflow-hidden bg-light">
+          <img [src]="img.url" alt="Work Gallery" loading="lazy" />
+          <div class="btn-delete-wrap">
+            <button cButton color="danger" size="sm" (click)="deleteGalleryImage(img.id)" title="Delete Image">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+          </div>
+        </div>
+      </c-col>
+    </c-row>
+    <p *ngIf="galleryImages.length === 0" class="text-center py-5 text-medium-emphasis">No gallery images yet. Start uploading!</p>
+  </c-card-body>
+</c-card>

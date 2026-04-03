@@ -17,6 +17,8 @@ namespace CleanNinja.Server.Data
         public DbSet<GalleryImage> GalleryImages { get; set; } = null!;
         public DbSet<ServiceFeedback> ServiceFeedbacks { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
+        public DbSet<WorkSchedule> WorkSchedules { get; set; } = null!;
+        public DbSet<WorkingHour> WorkingHours { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

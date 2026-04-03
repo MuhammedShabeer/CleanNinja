@@ -17,13 +17,29 @@ namespace CleanNinja.Server.Controllers
         public async Task<ActionResult<object>> GetSummary()
         {
             var completedBookings = await _context.Bookings
+                .Include(b => b.AssignedEmployees)
                 .Where(w => w.Status == "Completed")
+                .AsNoTracking()
                 .ToListAsync();
 
             var totalEarned = completedBookings.Sum(w => w.Revenue);
             var totalExpenses = await _context.Expenses.SumAsync(e => e.Amount);
-            var pendingCount = await _context.Bookings.CountAsync(w => w.Status == "Pending" && w.ScheduledDate == null);
-            var completedCount = completedBookings.Count(w => w.ScheduledDate == null);
+            
+            var pendingCount = await _context.Bookings.CountAsync(w => w.Status == "Pending");
+            var completedCount = completedBookings.Count();
+
+            // Project to an anonymous object list to avoid potential JSON circular reference or model proxy issues
+            var worksList = completedBookings.Select(w => new
+            {
+                w.Id,
+                w.CustomerName,
+                w.ServicePackage,
+                AssignedEmployeeName = (w.AssignedEmployees != null && w.AssignedEmployees.Any())
+                    ? string.Join(", ", w.AssignedEmployees.Select(e => e.Name))
+                    : "Unassigned",
+                w.Revenue,
+                CompletedAt = w.CompletedAt?.ToString("yyyy-MM-dd HH:mm")
+            }).ToList();
 
             return Ok(new
             {
@@ -32,15 +48,7 @@ namespace CleanNinja.Server.Controllers
                 netProfit = totalEarned - totalExpenses,
                 pendingCount,
                 completedCount,
-                works = completedBookings.Where(w => w.ScheduledDate == null).Select(w => new
-                {
-                    w.Id,
-                    w.CustomerName,
-                    w.ServicePackage,
-                    w.AssignedEmployeeName,
-                    w.Revenue,
-                    w.CompletedAt
-                })
+                works = worksList
             });
         }
 

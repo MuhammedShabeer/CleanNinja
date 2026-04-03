@@ -1,0 +1,29 @@
+<c-card>
+  <c-card-header><strong>Edit Site Content</strong></c-card-header>
+  <c-card-body>
+    <table cTable hover responsive striped>
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th>Key</th>
+          <th>Value</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of contentItems">
+          <td>{{ item.section }}</td>
+          <td><code>{{ item.key }}</code></td>
+          <td>
+            <textarea cFormControl [(ngModel)]="item.value" rows="2"></textarea>
+          </td>
+          <td>
+            <button cButton color="primary" size="sm" (click)="saveContentItem(item)">
+              <svg cIcon name="cilSave"></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </c-card-body>
+</c-card>

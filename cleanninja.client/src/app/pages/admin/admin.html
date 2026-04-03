@@ -1,761 +1,107 @@
 <div class="admin-theme">
-<c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" [unfoldable]="false" id="sidebar" colorScheme="dark">
-  <c-sidebar-brand class="d-md-flex align-items-center justify-content-center py-4 px-3 border-bottom border-secondary border-opacity-10 d-sm-flex">
-    <img src="favicon.png" height="32" class="me-2 rounded shadow-sm">
-    <span class="fw-bold tracking-wider">CLEAN NINJA</span>
-  </c-sidebar-brand>
-  <c-sidebar-nav>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'dashboard'" href="javascript:void(0)" (click)="switchTab('dashboard')">
-        <svg cIcon name="cilSpeedometer" class="nav-icon"></svg> Dashboard
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'bookings'" href="javascript:void(0)" (click)="switchTab('bookings')">
-        <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'works'" href="javascript:void(0)" (click)="switchTab('works')">
-        <svg cIcon name="cilTask" class="nav-icon"></svg> Works
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'schedules'" href="javascript:void(0)" (click)="switchTab('schedules')">
-        <svg cIcon name="cilCalendar" class="nav-icon"></svg> Schedules
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'revenue'" href="javascript:void(0)" (click)="switchTab('revenue')">
-        <svg cIcon name="cilDollar" class="nav-icon"></svg> Revenue
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'employees'" href="javascript:void(0)" (click)="switchTab('employees')">
-        <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'services'" href="javascript:void(0)" (click)="switchTab('services')">
-        <svg cIcon name="cilSettings" class="nav-icon"></svg> Services
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'gallery'" href="javascript:void(0)" (click)="switchTab('gallery')">
-        <svg cIcon name="cilImage" class="nav-icon"></svg> Gallery
-      </a>
-    </c-nav-item>
-    <c-nav-item>
-      <a cNavLink [active]="activeTab === 'content'" href="javascript:void(0)" (click)="switchTab('content')">
-        <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
-      </a>
-    </c-nav-item>
-  </c-sidebar-nav>
-</c-sidebar>
+  <c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" [unfoldable]="false" id="sidebar" colorScheme="dark">
+    <c-sidebar-brand class="d-md-flex align-items-center justify-content-center py-4 px-3 border-bottom border-secondary border-opacity-10 d-sm-flex">
+      <img src="favicon.png" height="32" class="me-2 rounded shadow-sm">
+      <span class="fw-bold tracking-wider">CLEAN NINJA</span>
+    </c-sidebar-brand>
+    <c-sidebar-nav>
+      <c-nav-item *ngIf="hasAccess('dashboard')">
+        <a cNavLink routerLink="/admin/dashboard" routerLinkActive="active">
+          <svg cIcon name="cilSpeedometer" class="nav-icon"></svg> Dashboard
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('bookings')">
+        <a cNavLink routerLink="/admin/bookings" routerLinkActive="active">
+          <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('works')">
+        <a cNavLink routerLink="/admin/works" routerLinkActive="active">
+          <svg cIcon name="cilTask" class="nav-icon"></svg> Works
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('schedules')">
+        <a cNavLink routerLink="/admin/schedules" routerLinkActive="active">
+          <svg cIcon name="cilTask" class="nav-icon"></svg> Schedules
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('calendar')">
+        <a cNavLink routerLink="/admin/calendar" routerLinkActive="active">
+          <svg cIcon name="cilCalendar" class="nav-icon"></svg> Calendar
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('revenue')">
+        <a cNavLink routerLink="/admin/revenue" routerLinkActive="active">
+          <svg cIcon name="cilDollar" class="nav-icon"></svg> Revenue
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('employees')">
+        <a cNavLink routerLink="/admin/employees" routerLinkActive="active">
+          <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('services')">
+        <a cNavLink routerLink="/admin/services" routerLinkActive="active">
+          <svg cIcon name="cilSettings" class="nav-icon"></svg> Services
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('gallery')">
+        <a cNavLink routerLink="/admin/gallery" routerLinkActive="active">
+          <svg cIcon name="cilImage" class="nav-icon"></svg> Gallery
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('content')">
+        <a cNavLink routerLink="/admin/content" routerLinkActive="active">
+          <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
+        </a>
+      </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('users')">
+        <a cNavLink routerLink="/admin/users" routerLinkActive="active">
+          <svg cIcon name="cilUser" class="nav-icon"></svg> Admin Users
+        </a>
+      </c-nav-item>
+    </c-sidebar-nav>
+  </c-sidebar>
 
-<div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent">
-  <c-header class="mb-4 d-print-none shadow-sm" position="sticky">
-    <div class="header-main w-100 bg-white">
-      <c-container fluid class="d-flex align-items-center justify-content-between h-100">
-        <div class="d-flex align-items-center">
-            <button cHeaderToggler class="ps-1 me-3 border-0 bg-transparent" (click)="sidebarVisible = !sidebarVisible">
-              <svg cIcon name="cilMenu" size="lg"></svg>
-            </button>
-            <span class="fw-semibold text-dark fs-5">Dash<span class="d-none d-sm-inline">board</span></span>
-        </div>
-        
-        <div class="d-flex align-items-center">
-          <span class="me-3 d-none d-md-inline text-muted small">Welcome, <strong>{{ adminName }}</strong></span>
-          <button cButton color="danger" variant="ghost" size="sm" (click)="logout()" title="Logout" class="rounded-pill">
-            <svg cIcon name="cilAccountLogout" size="lg"></svg>
-          </button>
-        </div>
-      </c-container>
-    </div>
-    <div class="header-divider h-1px bg-light"></div>
-    <div class="header-breadcrumb w-100 bg-white py-2">
-      <c-container fluid>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb m-0 ms-2 small fw-medium">
-            <li class="breadcrumb-item text-secondary align-items-center d-flex">
-                <svg cIcon name="cilInfo" size="sm" class="me-1"></svg> Home
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">{{ activeTab | titlecase }}</li>
-          </ol>
-        </nav>
-      </c-container>
-    </div>
-  </c-header>
-
-  <div class="body flex-grow-1 px-3">
-    <c-container breakpoint="lg">
-
-
-    <!-- Bookings Tab -->
-    <div [hidden]="activeTab !== 'bookings'">
-      <c-row class="mb-4">
-        <c-col [md]="12">
-          <c-card>
-            <c-card-header>
-              <strong>Pending Requests</strong> ({{ pendingBookings.length }})
-            </c-card-header>
-            <c-card-body>
-              <c-row>
-                <c-col [md]="6" [lg]="4" *ngFor="let b of pendingBookings" class="mb-3">
-                  <c-card class="h-100 shadow-sm border-start-primary">
-                    <c-card-body>
-                      <h5 class="card-title">{{ b.customerName }} <span cBadge color="info" class="ms-2">{{ b.servicePackage }}</span></h5>
-                      <p class="small text-medium-emphasis mb-1">📞 {{ b.phone }}</p>
-                      <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }} <span cBadge color="secondary" class="ms-1" *ngIf="b.frequency">{{ b.frequency }}</span></p>
-                      <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
-                      
-                      <div class="d-grid gap-2 mt-3">
-                        <div class="mt-2 text-center text-md-start">
-                          <button cButton color="secondary" size="sm" variant="outline" class="w-100 py-1 d-flex align-items-center justify-content-center" (click)="openAssignModal(b)">
-                            <svg cIcon name="cilPeople" class="me-1"></svg>
-                            {{ getAssignedNames(b) || 'Assign Ninja Team' }}
-                          </button>
-                        </div>
-
-                        <button cButton color="primary" (click)="approveBooking(b.id, b.phone, b.customerName, b.servicePackage)">
-                          <svg cIcon name="cilSave" class="me-2"></svg> Approve & WhatsApp
-                        </button>
-                      </div>
-                    </c-card-body>
-                  </c-card>
-                </c-col>
-              </c-row>
-              <p *ngIf="pendingBookings.length === 0" class="text-center py-4 text-medium-emphasis">No pending bookings right now.</p>
-            </c-card-body>
-          </c-card>
-        </c-col>
-      </c-row>
-      
-      <!-- Previous Orders -->
-      <c-row>
-        <c-col [md]="12">
-          <c-card>
-            <c-card-header>
-              <strong>Past Orders</strong> ({{ previousBookings.length }})
-            </c-card-header>
-            <c-card-body>
-              <table cTable hover responsive [striped]="true">
-                <thead>
-                  <tr>
-                    <th>Customer</th>
-                    <th>Package</th>
-                    <th>Phone</th>
-                    <th>Date</th>
-                    <th>Assigned Ninja</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let pb of previousBookings">
-                    <td><strong>{{ pb.customerName }}</strong></td>
-                    <td>{{ pb.servicePackage }}</td>
-                    <td>{{ pb.phone }}</td>
-                    <td>{{ pb.createdAt | date:'shortDate' }} <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span></td>
-                    <td>{{ pb.assignedEmployeeName || 'Unassigned' }}</td>
-                    <td><span cBadge color="success">{{ pb.status }}</span></td>
-                  </tr>
-                </tbody>
-              </table>
-              <p *ngIf="previousBookings.length === 0" class="text-center py-3 text-medium-emphasis">No past orders found.</p>
-            </c-card-body>
-          </c-card>
-        </c-col>
-      </c-row>
-    </div>
-
-    <!-- Employees Tab -->
-    <div [hidden]="activeTab !== 'employees'">
-      <c-row>
-        <c-col [md]="4">
-          <c-card class="mb-4">
-            <c-card-header><strong>Add Employee</strong></c-card-header>
-            <c-card-body>
-              <div class="mb-3">
-                <label cLabel>Full Name</label>
-                <input cFormControl type="text" [(ngModel)]="newEmployee.name" placeholder="Full Name" />
-              </div>
-              <div class="mb-3">
-                <label cLabel>Phone</label>
-                <input cFormControl type="text" [(ngModel)]="newEmployee.phone" placeholder="Phone" />
-              </div>
-              <div class="mb-3">
-                <label cLabel>Role</label>
-                <input cFormControl type="text" [(ngModel)]="newEmployee.role" placeholder="Role (e.g. Car Wash)" />
-              </div>
-              <button cButton color="primary" class="w-100" (click)="addEmployee()">
-                <svg cIcon name="cilPlus" class="me-2"></svg> Add Employee
+  <div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent">
+    <c-header class="mb-4 d-print-none shadow-sm" position="sticky">
+      <div class="header-main w-100 bg-white">
+        <c-container fluid class="d-flex align-items-center justify-content-between h-100">
+          <div class="d-flex align-items-center">
+              <button cHeaderToggler class="ps-1 me-3 border-0 bg-transparent" (click)="sidebarVisible = !sidebarVisible">
+                <svg cIcon name="cilMenu" size="lg"></svg>
               </button>
-            </c-card-body>
-          </c-card>
-        </c-col>
-        <c-col [md]="8">
-          <c-card>
-            <c-card-header><strong>Current Ninja Staff</strong> ({{ employees.length }})</c-card-header>
-            <c-card-body>
-              <table cTable hover responsive [striped]="true">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Role</th>
-                    <th>Phone</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let e of employees">
-                    <td><strong>{{ e.name }}</strong></td>
-                    <td><span cBadge color="secondary">{{ e.role }}</span></td>
-                    <td>📞 {{ e.phone }}</td>
-                    <td>
-                      <button cButton size="sm" [color]="e.isActive ? 'success' : 'secondary'" (click)="toggleEmployeeActive(e)">
-                        {{ e.isActive ? 'Active' : 'Inactive' }}
-                      </button>
-                    </td>
-                    <td>
-                      <button cButton color="danger" variant="outline" size="sm" (click)="removeEmployee(e.id)">
-                        <svg cIcon name="cilTrash"></svg>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <p *ngIf="employees.length === 0" class="text-center py-3 text-medium-emphasis">No employees added yet.</p>
-            </c-card-body>
-          </c-card>
-        </c-col>
-      </c-row>
-    </div>
-
-    <!-- Services Tab -->
-    <div [hidden]="activeTab !== 'services'">
-      <c-row>
-        <!-- Add New Service -->
-        <c-col [md]="12" class="mb-4">
-          <c-card>
-            <c-card-header><strong>Add New Service</strong></c-card-header>
-            <c-card-body>
-              <c-row class="g-3">
-                <c-col [md]="4">
-                  <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Full Valet)" />
-                </c-col>
-                <c-col [md]="4">
-                  <!-- Use text input for small strings or comma separated features -->
-                  <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Description or Features (comma separated)" />
-                </c-col>
-                <c-col [md]="2">
-                  <input cFormControl type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" />
-                </c-col>
-                <c-col [md]="2">
-                  <button cButton color="primary" class="w-100" (click)="addService()">
-                    <svg cIcon name="cilPlus" class="me-2"></svg> Create
-                  </button>
-                </c-col>
-              </c-row>
-            </c-card-body>
-          </c-card>
-        </c-col>
-
-        <c-col [md]="12">
-          <c-row>
-            <c-col [md]="6" *ngFor="let s of services" class="mb-4">
-              <c-card class="h-100 shadow-sm border-0 border-top border-4" [class.border-warning]="s.isHighlighted" [class.border-secondary]="!s.isActive">
-                <c-card-header class="d-flex justify-content-between align-items-center bg-white border-bottom-0 pb-0">
-                  <strong class="fs-5">{{ s.name }}</strong>
-                  <div class="d-flex gap-2">
-                    <button cButton size="sm" [color]="s.isActive ? 'success' : 'secondary'" (click)="s.isActive = !s.isActive; saveService(s)">
-                      {{ s.isActive ? 'Active' : 'Inactive' }}
-                    </button>
-                    <button cButton color="warning" size="sm" (click)="toggleHighlight(s)">
-                      <svg cIcon [name]="s.isHighlighted ? 'cilStar' : 'cilStar'"></svg>
-                    </button>
-                    <button cButton color="info" size="sm" (click)="editingService = s">
-                      <svg cIcon name="cilSave"></svg> Edit
-                    </button>
-                    <button cButton color="danger" size="sm" (click)="deleteService(s.id)">
-                      <svg cIcon name="cilTrash"></svg>
-                    </button>
-                  </div>
-                </c-card-header>
-                <c-card-body>
-                  <!-- View mode -->
-                  <div *ngIf="editingService?.id !== s.id">
-                    <p class="text-medium-emphasis mb-3">{{ s.description }}</p>
-                    <div class="mb-3 d-flex flex-wrap gap-2">
-                      <span cBadge color="primary" *ngIf="s.price">Standard: £{{ s.price }}</span>
-                      <span cBadge color="danger" *ngIf="s.discountedPrice">Discount: £{{ s.discountedPrice }}</span>
-                      <span cBadge color="info" *ngIf="s.weeklyPrice">Weekly: £{{ s.weeklyPrice }}</span>
-                      <span cBadge color="info" *ngIf="s.monthlyPrice">Monthly: £{{ s.monthlyPrice }}</span>
-                    </div>
-                    
-                    <div class="d-flex align-items-center gap-3 mt-3 border-top pt-3">
-                      <div class="bg-light p-2 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; color: var(--primary-color);" [innerHTML]="s.icon"></div>
-                      <div class="flex-grow-1 overflow-auto d-flex gap-2">
-                        <div *ngFor="let m of s.media" class="position-relative">
-                          <img *ngIf="m.fileType === 'image'" [src]="m.url" width="50" height="50" class="rounded shadow-sm" />
-                          <button class="btn-close position-absolute top-0 end-0 bg-white" style="padding: 2px;" (click)="deleteMedia(s.id, m.id)"></button>
-                        </div>
-                        <label cButton color="secondary" variant="outline" size="sm" class="d-flex align-items-center justify-content-center fw-bold p-0" style="width: 50px; height: 50px;">
-                           <span *ngIf="!isUploadingMedia[s.id]">+ Media</span>
-                           <span *ngIf="isUploadingMedia[s.id]" class="spinner-border spinner-border-sm"></span>
-                           <input type="file" accept="image/*,video/*" hidden (change)="onMediaSelected($event, s.id)" />
-                        </label>
-                      </div>
-                    </div>
-
-                    <!-- Customer Reviews moderation -->
-                    <div class="mt-3 border-top pt-3">
-                      <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="fw-semibold small text-muted">Customer Reviews</span>
-                        <button cButton size="sm" color="secondary" variant="outline" (click)="loadFeedback(s.id)">
-                          Load Reviews ({{ (loadedFeedbacks[s.id] || []).length }})
-                        </button>
-                      </div>
-                      <div *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length > 0">
-                        <div *ngFor="let fb of loadedFeedbacks[s.id]" class="border rounded p-2 mb-2 small" [class.bg-warning-subtle]="!fb.isApproved" [class.bg-success-subtle]="fb.isApproved">
-                          <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                              <strong>{{ fb.customerName }}</strong>
-                              <span class="ms-2">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
-                              <span class="ms-2 badge" [class.bg-warning]="!fb.isApproved" [class.bg-success]="fb.isApproved">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
-                            </div>
-                            <div class="d-flex gap-1">
-                              <button *ngIf="!fb.isApproved" cButton size="sm" color="success" (click)="approveFeedback(fb.id, s.id)">✓ Approve</button>
-                              <button cButton size="sm" color="danger" variant="outline" (click)="deleteFeedback(fb.id, s.id)"><svg cIcon name="cilTrash"></svg></button>
-                            </div>
-                          </div>
-                          <p class="mb-0 mt-1 text-muted">{{ fb.comment }}</p>
-                        </div>
-                      </div>
-                      <p *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length === 0" class="text-muted small mb-0">No reviews yet.</p>
-                    </div>
-                  </div>
-
-                  <!-- Edit mode -->
-                  <div *ngIf="editingService?.id === s.id" class="bg-light p-3 rounded">
-                    <div class="mb-3">
-                      <label cLabel>Service Name</label>
-                      <input cFormControl type="text" [(ngModel)]="s.name" />
-                    </div>
-                    <div class="mb-3">
-                      <label cLabel>Description (or Comma separated Features)</label>
-                      <textarea cFormControl [(ngModel)]="s.description" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                      <label cLabel>SVG Icon Code</label>
-                      <textarea cFormControl [(ngModel)]="s.icon" rows="3" placeholder="<svg>...</svg>"></textarea>
-                      <div class="form-text mt-1 text-muted">Paste raw SVG code here. Note: Use `currentColor` for fill/stroke.</div>
-                    </div>
-                    
-                    <c-row class="mb-3 g-2">
-                        <c-col [sm]="4">
-                          <label cLabel class="small text-muted">Sort Order</label>
-                          <input cFormControl type="number" [(ngModel)]="s.sortOrder" />
-                        </c-col>
-                    </c-row>
-
-                    <h6 class="mt-4 border-bottom pb-2">Pricing Structure</h6>
-                    <c-row class="mb-4 g-2">
-                      <c-col [sm]="6">
-                        <label cLabel>Standard Price (£)</label>
-                        <input cFormControl type="number" [(ngModel)]="s.price" />
-                      </c-col>
-                      <c-col [sm]="6">
-                        <label cLabel>Discounted (£)</label>
-                        <input cFormControl type="number" [(ngModel)]="s.discountedPrice" />
-                      </c-col>
-                      <c-col [sm]="6">
-                        <label cLabel>Weekly Sub (£)</label>
-                        <input cFormControl type="number" [(ngModel)]="s.weeklyPrice" />
-                      </c-col>
-                      <c-col [sm]="6">
-                        <label cLabel>Monthly Sub (£)</label>
-                        <input cFormControl type="number" [(ngModel)]="s.monthlyPrice" />
-                      </c-col>
-                    </c-row>
-                    <div class="d-flex gap-2">
-                      <button cButton color="success" class="flex-grow-1" (click)="saveService(s)">Save Settings</button>
-                      <button cButton color="secondary" (click)="editingService = null">Cancel</button>
-                    </div>
-                  </div>
-                </c-card-body>
-              </c-card>
-            </c-col>
-          </c-row>
-        </c-col>
-      </c-row>
-    </div>
-
-
-
-    <!-- Gallery Tab -->
-    <div [hidden]="activeTab !== 'gallery'">
-      <c-card class="mb-4">
-        <c-card-header><strong>📸 Work Gallery Management</strong></c-card-header>
-        <c-card-body>
-          <div class="text-center py-4 border rounded mb-4 bg-light">
-             <label cButton color="primary" class="position-relative">
-               <span *ngIf="!isUploadingGallery"><svg cIcon name="cilPlus" class="me-2"></svg> Upload New Photo</span>
-               <span *ngIf="isUploadingGallery"><span class="spinner-border spinner-border-sm me-2"></span> Uploading...</span>
-               <input type="file" accept="image/*" hidden (change)="onGalleryFileSelected($event)" [disabled]="isUploadingGallery" />
-             </label>
-             <p class="mt-2 text-medium-emphasis small">Showcase your before & after results on the landing page.</p>
+              <span class="fw-semibold text-dark fs-5">Dash<span class="d-none d-sm-inline">board</span></span>
           </div>
-
-          <c-row class="g-3">
-            <c-col [xs]="6" [sm]="4" [md]="3" [lg]="2" *ngFor="let img of galleryImages">
-              <div class="position-relative ratio ratio-1x1 shadow-sm rounded overflow-hidden bg-light">
-                <img [src]="img.url" alt="Work Gallery" loading="lazy" />
-                <div class="btn-delete-wrap">
-                  <button cButton color="danger" size="sm" (click)="deleteGalleryImage(img.id)" title="Delete Image">
-                    <svg cIcon name="cilTrash"></svg>
-                  </button>
-                </div>
-              </div>
-            </c-col>
-          </c-row>
-          <p *ngIf="galleryImages.length === 0" class="text-center py-5 text-medium-emphasis">No gallery images yet. Start uploading!</p>
-        </c-card-body>
-      </c-card>
-    </div>
-
-    <!-- Content Tab -->
-    <div [hidden]="activeTab !== 'content'">
-      <c-card>
-        <c-card-header><strong>Edit Site Content</strong></c-card-header>
-        <c-card-body>
-          <table cTable hover responsive striped>
-            <thead>
-              <tr>
-                <th>Section</th>
-                <th>Key</th>
-                <th>Value</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of contentItems">
-                <td>{{ item.section }}</td>
-                <td><code>{{ item.key }}</code></td>
-                <td>
-                  <textarea cFormControl [(ngModel)]="item.value" rows="2"></textarea>
-                </td>
-                <td>
-                  <button cButton color="primary" size="sm" (click)="saveContentItem(item)">
-                    <svg cIcon name="cilSave"></svg>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </c-card-body>
-      </c-card>
-    </div>
-
-    <!-- ══════════════ DASHBOARD TAB ══════════════ -->
-    <div [hidden]="activeTab !== 'dashboard'">
-      <div class="row g-4 mb-4">
-        <div class="col-6 col-md-3">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-warning fs-1 fw-bold">{{ revenueSummary.pendingCount }}</div>
-              <div class="text-muted small">Pending Works</div>
-            </c-card-body>
-          </c-card>
-        </div>
-        <div class="col-6 col-md-3">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-success fs-1 fw-bold">{{ revenueSummary.completedCount }}</div>
-              <div class="text-muted small">Completed Works</div>
-            </c-card-body>
-          </c-card>
-        </div>
-        <div class="col-6 col-md-3">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-primary fs-1 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
-              <div class="text-muted small">Total Earnings</div>
-            </c-card-body>
-          </c-card>
-        </div>
-        <div class="col-6 col-md-3">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-danger fs-1 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
-              <div class="text-muted small">Total Expenses</div>
-            </c-card-body>
-          </c-card>
-        </div>
-      </div>
-      <c-card class="border-0 shadow-sm">
-        <c-card-header><strong>Net Profit</strong></c-card-header>
-        <c-card-body>
-          <div class="display-6 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
-            £{{ revenueSummary.netProfit | number:'1.2-2' }}
+          
+          <div class="d-flex align-items-center">
+            <span class="me-3 d-none d-md-inline text-muted small">Welcome, <strong>{{ adminName }}</strong></span>
+            <button cButton color="danger" variant="ghost" size="sm" (click)="logout()" title="Logout" class="rounded-pill">
+              <svg cIcon name="cilAccountLogout" size="lg"></svg>
+            </button>
           </div>
-        </c-card-body>
-      </c-card>
-    </div>
-
-    <!-- ══════════════ WORKS TAB ══════════════ -->
-    <div [hidden]="activeTab !== 'works'">
-
-
-      <!-- Complete work modal overlay -->
-      <div *ngIf="completingWork" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
-        <c-card style="width:400px">
-          <c-card-header><strong>Complete Work — {{ completingWork.customerName }}</strong></c-card-header>
-          <c-card-body>
-            <label cLabel>Revenue Earned (£)</label>
-            <input cFormControl type="number" [(ngModel)]="completeRevenue" class="mb-2">
-            <label cLabel>Notes (optional)</label>
-            <textarea cFormControl rows="2" [(ngModel)]="completeNotes"></textarea>
-          </c-card-body>
-          <c-card-footer class="d-flex gap-2">
-            <button cButton color="success" (click)="submitCompleteWork()"><svg cIcon name="cilCheckCircle"></svg> Save</button>
-            <button cButton color="secondary" variant="outline" (click)="completingWork=null">Cancel</button>
-          </c-card-footer>
-        </c-card>
+        </c-container>
       </div>
-
-      <c-card class="border-0 shadow-sm">
-        <c-card-header><strong>All Works</strong></c-card-header>
-        <c-card-body>
-          <div *ngIf="works.length === 0" class="text-muted text-center py-3">No works yet.</div>
-          <div *ngIf="works.length > 0" class="table-responsive">
-            <table class="table table-hover table-striped align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th style="width:20%">Customer</th>
-                  <th style="width:20%">Package</th>
-                  <th style="width:22%">Assigned Ninjas</th>
-                  <th style="width:12%">Status</th>
-                  <th style="width:10%">Revenue</th>
-                  <th style="width:16%">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let w of works">
-                  <td>
-                    <div class="fw-semibold">{{ w.customerName }}</div>
-                    <small class="text-muted">{{ w.phone }}</small>
-                  </td>
-                  <td>{{ w.servicePackage }}</td>
-                  <td>
-                    <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-1" (click)="openAssignModal(w)" style="max-width:200px">
-                      <svg cIcon name="cilPeople" size="sm" class="flex-shrink-0"></svg>
-                      <span class="text-truncate" style="font-size:0.78rem">{{ getAssignedNames(w) || 'Assign Ninjas...' }}</span>
-                    </button>
-                  </td>
-                  <td>
-                    <span class="badge rounded-pill text-white"
-                      [class.bg-success]="w.status === 'Completed'"
-                      [class.bg-warning]="w.status === 'InProgress' || w.status === 'Accepted'"
-                      [class.bg-secondary]="w.status === 'Pending'">
-                      {{ w.status }}
-                    </span>
-                  </td>
-                  <td class="fw-semibold">{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</td>
-                  <td>
-                    <div class="d-flex gap-1">
-                      <button *ngIf="w.status === 'Pending'" class="btn btn-sm btn-info" (click)="acceptWork(w.id)">Accept</button>
-                      <button *ngIf="w.status !== 'Completed'" class="btn btn-sm btn-success" (click)="openCompleteWork(w)">Complete</button>
-                      <button class="btn btn-sm btn-outline-danger" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </c-card-body>
-      </c-card>
-    </div>
-
-    <!-- ══════════════ SCHEDULES TAB ══════════════ -->
-    <div [hidden]="activeTab !== 'schedules'">
-      <c-card class="mb-4 border-0 shadow-sm">
-        <c-card-header><strong>Add New Schedule</strong></c-card-header>
-        <c-card-body>
-          <div class="row g-2">
-            <div class="col-md-3"><input cFormControl placeholder="Title" [(ngModel)]="newSchedule.title"></div>
-            <div class="col-md-2"><input cFormControl placeholder="Customer Name" [(ngModel)]="newSchedule.customerName"></div>
-            <div class="col-md-2"><input cFormControl placeholder="Phone" [(ngModel)]="newSchedule.phone"></div>
-            <div class="col-md-2"><input cFormControl placeholder="Service" [(ngModel)]="newSchedule.servicePackage"></div>
-            <div class="col-md-2"><input cFormControl type="datetime-local" [(ngModel)]="newSchedule.scheduledDate"></div>
-            <div class="col-md-1"><button cButton color="success" (click)="addSchedule()"><svg cIcon name="cilPlus"></svg></button></div>
-          </div>
-          <input cFormControl placeholder="Notes (optional)" [(ngModel)]="newSchedule.notes" class="mt-2">
-        </c-card-body>
-      </c-card>
-
-      <div class="row g-3">
-        <div *ngIf="schedules.length === 0" class="text-muted text-center py-3">No schedules yet.</div>
-        <div class="col-md-4" *ngFor="let s of schedules">
-          <c-card [class.border-success]="s.isCompleted" [class.border-warning]="!s.isCompleted" class="shadow-sm h-100">
-            <c-card-header class="d-flex justify-content-between align-items-center">
-              <strong>{{ s.title }}</strong>
-              <span class="badge" [class.bg-success]="s.isCompleted" [class.bg-warning]="!s.isCompleted">{{ s.isCompleted ? 'Done' : 'Upcoming' }}</span>
-            </c-card-header>
-            <c-card-body class="small">
-              <p class="mb-1"><strong>Customer:</strong> {{ s.customerName }}</p>
-              <p class="mb-1"><strong>Date:</strong> {{ s.scheduledDate | date:'medium' }}</p>
-              <p *ngIf="s.servicePackage" class="mb-1"><strong>Service:</strong> {{ s.servicePackage }}</p>
-              <p *ngIf="s.notes" class="mb-0 text-muted">{{ s.notes }}</p>
-            </c-card-body>
-            <c-card-footer class="d-flex gap-2">
-              <button *ngIf="!s.isCompleted" cButton color="success" size="sm" (click)="completeSchedule(s.id)"><svg cIcon name="cilCheckCircle"></svg> Mark Done</button>
-              <button cButton color="danger" size="sm" variant="outline" (click)="deleteSchedule(s.id)"><svg cIcon name="cilTrash"></svg></button>
-            </c-card-footer>
-          </c-card>
-        </div>
+      <div class="header-divider h-1px bg-light"></div>
+      <div class="header-breadcrumb w-100 bg-white py-2">
+        <c-container fluid>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb m-0 ms-2 small fw-medium">
+              <li class="breadcrumb-item text-secondary align-items-center d-flex">
+                  <svg cIcon name="cilInfo" size="sm" class="me-1"></svg> Home
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Admin</li>
+            </ol>
+          </nav>
+        </c-container>
       </div>
+    </c-header>
+
+    <div class="body flex-grow-1 px-3">
+      <c-container breakpoint="lg">
+        <router-outlet></router-outlet>
+      </c-container>
     </div>
-
-    <!-- ══════════════ REVENUE TAB ══════════════ -->
-    <div [hidden]="activeTab !== 'revenue'">
-      <div class="row g-4 mb-4">
-        <div class="col-md-4">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-success fs-2 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
-              <div class="text-muted">Total Earned</div>
-            </c-card-body>
-          </c-card>
-        </div>
-        <div class="col-md-4">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="text-danger fs-2 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
-              <div class="text-muted">Total Expenses</div>
-            </c-card-body>
-          </c-card>
-        </div>
-        <div class="col-md-4">
-          <c-card class="text-center border-0 shadow-sm h-100">
-            <c-card-body>
-              <div class="fs-2 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
-                £{{ revenueSummary.netProfit | number:'1.2-2' }}
-              </div>
-              <div class="text-muted">Net Profit</div>
-            </c-card-body>
-          </c-card>
-        </div>
-      </div>
-
-      <div class="row g-4">
-        <!-- Per-work earnings table -->
-        <div class="col-md-7">
-          <c-card class="border-0 shadow-sm">
-            <c-card-header><strong>Earnings per Work</strong></c-card-header>
-            <c-card-body>
-              <div *ngIf="!revenueSummary.works || revenueSummary.works.length === 0" class="text-muted text-center py-3">No completed works yet.</div>
-              <table *ngIf="revenueSummary.works && revenueSummary.works.length > 0" cTable hover responsive striped>
-                <thead><tr><th>Customer</th><th>Package</th><th>Employee</th><th>Earned</th><th>Date</th></tr></thead>
-                <tbody>
-                  <tr *ngFor="let w of revenueSummary.works">
-                    <td>{{ w.customerName }}</td>
-                    <td>{{ w.servicePackage }}</td>
-                    <td>{{ w.assignedEmployeeName || '—' }}</td>
-                    <td class="text-success fw-bold">£{{ w.revenue | number:'1.2-2' }}</td>
-                    <td>{{ w.completedAt | date:'shortDate' }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </c-card-body>
-          </c-card>
-        </div>
-
-        <!-- Expenses -->
-        <div class="col-md-5">
-          <c-card class="border-0 shadow-sm mb-3">
-            <c-card-header><strong>Add Expense</strong></c-card-header>
-            <c-card-body>
-              <input cFormControl placeholder="Description" [(ngModel)]="newExpense.description" class="mb-2">
-              <div class="row g-2 mb-2">
-                <div class="col-6"><input cFormControl type="number" placeholder="Amount (£)" [(ngModel)]="newExpense.amount"></div>
-                <div class="col-6">
-                  <select cSelect [(ngModel)]="newExpense.category">
-                    <option value="General">General</option>
-                    <option value="Supplies">Supplies</option>
-                    <option value="Transport">Transport</option>
-                    <option value="Staff">Staff</option>
-                  </select>
-                </div>
-              </div>
-              <input cFormControl type="date" [(ngModel)]="newExpense.date" class="mb-2">
-              <button cButton color="danger" class="w-100" (click)="addExpense()"><svg cIcon name="cilPlus"></svg> Add Expense</button>
-            </c-card-body>
-          </c-card>
-
-          <c-card class="border-0 shadow-sm">
-            <c-card-header><strong>Expense List</strong></c-card-header>
-            <c-card-body>
-              <div *ngIf="expenses.length === 0" class="text-muted text-center py-2">No expenses recorded.</div>
-              <div *ngFor="let ex of expenses" class="d-flex justify-content-between align-items-center border-bottom py-2">
-                <div>
-                  <div class="fw-semibold">{{ ex.description }}</div>
-                  <small class="text-muted">{{ ex.category }} · {{ ex.date | date:'shortDate' }}</small>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="text-danger fw-bold">£{{ ex.amount | number:'1.2-2' }}</span>
-                  <button cButton color="danger" size="sm" variant="outline" (click)="deleteExpense(ex.id)"><svg cIcon name="cilTrash"></svg></button>
-                </div>
-              </div>
-            </c-card-body>
-          </c-card>
-        </div>
-      </div>
-    </div>
-
-  </c-container>
-
-  <!-- Shared Ninja Assignment Modal -->
-  <div *ngIf="isAssignModalOpen" class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(0,0,0,0.5);z-index:9999">
-    <c-card style="width:400px; max-height: 85vh;" class="shadow-lg border-0">
-      <c-card-header class="bg-primary text-white d-flex justify-content-between align-items-center p-3">
-        <div class="d-flex align-items-center">
-          <svg cIcon name="cilPeople" class="me-2 text-white-50"></svg>
-          <strong>Assign Team — {{ currentAssignWork?.customerName }}</strong>
-        </div>
-        <button class="btn-close btn-close-white" (click)="closeAssignModal()"></button>
-      </c-card-header>
-      <c-card-body style="overflow-y: auto;" class="p-4">
-        <p class="small text-muted mb-3 fw-semibold">SELECT THE NINJAS FOR THIS TEAM:</p>
-        <div *ngIf="employees.length === 0" class="text-center py-4 text-muted border rounded-3 bg-light">
-          No active Ninjas found. Please add Ninjas in the Employees tab.
-        </div>
-        <div *ngIf="employees.length > 0">
-          <label *ngFor="let e of employees; trackBy: trackByEmployeeId"
-            [for]="'modal-emp-' + e.id"
-            class="d-flex align-items-center gap-3 px-3 py-3 mb-1 rounded border cursor-pointer"
-            style="cursor:pointer"
-            [style.background]="(isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))) ? '#e8f4fd' : '#f8f9fa'">
-            <input type="checkbox" class="form-check-input flex-shrink-0 mt-0" style="width:1.2rem;height:1.2rem"
-              [id]="'modal-emp-' + e.id"
-              [checked]="isEmployeeAssigned(currentAssignWork, e.id) || (selectedEmployeeIds[currentAssignWork?.id] && selectedEmployeeIds[currentAssignWork?.id].includes(e.id))"
-              (change)="toggleEmployeeAssignment(currentAssignWork?.id, e.id, currentAssignWork?.assignedEmployees)">
-            <div>
-              <div class="fw-semibold">{{ e.name }}</div>
-              <small class="text-muted">{{ e.role }}</small>
-            </div>
-          </label>
-        </div>
-      </c-card-body>
-      <c-card-footer class="d-flex gap-2 bg-white p-3 border-top">
-        <button cButton color="primary" class="flex-grow-1 py-2 fw-bold" (click)="saveAssignment()">
-           <svg cIcon name="cilCheckCircle" class="me-1"></svg> Confirm Team
-        </button>
-        <button cButton color="secondary" variant="outline" class="px-4 py-2" (click)="closeAssignModal()">Cancel</button>
-      </c-card-footer>
-    </c-card>
   </div>
-</div>
-</div>
 </div>
 

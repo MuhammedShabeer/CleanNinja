@@ -123,7 +123,7 @@ export class Landing implements OnInit, OnDestroy {
   }
 
   getMediaUrl(url: string | undefined): string {
-      if (!url) return 'assets/images/placeholder.png';
+      if (!url) return 'assets/images/service_placeholder.png';
       if (url.startsWith('http')) return url;
       return `${this.backendUrl}${url}`;
   }
