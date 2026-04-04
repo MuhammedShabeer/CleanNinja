@@ -1,88 +1,76 @@
-<div class="row g-4 mb-4">
-  <div class="col-md-4">
-    <c-card class="text-center border-0 shadow-sm h-100">
-      <c-card-body>
-        <div class="text-success fs-2 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
-        <div class="text-muted">Total Earned</div>
-      </c-card-body>
-    </c-card>
-  </div>
-  <div class="col-md-4">
-    <c-card class="text-center border-0 shadow-sm h-100">
-      <c-card-body>
-        <div class="text-danger fs-2 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
-        <div class="text-muted">Total Expenses</div>
-      </c-card-body>
-    </c-card>
-  </div>
-  <div class="col-md-4">
-    <c-card class="text-center border-0 shadow-sm h-100">
-      <c-card-body>
-        <div class="fs-2 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
-          £{{ revenueSummary.netProfit | number:'1.2-2' }}
-        </div>
-        <div class="text-muted">Net Profit</div>
-      </c-card-body>
-    </c-card>
-  </div>
-</div>
-
-<div class="row g-4">
-  <!-- Per-work earnings table -->
-  <div class="col-md-7">
-    <c-card class="border-0 shadow-sm">
-      <c-card-header><strong>Earnings per Work</strong></c-card-header>
-      <c-card-body>
-        <div *ngIf="!revenueSummary.works || revenueSummary.works.length === 0" class="text-muted text-center py-3">No completed works yet.</div>
-        <table *ngIf="revenueSummary.works && revenueSummary.works.length > 0" cTable hover responsive striped>
-          <thead><tr><th>Customer</th><th>Package</th><th>Employee</th><th>Earned</th><th>Date</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let w of revenueSummary.works">
-              <td>{{ w.customerName }}</td>
-              <td>{{ w.servicePackage }}</td>
-              <td>{{ w.assignedEmployeeName || '—' }}</td>
-              <td class="text-success fw-bold">£{{ w.revenue | number:'1.2-2' }}</td>
-              <td>{{ w.completedAt | date:'shortDate' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </c-card-body>
-    </c-card>
+<c-container fluid class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark">Financial Summary</h3>
   </div>
 
-  <!-- Expenses -->
-  <div class="col-md-5">
-    <c-card class="border-0 shadow-sm mb-3">
-      <c-card-header><strong>Add Expense</strong></c-card-header>
-      <c-card-body>
-        <input cFormControl placeholder="Description" [(ngModel)]="newExpense.description" class="mb-2">
-        <div class="row g-2 mb-2">
-          <div class="col-6"><input cFormControl type="number" placeholder="Amount (£)" [(ngModel)]="newExpense.amount"></div>
-          <div class="col-6">
-            <select cSelect [(ngModel)]="newExpense.category">
-              <option value="General">General</option>
-              <option value="Supplies">Supplies</option>
-              <option value="Transport">Transport</option>
-              <option value="Staff">Staff</option>
-            </select>
+  <!-- Key Metrics Row -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <c-card class="text-center border-0 shadow-sm h-100 py-3">
+        <c-card-body>
+          <div class="text-success fs-2 fw-bold">£{{ revenueSummary.totalEarned | number:'1.2-2' }}</div>
+          <div class="text-muted small text-uppercase">Total Earned</div>
+        </c-card-body>
+      </c-card>
+    </div>
+    <div class="col-md-4">
+      <c-card class="text-center border-0 shadow-sm h-100 py-3">
+        <c-card-body>
+          <div class="text-danger fs-2 fw-bold">£{{ revenueSummary.totalExpenses | number:'1.2-2' }}</div>
+          <div class="text-muted small text-uppercase">Total Expenses</div>
+        </c-card-body>
+      </c-card>
+    </div>
+    <div class="col-md-4">
+      <c-card class="text-center border-0 shadow-sm h-100 py-3">
+        <c-card-body>
+          <div class="fs-2 fw-bold" [class.text-success]="revenueSummary.netProfit >= 0" [class.text-danger]="revenueSummary.netProfit < 0">
+            £{{ revenueSummary.netProfit | number:'1.2-2' }}
           </div>
-        </div>
-        <input cFormControl type="date" [(ngModel)]="newExpense.date" class="mb-2">
-        <button cButton color="danger" class="w-100" (click)="addExpense()"><svg cIcon name="cilPlus"></svg> Add Expense</button>
-      </c-card-body>
-    </c-card>
-
-    <c-card class="border-0 shadow-sm">
-      <c-card-header><strong>Expense List</strong></c-card-header>
-      <c-card-body>
-        <div *ngIf="expenses.length === 0" class="text-muted text-center py-2">No expenses recorded.</div>
-        <div *ngFor="let ex of expenses" class="d-flex justify-content-between align-items-center border-bottom py-2">
-          <div>
-            <div class="fw-semibold">{{ ex.description }}</div>
-            <small class="text-muted">{{ ex.category }} · {{ ex.date | date:'shortDate' }}</small>
-          </div>
-        </div>
-      </c-card-body>
-    </c-card>
+          <div class="text-muted small text-uppercase">Net Profit</div>
+        </c-card-body>
+      </c-card>
+    </div>
   </div>
-</div>
+
+  <div class="row g-4">
+    <!-- Per-work earnings table -->
+    <div class="col-12">
+      <c-card class="border-0 shadow-sm overflow-hidden">
+        <c-card-header class="bg-light border-0 py-3">
+          <strong>Earnings Breakdown per Service</strong>
+        </c-card-header>
+        <c-card-body class="p-0">
+          <div class="table-responsive">
+            <table cTable [hover]="true" [align]="'middle'" class="mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="px-4 py-3 border-0">Customer</th>
+                  <th class="py-3 border-0">Service Package</th>
+                  <th class="py-3 border-0 text-center">Staff Assigned</th>
+                  <th class="py-3 border-0 text-center">Completed On</th>
+                  <th class="px-4 py-3 border-0 text-end">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let w of revenueSummary.works">
+                  <td class="px-4 fw-medium">{{ w.customerName }}</td>
+                  <td>{{ w.servicePackage }}</td>
+                  <td class="text-center">
+                    <c-badge color="info" *ngIf="w.assignedEmployeeName">{{ w.assignedEmployeeName }}</c-badge>
+                    <span class="text-muted small" *ngIf="!w.assignedEmployeeName">No Staff</span>
+                  </td>
+                  <td class="text-center text-muted small">{{ w.completedAt | date:'mediumDate' }}</td>
+                  <td class="px-4 text-end text-success fw-bold">£{{ w.revenue | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="!revenueSummary.works || revenueSummary.works.length === 0">
+                  <td colspan="5" class="text-center py-5 text-muted">No completed works yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </c-card-body>
+      </c-card>
+    </div>
+  </div>
+</c-container>

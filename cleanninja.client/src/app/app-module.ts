@@ -35,6 +35,7 @@ import { AdminServices } from './pages/admin/services/services';
 import { AdminGallery } from './pages/admin/gallery/gallery';
 import { AdminContent } from './pages/admin/content/content';
 import { AdminUsers } from './pages/admin/users/users';
+import { AdminExpenses } from './pages/admin/expenses/expenses';
 import { Login } from './pages/login/login';
 
 @NgModule({
@@ -42,7 +43,7 @@ import { Login } from './pages/login/login';
     App, Landing, Booking, Admin, Login,
     AdminDashboard, AdminBookings, AdminWorks, AdminSchedules, AdminCalendar,
     AdminRevenue, AdminEmployees, AdminServices, AdminGallery, AdminContent,
-    AdminUsers
+    AdminUsers, AdminExpenses
   ],
   imports: [
     BrowserModule,

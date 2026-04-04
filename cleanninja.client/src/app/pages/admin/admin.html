@@ -35,6 +35,11 @@
           <svg cIcon name="cilDollar" class="nav-icon"></svg> Revenue
         </a>
       </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('expenses')">
+        <a cNavLink routerLink="/admin/expenses" routerLinkActive="active">
+          <svg cIcon name="cilWallet" class="nav-icon"></svg> Expenses
+        </a>
+      </c-nav-item>
       <c-nav-item *ngIf="hasAccess('employees')">
         <a cNavLink routerLink="/admin/employees" routerLinkActive="active">
           <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees

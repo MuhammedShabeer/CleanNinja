@@ -6,7 +6,7 @@ import {
   cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, 
   cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, 
   cilInfo, cilSpeedometer, cilBriefcase, cilCalendar, cilDollar, 
-  cilTask, cilUser 
+  cilTask, cilUser, cilWallet 
 } from '@coreui/icons';
 
 @Component({
@@ -29,7 +29,7 @@ export class Admin implements OnInit {
       cilList, cilPeople, cilSettings, cilImage, cilAccountLogout, 
       cilMenu, cilPlus, cilTrash, cilSave, cilStar, cilCheckCircle, 
       cilInfo, cilSpeedometer, cilBriefcase, cilCalendar, cilDollar, 
-      cilTask, cilUser 
+      cilTask, cilUser, cilWallet 
     };
   }
 

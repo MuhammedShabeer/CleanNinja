@@ -15,6 +15,7 @@ import { AdminServices } from './pages/admin/services/services';
 import { AdminGallery } from './pages/admin/gallery/gallery';
 import { AdminContent } from './pages/admin/content/content';
 import { AdminUsers } from './pages/admin/users/users';
+import { AdminExpenses } from './pages/admin/expenses/expenses';
 import { Login } from './pages/login/login';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -33,6 +34,7 @@ const routes: Routes = [
       { path: 'schedules', component: AdminSchedules },
       { path: 'calendar', component: AdminCalendar },
       { path: 'revenue', component: AdminRevenue },
+      { path: 'expenses', component: AdminExpenses },
       { path: 'employees', component: AdminEmployees },
       { path: 'services', component: AdminServices },
       { path: 'gallery', component: AdminGallery },

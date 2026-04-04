@@ -27,6 +27,7 @@ export class AdminUsers implements OnInit {
     { id: 'schedules', name: 'Schedules' },
     { id: 'calendar', name: 'Calendar' },
     { id: 'revenue', name: 'Revenue' },
+    { id: 'expenses', name: 'Expenses' },
     { id: 'employees', name: 'Employees' },
     { id: 'services', name: 'Services' },
     { id: 'gallery', name: 'Gallery' },
