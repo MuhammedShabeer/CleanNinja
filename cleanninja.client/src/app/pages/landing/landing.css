@@ -613,3 +613,139 @@
     border-radius: 12px;
   }
 }
+
+/* ── Special Offers Popup ───────────────── */
+.offers-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+.offers-popup-content {
+  width: 100%;
+  max-width: 650px;
+  background: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(15,15,15,0.98));
+  border: 1px solid rgba(246, 129, 20, 0.4);
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  box-shadow: 0 0 50px rgba(246, 129, 20, 0.3);
+  animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.close-popup {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.close-popup:hover { opacity: 1; }
+
+.popup-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.ninja-badge {
+  display: inline-block;
+  background: var(--primary-color);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.popup-header h2 {
+  font-size: 2.2rem;
+  font-family: var(--heading-font);
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.popup-header p {
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.popup-offers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Custom Scrollbar for Offers List */
+.popup-offers-list::-webkit-scrollbar { width: 5px; }
+.popup-offers-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.popup-offers-list::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+
+.popup-offer-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255,255,255,0.03);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.3s;
+}
+
+.popup-offer-item:hover {
+  background: rgba(246, 129, 20, 0.05);
+  border-color: rgba(246, 129, 20, 0.2);
+  transform: translateX(5px);
+}
+
+.offer-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  min-width: 60px;
+}
+
+.offer-details { flex-grow: 1; }
+.offer-details h4 { color: #fff; margin-bottom: 4px; font-size: 1.2rem; }
+.offer-details p { color: #aaa; font-size: 0.85rem; margin-bottom: 8px; }
+
+.popup-footer {
+  margin-top: 30px;
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 576px) {
+  .offers-popup-content { padding: 30px 20px; }
+  .popup-offer-item { flex-direction: column; text-align: center; }
+  .popup-header h2 { font-size: 1.8rem; }
+}

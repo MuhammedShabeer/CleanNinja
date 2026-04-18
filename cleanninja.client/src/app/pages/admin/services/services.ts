@@ -8,7 +8,7 @@ import { ServiceApiService, CleanService, ServiceFeedback } from '../../../servi
 })
 export class AdminServices implements OnInit {
   public services: CleanService[] = [];
-  public newService: any = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
+  public newService: any = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false };
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
   public loadedFeedbacks: { [serviceId: number]: ServiceFeedback[] } = {};
@@ -33,9 +33,15 @@ export class AdminServices implements OnInit {
     if (!this.newService.name.trim()) { alert('Service name is required.'); return; }
     // Ensure default active state for new services
     this.newService.isActive = true;
-    this.serviceApi.createService(this.newService).subscribe(() => {
-      this.newService = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
-      this.fetchServices();
+    this.serviceApi.createService(this.newService).subscribe({
+      next: () => {
+        this.newService = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
+        this.fetchServices();
+      },
+      error: (err) => {
+        console.error('Error creating service:', err);
+        alert('Failed to create service. Please check console for details.');
+      }
     });
   }
 

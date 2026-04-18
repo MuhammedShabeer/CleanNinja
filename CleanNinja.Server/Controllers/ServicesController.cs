@@ -30,6 +30,19 @@ namespace CleanNinja.Server.Controllers
                 .ToListAsync();
         }
 
+        // GET: api/services/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Service>> GetService(int id)
+        {
+            var service = await _context.Services
+                .Include(s => s.Media)
+                .Include(s => s.Feedbacks)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (service == null) return NotFound();
+            return service;
+        }
+
         // POST: api/services
         [HttpPost]
         public async Task<ActionResult<Service>> CreateService([FromBody] Service service)
@@ -38,7 +51,7 @@ namespace CleanNinja.Server.Controllers
             service.CreatedAt = DateTime.UtcNow;
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetServices), new { id = service.Id }, service);
+            return CreatedAtAction(nameof(GetService), new { id = service.Id }, service);
         }
 
         // PUT: api/services/5
@@ -57,6 +70,7 @@ namespace CleanNinja.Server.Controllers
             service.MonthlyPrice = updated.MonthlyPrice;
             service.YearlyPrice = updated.YearlyPrice;
             service.IsHighlighted = updated.IsHighlighted;
+            service.ShowInOffersPopup = updated.ShowInOffersPopup;
             await _context.SaveChangesAsync();
             return NoContent();
         }

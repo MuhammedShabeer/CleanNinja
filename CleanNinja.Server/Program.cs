@@ -140,6 +140,11 @@ using (var scope = app.Services.CreateScope())
             ALTER TABLE Services ADD DefaultDurationMinutes INT NOT NULL DEFAULT 60;
         END
 
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Services' AND COLUMN_NAME = 'ShowInOffersPopup')
+        BEGIN
+            ALTER TABLE Services ADD ShowInOffersPopup BIT NOT NULL DEFAULT 0;
+        END
+
         -- Add missing columns to Bookings
         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bookings' AND COLUMN_NAME = 'DurationMinutes')
         BEGIN

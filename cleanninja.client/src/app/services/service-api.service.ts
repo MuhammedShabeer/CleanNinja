@@ -42,6 +42,7 @@ export interface CleanService {
   monthlyPrice?: number;
   yearlyPrice?: number;
   defaultDurationMinutes: number;
+  showInOffersPopup: boolean;
   createdAt: string;
   media: ServiceMedia[];
   feedbacks: ServiceFeedback[];

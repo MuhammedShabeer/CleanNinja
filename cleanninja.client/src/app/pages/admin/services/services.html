@@ -20,6 +20,12 @@
               <svg cIcon name="cilPlus" class="me-2"></svg> Create
             </button>
           </c-col>
+          <c-col [md]="12" class="mt-2">
+            <c-form-check [switch]="true">
+              <input cFormCheckInput type="checkbox" id="showInOffersPopupNew" [(ngModel)]="newService.showInOffersPopup" />
+              <label cFormCheckLabel for="showInOffersPopupNew">Show in Offers Popup</label>
+            </c-form-check>
+          </c-col>
         </c-row>
       </c-card-body>
     </c-card>
@@ -142,6 +148,12 @@
                   <input cFormControl type="number" [(ngModel)]="s.monthlyPrice" />
                 </c-col>
               </c-row>
+              <div class="mb-4">
+                <c-form-check [switch]="true">
+                  <input cFormCheckInput type="checkbox" [id]="'showInOffersPopupEdit' + s.id" [(ngModel)]="s.showInOffersPopup" />
+                  <label cFormCheckLabel [for]="'showInOffersPopupEdit' + s.id">Show in Offers Popup</label>
+                </c-form-check>
+              </div>
               <div class="d-flex gap-2">
                 <button cButton color="success" class="flex-grow-1" (click)="saveService(s)">Save Settings</button>
                 <button cButton color="secondary" (click)="editingService = null">Cancel</button>

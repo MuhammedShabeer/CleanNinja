@@ -24,6 +24,9 @@ export class Landing implements OnInit, OnDestroy {
   public openFeedbackForms: { [id: number]: boolean } = {};
   public feedbackDrafts: { [id: number]: { customerName: string; rating: number; comment: string } } = {};
   public feedbackSuccess: { [id: number]: boolean } = {};
+  
+  public offerServices: CleanService[] = [];
+  public showOffersPopup: boolean = false;
 
   constructor(
       private seoService: SeoService,
@@ -45,6 +48,8 @@ export class Landing implements OnInit, OnDestroy {
       });
       this.serviceApi.getServices().subscribe(s => {
           this.services = s;
+          this.offerServices = s.filter(svc => svc.showInOffersPopup);
+          
           this.testimonials = []; // Clear and aggregate
           s.forEach(svc => {
               this.feedbackDrafts[svc.id] = { customerName: '', rating: 5, comment: '' };
@@ -68,6 +73,15 @@ export class Landing implements OnInit, OnDestroy {
 
           this.startAutoSlide();
           this.cdr.detectChanges();
+
+          // Check if popup should be shown (once per session)
+          if (this.offerServices.length > 0 && !sessionStorage.getItem('offersPopupShown')) {
+              setTimeout(() => {
+                  this.showOffersPopup = true;
+                  sessionStorage.setItem('offersPopupShown', 'true');
+                  this.cdr.detectChanges();
+              }, 2000);
+          }
       });
   }
 
