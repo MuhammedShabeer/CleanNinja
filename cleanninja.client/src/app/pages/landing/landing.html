@@ -1,66 +1,89 @@
-<div class="hero-section" style="padding: 120px 20px; text-align: center;">
+<div class="hero-section">
+  <div class="hero-overlay"></div>
   <div class="container hero-content">
-    <div class="hero-logo-wrap" style="animation: float 6s ease-in-out infinite; margin-bottom: 30px;">
-      <img src="assets/images/CleanNinjaNew.png" alt="Clean Ninja" style="max-height: 280px; filter: hue-rotate(30deg) saturate(1.5) drop-shadow(0 0 30px rgba(246, 129, 20, 0.6));">
-    </div>
-    
-    <h1 style="font-size: clamp(2.5rem, 8vw, 4.5rem); color: #fff; margin-bottom: 5px; line-height: 1; letter-spacing: -2px;">PREMIUM MOBILE VALETING</h1>
-    <p class="hero-tagline" style="font-family: var(--heading-font); font-size: 1.5rem; color: #fff; max-width: 800px; margin: 0 auto 50px; line-height: 1.4; text-transform: uppercase; letter-spacing: 2px; font-weight: 400;">
-      IN a mission to keep our <span style="color: #ff4d4d; font-weight: 800; border-bottom: 2px solid #ff4d4d;">RED LAND</span> clean
+    <h1 class="hero-main-title">EXPERT MOBILE VALETING<br><span class="text-primary-bright">& BIN CLEANING</span></h1>
+    <p class="hero-subtitle">
+      Professional, Fully Insured Detailing & Sanitization Services Delivered Straight to Your Driveway in Liverpool.
     </p>
     
     <div class="hero-actions">
       <a routerLink="/booking" class="btn-primary shimmer-effect hero-btn">Get Your Quote</a>
+      <a href="#services" class="hero-btn-outline">Our Services</a>
     </div>
   </div>
 </div>
 
 <!-- About Us Section -->
-<div class="container about-section">
+<div class="container about-section section-padding">
   <div class="about-grid">
     <div class="about-image">
-      <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: 20px; border: 4px solid var(--primary-color);">
-        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800" alt="Clean Ninja Van" style="width: 100%; height: auto; display: block;">
+      <div class="image-stack">
+        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800" alt="Clean Ninja Van" class="about-main-img">
+        <div class="usp-floating-card">
+          <span class="usp-icon">💎</span>
+          <div>
+            <strong>100% Guaranteed</strong>
+            <p>Premium Finish</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="about-text">
-      <h2 class="section-title" style="left: 0; transform: none; margin-top: 0;">Who We Are</h2>
-      <h3>Mobile Premium Valeting in Liverpool</h3>
-      <p>Clean Ninja is Liverpool's premier mobile valeting and bin cleaning specialist. We don't just clean; we restore. Our fully equipped "Ninja Vans" bring the highest standard of exterior foam washing and interior detailing straight to your driveway.</p>
-      <div class="usp-list">
-        <div class="usp-item"><span class="usp-icon">🛡️</span> Fully Insured</div>
-        <div class="usp-item"><span class="usp-icon">📍</span> Liverpool Based</div>
-        <div class="usp-item"><span class="usp-icon">⚡</span> Rapid Ninja Response</div>
-        <div class="usp-item"><span class="usp-icon">💎</span> 100% Satisfaction</div>
+      <h2 class="section-title">Who We Are</h2>
+      <h3 class="subtitle-text">Mobile Premium Valeting in Liverpool</h3>
+      <p class="desc-text">Clean Ninja is Liverpool's premier mobile valeting and bin cleaning specialist. We don't just clean; we restore. Our fully equipped "Ninja Vans" bring the highest standard of exterior foam washing and interior detailing straight to your driveway.</p>
+      <div class="usp-grid">
+        <div class="usp-feature">
+          <div class="usp-check">✓</div>
+          <span>Fully Insured & Professional</span>
+        </div>
+        <div class="usp-feature">
+          <div class="usp-check">✓</div>
+          <span>Liverpool Based Experts</span>
+        </div>
+        <div class="usp-feature">
+          <div class="usp-check">✓</div>
+          <span>Rapid Ninja Response Time</span>
+        </div>
+        <div class="usp-feature">
+          <div class="usp-check">✓</div>
+          <span>Eco-Friendly Cleaning Solutions</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Services Section -->
-<div class="services-section container">
-  <h2 class="section-title text-center">Ninja Services</h2>
+<div id="services" class="services-section container section-padding">
+  <div class="text-center mb-5">
+    <h2 class="section-title text-center">Ninja Services</h2>
+    <p class="section-subtitle">Premium mobile valeting and bin cleaning solutions for your vehicle and home.</p>
+  </div>
+  
   <div class="services-grid">
     <div class="service-card-wrapper" *ngFor="let service of services">
       <div *ngIf="service.isHighlighted" class="featured-badge">⭐ MOST POPULAR</div>
-      <div class="glass-card service-card" [class.is-highlighted]="service.isHighlighted">
-        <div class="service-icon-wrap" style="color: var(--primary-color);" [innerHTML]="service.icon"></div>
-        <h3 style="font-size: 1.8rem;">{{ service.name }}</h3>
-        <p style="margin-bottom: 20px;">{{ service.description }}</p>
-
-        <div class="service-price-row" style="justify-content: center; margin-bottom: 10px;">
-          <span *ngIf="service.discountedPrice" class="price-original">£{{ service.price | number:'1.2-2' }}</span>
-          <span class="price-current" style="font-size: 2rem;">£{{ (service.discountedPrice || service.price) | number:'1.2-2' }}</span>
+      <div class="professional-card service-card">
+        <div class="card-image-wrap">
+          <img [src]="getMediaUrl(service.media[0]?.url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="service.name" class="card-img" />
+          <div class="card-price-overlay">
+            <span class="price-tag">£{{ (service.discountedPrice || service.price) | number:'1.2-2' }}</span>
+          </div>
         </div>
-        <p *ngIf="service.monthlyPrice" style="font-size: 0.85rem; color: #aaa; margin-bottom: 20px; font-weight: 500;">
-          Monthly Subscription: <span style="color: #fff; font-weight: 700;">£{{ service.monthlyPrice | number:'1.2-2' }}</span>
-        </p>
+        
+        <div class="card-body">
+          <div class="service-icon-sm" [innerHTML]="service.icon"></div>
+          <h3 class="service-name">{{ service.name }}</h3>
+          <p class="service-desc">{{ service.description }}</p>
+          
+          <div class="service-meta" *ngIf="service.monthlyPrice">
+             <span class="monthly-badge">Subscription from £{{ service.monthlyPrice | number:'1.2-2' }}/mo</span>
+          </div>
 
-        <a routerLink="/booking" class="btn-primary" style="width: 100%; padding: 12px; font-size: 0.9rem;">Book This Service</a>
-
-        <!-- Media thumbnail -->
-        <div class="service-media" *ngIf="service.media && service.media.length > 0" style="margin-top: 25px;">
-          <img [src]="getMediaUrl(service.media[0].url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="service.name" class="service-thumb" style="border-radius: 12px; width: 100%; height: 200px; object-fit: cover;" />
+          <div class="card-footer">
+            <a routerLink="/booking" class="btn-primary w-100">Book Now</a>
+          </div>
         </div>
       </div>
     </div>
@@ -68,20 +91,25 @@
 </div>
 
 <!-- Testimonials Section -->
-<div class="container testimonials-section">
-  <h2 class="section-title text-center">Customer Reviews</h2>
-  <div class="testimonials-container">
-    <div class="testimonials-slider" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'">
-      <div class="glass-card testimonial-card" *ngFor="let t of testimonials; let i = index">
-        <div class="stars-display" style="margin-bottom: 15px; color: var(--primary-color);">
-          <span *ngFor="let s of [1,2,3,4,5]">★</span>
-        </div>
-        <p class="quote-text">"{{ t.comment }}"</p>
-        <div class="author-info">
-          <div class="author-avatar">{{ t.customerName.charAt(0) }}</div>
-          <div>
-            <strong style="display: block;">{{ t.customerName }}</strong>
-            <span style="font-size: 0.8rem; color: #777;">Verified Ninja Customer</span>
+<div class="testimonials-bg-wrap" style="background: var(--bg-secondary); padding: 100px 0;">
+  <div class="container testimonials-section">
+    <h2 class="section-title text-center">Customer Reviews</h2>
+    <div class="testimonials-container">
+      <div class="testimonials-slider" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'">
+        <div class="professional-card testimonial-card" *ngFor="let t of testimonials; let i = index">
+          <div class="testimonial-header">
+            <div class="stars-display">
+              <span *ngFor="let s of [1,2,3,4,5]">★</span>
+            </div>
+            <div class="quote-icon">"</div>
+          </div>
+          <p class="quote-text">{{ t.comment }}</p>
+          <div class="author-info">
+            <div class="author-avatar">{{ t.customerName.charAt(0) }}</div>
+            <div class="author-text">
+              <strong class="author-name">{{ t.customerName }}</strong>
+              <span class="author-status">Verified Ninja Customer</span>
+            </div>
           </div>
         </div>
       </div>
@@ -119,41 +147,59 @@
 </div>
 
 <!-- Contact Section -->
-<div class="container contact-section">
-  <h2 class="section-title text-center">Get In Touch</h2>
-  <div class="contact-grid">
-    <div class="contact-info-card glass-card">
-      <div class="info-item">
-        <h4>📞 Phone</h4>
-        <p>+44 7578 334674</p>
+<div class="container contact-section section-padding">
+  <div class="contact-card-wrap professional-card">
+    <div class="contact-grid">
+      <div class="contact-info-panel">
+        <div class="panel-header">
+          <h2 class="section-title" style="color:#fff;">Get In Touch</h2>
+          <p style="color:#ccc;">Expert advice and bookings available daily.</p>
+        </div>
+        <div class="info-items">
+          <div class="info-item-rev">
+            <span class="info-icon">📞</span>
+            <div>
+              <label>Phone</label>
+              <p>+44 7578 334674</p>
+            </div>
+          </div>
+          <div class="info-item-rev">
+            <span class="info-icon">📧</span>
+            <div>
+              <label>Email</label>
+              <p>hello@cleanninja.uk</p>
+            </div>
+          </div>
+          <div class="info-item-rev">
+            <span class="info-icon">📍</span>
+            <div>
+              <label>Service Area</label>
+              <p>Liverpool & Surrounding Areas</p>
+            </div>
+          </div>
+        </div>
+        <div class="instagram-link-footer">
+          <a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">Follow Our Journey →</a>
+        </div>
       </div>
-      <div class="info-item">
-        <h4>📧 Email</h4>
-        <p>hello@cleanninja.uk</p>
+      
+      <div class="contact-form-panel">
+        <div class="form-row">
+          <div class="form-group-custom">
+            <label>Name</label>
+            <input type="text" placeholder="Your Name">
+          </div>
+          <div class="form-group-custom">
+            <label>Phone</label>
+            <input type="tel" placeholder="Your Phone Number">
+          </div>
+        </div>
+        <div class="form-group-custom">
+          <label>Inquiry Message</label>
+          <textarea rows="4" placeholder="How can our Ninja's help you today?"></textarea>
+        </div>
+        <button class="btn-primary w-100 py-3 mt-3">Send Your Request</button>
       </div>
-      <div class="info-item">
-        <h4>📍 Service Area</h4>
-        <p>Serving all of Liverpool and surrounding areas.</p>
-      </div>
-      <div class="instagram-link">
-        <a href="#" [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">Follow @clean_ninja_official</a>
-      </div>
-    </div>
-    
-    <div class="contact-form-side glass-card">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" placeholder="Ninja Customer">
-      </div>
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" placeholder="07123 456789">
-      </div>
-      <div class="form-group">
-        <label>Message</label>
-        <textarea rows="4" placeholder="How can we help you?"></textarea>
-      </div>
-      <button class="btn-primary" style="width: 100%;">Send Message</button>
     </div>
   </div>
 

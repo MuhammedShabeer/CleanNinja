@@ -71,6 +71,8 @@ namespace CleanNinja.Server.Controllers
             service.YearlyPrice = updated.YearlyPrice;
             service.IsHighlighted = updated.IsHighlighted;
             service.ShowInOffersPopup = updated.ShowInOffersPopup;
+            service.IsActive = updated.IsActive;
+            service.DefaultDurationMinutes = updated.DefaultDurationMinutes;
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -81,7 +83,7 @@ namespace CleanNinja.Server.Controllers
         {
             var service = await _context.Services.FindAsync(id);
             if (service == null) return NotFound();
-            service.IsActive = false;
+            _context.Services.Remove(service);
             await _context.SaveChangesAsync();
             return NoContent();
         }

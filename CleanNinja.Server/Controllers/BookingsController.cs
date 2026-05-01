@@ -76,7 +76,8 @@ namespace CleanNinja.Server.Controllers
             // If duration not set, use default from service
             if (booking.DurationMinutes <= 0)
             {
-                var service = await _context.Services.FirstOrDefaultAsync(s => s.Name == booking.ServicePackage);
+                var baseServiceName = booking.ServicePackage.Split(" (")[0];
+                var service = await _context.Services.FirstOrDefaultAsync(s => s.Name == baseServiceName);
                 booking.DurationMinutes = service?.DefaultDurationMinutes ?? 60;
             }
 

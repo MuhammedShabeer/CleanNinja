@@ -60,39 +60,39 @@
       </div>
 
       <form *ngIf="!submitSuccess" class="booking-form glass-card" (submit)="submitBooking($event)">
-        <!-- Details -->
+          <!-- Details -->
         <div class="row g-3">
           <div class="col-md-6 form-group">
-            <label class="fw-bold mb-2">Full Name</label>
-            <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe" class="form-control bg-dark text-white border-secondary" />
+            <label class="form-label fw-bold mb-2">Full Name</label>
+            <input type="text" [(ngModel)]="customerName" name="name" required placeholder="John Doe" class="form-control" />
           </div>
           <div class="col-md-6 form-group">
-            <label class="fw-bold mb-2">Phone Number</label>
-            <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" class="form-control bg-dark text-white border-secondary" />
+            <label class="form-label fw-bold mb-2">Phone Number</label>
+            <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" class="form-control" />
           </div>
           <div class="col-12 form-group">
-            <label class="fw-bold mb-2">Address / Location</label>
-            <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" class="form-control bg-dark text-white border-secondary" />
+            <label class="form-label fw-bold mb-2">Address / Location</label>
+            <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" class="form-control" />
           </div>
         </div>
 
-        <hr class="my-4 border-secondary opacity-25">
+        <hr class="my-4 opacity-10">
 
         <!-- Date & Slot Selection -->
         <div class="row g-3" *ngIf="selectedService">
           <div class="col-md-6 form-group">
-            <label class="fw-bold mb-2">Select Date</label>
-            <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" (change)="onDateChange()" class="form-control bg-dark text-white border-secondary" required />
+            <label class="form-label fw-bold mb-2">Select Date</label>
+            <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" (change)="onDateChange()" class="form-control" required />
           </div>
           <div class="col-md-6 form-group">
-            <label class="fw-bold mb-2">Select Time Slot</label>
+            <label class="form-label fw-bold mb-2">Select Time Slot</label>
             <div *ngIf="isLoadingSlots" class="py-2 text-warning small"><span class="spinner-border spinner-border-sm me-2"></span>Checking availability...</div>
             <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && scheduledDate" class="py-2 text-danger small">No slots available for this date.</div>
-            <div *ngIf="!isLoadingSlots && availableSlots.length > 0" class="slots-container d-flex flex-wrap gap-2 py-1">
+            <div *ngIf="!isLoadingSlots && availableSlots.length > 0" class="slots-container py-1">
               <button type="button" 
                 *ngFor="let slot of availableSlots" 
                 (click)="selectSlot(slot)"
-                class="btn btn-sm"
+                class="btn"
                 [class.btn-primary]="selectedSlot === slot"
                 [class.btn-outline-secondary]="selectedSlot !== slot">
                 {{ slot | date:'shortTime' }}
@@ -101,13 +101,13 @@
           </div>
         </div>
 
-        <hr class="my-4 border-secondary opacity-25">
+        <hr class="my-4 opacity-10">
 
         <!-- Frequency -->
         <div class="row g-3">
           <div class="col-md-6 form-group">
-            <label class="fw-bold mb-2">Service Frequency</label>
-            <select [(ngModel)]="selectedFrequency" name="frequency" class="form-select bg-dark text-white border-secondary">
+            <label class="form-label fw-bold mb-2">Service Frequency</label>
+            <select [(ngModel)]="selectedFrequency" name="frequency" class="form-select">
               <option value="Once">One-time Service</option>
               <option value="Every 2 Days">Once in 2 Days</option>
               <option value="Weekly">Weekly Service</option>
@@ -115,26 +115,26 @@
             </select>
           </div>
           <div class="col-md-6 form-group" *ngIf="selectedFrequency !== 'Once'">
-            <label class="fw-bold mb-2">Occurrences ({{ frequencyLabel }})</label>
+            <label class="form-label fw-bold mb-2">Occurrences ({{ frequencyLabel }})</label>
             <div class="input-group">
-              <input type="number" [(ngModel)]="frequencyCount" name="frequencyCount" class="form-control bg-dark text-white border-secondary" [min]="2" required />
-              <span class="input-group-text bg-dark text-white-50 border-secondary small">sessions</span>
+              <input type="number" [(ngModel)]="frequencyCount" name="frequencyCount" class="form-control" [min]="2" required />
+              <span class="input-group-text small">sessions</span>
             </div>
           </div>
         </div>
 
-        <div class="selected-summary mt-4 p-3 rounded bg-white bg-opacity-10 border border-white border-opacity-10" *ngIf="selectedService">
+        <div class="selected-summary mt-4 p-3 rounded" *ngIf="selectedService">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-              <h5 class="mb-0 text-white">{{ selectedService.name }}</h5>
-              <div class="small text-white-50" *ngIf="selectedSlot">
+              <h5 class="mb-0 fw-bold">{{ selectedService.name }}</h5>
+              <div class="small text-muted" *ngIf="selectedSlot">
                 Scheduled for: {{ selectedSlot | date:'longDate' }} at {{ selectedSlot | date:'shortTime' }}
                 <span *ngIf="selectedFrequency !== 'Once'"> — Repeating {{ selectedFrequency }} x {{ frequencyCount }}</span>
               </div>
             </div>
             <div class="text-end">
               <h4 class="mb-0 text-primary fw-bold">£{{ totalPrice | number:'1.2-2' }}</h4>
-              <small *ngIf="selectedFrequency !== 'Once'" class="text-white-50 d-block">£{{ (totalPrice / frequencyCount) | number:'1.2-2' }} / session</small>
+              <small *ngIf="selectedFrequency !== 'Once'" class="text-muted d-block">£{{ (totalPrice / frequencyCount) | number:'1.2-2' }} / session</small>
             </div>
           </div>
         </div>

@@ -1,12 +1,16 @@
 <div class="landing-theme" *ngIf="showBrandedHeader">
   <header class="app-header">
-    <div class="container" style="display: flex; align-items: center; justify-content: space-between;">
+    <div class="container d-flex justify-content-between align-items-center">
       <div class="logo">
-        <a routerLink="/"><img src="assets/images/CleanNinjaWB.png" alt="Clean Ninja Logo" style="height: 60px; vertical-align: middle; filter: hue-rotate(30deg) saturate(1.5);"></a>
+        <a routerLink="/"><img src="assets/images/CleanNinjaNew.png" alt="Clean Ninja"> CLEAN NINJA</a>
       </div>
-      <nav class="nav-links">
-        <a routerLink="/">Home</a>
-        <a routerLink="/booking" class="btn-primary">Book Now</a>
+      <button class="menu-trigger" (click)="toggleMobileMenu()">☰</button>
+      <nav class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+        <a routerLink="/" (click)="closeMobileMenu()">Home</a>
+        <a href="#services" (click)="closeMobileMenu()">Services</a>
+        <a href="#gallery" (click)="closeMobileMenu()">Gallery</a>
+        <a href="#contact" (click)="closeMobileMenu()">Contact</a>
+        <a routerLink="/booking" class="btn-primary shimmer-effect" (click)="closeMobileMenu()">Book Now</a>
       </nav>
     </div>
   </header>

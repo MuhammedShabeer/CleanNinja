@@ -15,6 +15,7 @@ export class Landing implements OnInit, OnDestroy {
   public gallery: GalleryImage[] = [];
   public instagramHandle: string = '';
   public backendUrl: string = ''; // Relative paths for media resolution
+  public isMobileMenuOpen: boolean = false;
 
   // Carousel State
   public testimonials: ServiceFeedback[] = [];
@@ -140,5 +141,14 @@ export class Landing implements OnInit, OnDestroy {
       if (!url) return 'assets/images/service_placeholder.png';
       if (url.startsWith('http')) return url;
       return `${this.backendUrl}${url}`;
+  }
+
+  // Mobile Menu Logic
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 }

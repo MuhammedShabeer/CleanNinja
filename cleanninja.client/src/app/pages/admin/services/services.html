@@ -5,12 +5,14 @@
       <c-card-header><strong>Add New Service</strong></c-card-header>
       <c-card-body>
         <c-row class="g-3">
-          <c-col [md]="4">
+          <c-col [md]="3">
             <input cFormControl type="text" [(ngModel)]="newService.name" placeholder="Service Name (e.g. Full Valet)" />
           </c-col>
-          <c-col [md]="4">
-            <!-- Use text input for small strings or comma separated features -->
-            <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Description or Features (comma separated)" />
+          <c-col [md]="3">
+            <input cFormControl type="text" [(ngModel)]="newService.description" placeholder="Description or Features" />
+          </c-col>
+          <c-col [md]="2">
+            <input cFormControl type="number" [(ngModel)]="newService.defaultDurationMinutes" placeholder="Duration (mins)" />
           </c-col>
           <c-col [md]="2">
             <input cFormControl type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" />
@@ -126,6 +128,10 @@
                   <c-col [sm]="4">
                     <label cLabel class="small text-muted">Sort Order</label>
                     <input cFormControl type="number" [(ngModel)]="s.sortOrder" />
+                  </c-col>
+                  <c-col [sm]="4">
+                    <label cLabel class="small text-muted">Duration (Minutes)</label>
+                    <input cFormControl type="number" [(ngModel)]="s.defaultDurationMinutes" />
                   </c-col>
               </c-row>
 

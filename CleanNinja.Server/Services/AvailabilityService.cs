@@ -45,6 +45,11 @@ namespace CleanNinja.Server.Services
                 .OrderBy(s => s.ScheduledStart)
                 .ToListAsync();
 
+            // Fetch pending bookings that haven't been converted to WorkSchedules yet
+            var pendingBookings = await _context.Bookings
+                .Where(b => b.Status == "Pending" && b.ScheduledDate != null && b.ScheduledDate >= date.Date && b.ScheduledDate < date.Date.AddDays(1))
+                .ToListAsync();
+
             var slots = new List<DateTime>();
             var currentPos = startBusiness;
 
@@ -53,11 +58,15 @@ namespace CleanNinja.Server.Services
             {
                 var nextEnd = currentPos.AddMinutes(duration);
                 
-                // Check if this slot overlaps with any existing schedule
+                // Check if this slot overlaps with any existing schedule or pending booking
                 bool isOverlap = existingSchedules.Any(s => 
                     (currentPos >= s.ScheduledStart && currentPos < s.ScheduledEnd) ||
                     (nextEnd > s.ScheduledStart && nextEnd <= s.ScheduledEnd) ||
                     (currentPos <= s.ScheduledStart && nextEnd >= s.ScheduledEnd)
+                ) || pendingBookings.Any(b => 
+                    (currentPos >= b.ScheduledDate!.Value && currentPos < b.ScheduledDate.Value.AddMinutes(b.DurationMinutes)) ||
+                    (nextEnd > b.ScheduledDate!.Value && nextEnd <= b.ScheduledDate.Value.AddMinutes(b.DurationMinutes)) ||
+                    (currentPos <= b.ScheduledDate!.Value && nextEnd >= b.ScheduledDate.Value.AddMinutes(b.DurationMinutes))
                 );
 
                 if (!isOverlap)

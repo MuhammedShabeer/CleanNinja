@@ -12,6 +12,7 @@ export class App implements OnInit {
   public showBrandedHeader: boolean = true;
   public deferredPrompt: any;
   public showInstallButton: boolean = false;
+  public isMobileMenuOpen: boolean = false;
 
   constructor(
     private swUpdate: SwUpdate,
@@ -22,6 +23,14 @@ export class App implements OnInit {
     ).subscribe((event: any) => {
       this.updateVisibility(event.urlAfterRedirects);
     });
+  }
+
+  public toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  public closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 
   ngOnInit(): void {

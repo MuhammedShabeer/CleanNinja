@@ -8,7 +8,7 @@ import { ServiceApiService, CleanService, ServiceFeedback } from '../../../servi
 })
 export class AdminServices implements OnInit {
   public services: CleanService[] = [];
-  public newService: any = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false };
+  public newService: any = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
   public loadedFeedbacks: { [serviceId: number]: ServiceFeedback[] } = {};
@@ -35,7 +35,7 @@ export class AdminServices implements OnInit {
     this.newService.isActive = true;
     this.serviceApi.createService(this.newService).subscribe({
       next: () => {
-        this.newService = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true };
+        this.newService = { name: '', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
         this.fetchServices();
       },
       error: (err) => {

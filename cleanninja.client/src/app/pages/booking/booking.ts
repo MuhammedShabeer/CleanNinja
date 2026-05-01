@@ -120,7 +120,8 @@ export class Booking implements OnInit {
       frequency: this.selectedFrequency,
       frequencyCount: this.selectedFrequency !== 'Once' ? this.frequencyCount : 1,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      durationMinutes: this.selectedService.defaultDurationMinutes
     };
     if (this.scheduledDate && this.selectedSlot) {
       // Create a full DateTime from date and slot
