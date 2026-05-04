@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { ServiceApiService, CleanService } from '../../services/service-api.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { ServiceApiService, CleanService } from '../../services/service-api.serv
 })
 export class Booking implements OnInit {
   public services: CleanService[] = [];
+  public categories: string[] = [];
+  public selectedCategory: string = 'All';
   public selectedService: CleanService | null = null;
   public customerName: string = '';
   public phone: string = '';
@@ -28,6 +31,7 @@ export class Booking implements OnInit {
   constructor(
     private serviceApi: ServiceApiService,
     private http: HttpClient,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -64,8 +68,39 @@ export class Booking implements OnInit {
   ngOnInit(): void {
     this.serviceApi.getServices().subscribe(s => {
       this.services = s;
+      
+      // Extract unique categories, ignoring empty/null ones
+      const cats = new Set(s.map(svc => svc.category).filter(c => !!c));
+      this.categories = Array.from(cats);
+      
+      // Check query parameters
+      this.route.queryParams.subscribe(params => {
+        if (params['category']) {
+          this.selectedCategory = params['category'];
+        }
+        if (params['serviceId']) {
+          const svcId = Number(params['serviceId']);
+          const svc = this.services.find(x => x.id === svcId);
+          if (svc) {
+            this.selectedCategory = svc.category || 'All';
+            this.selectService(svc);
+          }
+        }
+      });
+      
       this.cdr.detectChanges();
     });
+  }
+
+  get filteredServices(): CleanService[] {
+    if (this.selectedCategory === 'All') {
+      return this.services;
+    }
+    return this.services.filter(s => s.category === this.selectedCategory);
+  }
+
+  selectCategory(cat: string): void {
+    this.selectedCategory = cat;
   }
 
   selectService(s: CleanService): void {

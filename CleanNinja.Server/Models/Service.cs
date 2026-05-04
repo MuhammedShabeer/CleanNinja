@@ -13,6 +13,7 @@ namespace CleanNinja.Server.Models
         public int SortOrder { get; set; } = 0;
         public int DefaultDurationMinutes { get; set; } = 60;
         public bool ShowInOffersPopup { get; set; } = false;
+        public string Category { get; set; } = "Uncategorized";
         public decimal? Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
         public decimal? WeeklyPrice { get; set; }

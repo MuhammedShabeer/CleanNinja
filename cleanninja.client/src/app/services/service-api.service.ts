@@ -36,6 +36,7 @@ export interface CleanService {
   isActive: boolean;
   isHighlighted: boolean;
   sortOrder: number;
+  category: string;
   price?: number;
   discountedPrice?: number;
   weeklyPrice?: number;

@@ -14,10 +14,19 @@
     <!-- Step 1: Choose Service -->
     <div class="step-section">
       <h2 class="step-title"><span class="step-num">1</span> Choose a Service</h2>
+
+      <!-- Category Filter -->
+      <div class="category-tabs" style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px;">
+        <button class="btn" [class.btn-primary]="selectedCategory === 'All'" [class.btn-outline-secondary]="selectedCategory !== 'All'" (click)="selectCategory('All')">All Services</button>
+        <button *ngFor="let cat of categories" class="btn" [class.btn-primary]="selectedCategory === cat" [class.btn-outline-secondary]="selectedCategory !== cat" (click)="selectCategory(cat)">
+          {{ cat }}
+        </button>
+      </div>
+
       <div class="services-grid">
         <div
           class="service-card glass-card"
-          *ngFor="let s of services"
+          *ngFor="let s of filteredServices"
           [class.selected]="selectedService?.id === s.id"
           (click)="selectService(s)">
 
@@ -31,8 +40,8 @@
           </div>
 
           <div class="service-info">
-            <h3>{{ s.icon }} {{ s.name }}</h3>
-            <p>{{ s.description }}</p>
+            <h3><span *ngIf="s.icon">{{ s.icon }} </span>{{ s.name }}</h3>
+            <div class="service-desc" [innerHTML]="s.description"></div>
             <div class="price-row" *ngIf="s.price">
               <span *ngIf="s.discountedPrice" class="price-original">£{{ s.price | number:'1.2-2' }}</span>
               <span class="price-current">£{{ (s.discountedPrice ?? s.price) | number:'1.2-2' }}</span>

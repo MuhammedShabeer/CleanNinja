@@ -1,14 +1,39 @@
 <div class="hero-section">
   <div class="hero-overlay"></div>
   <div class="container hero-content">
-    <h1 class="hero-main-title">EXPERT MOBILE VALETING<br><span class="text-primary-bright">& BIN CLEANING</span></h1>
+    <h1 class="hero-main-title">EXPERT MOBILE VALETING<br><span class="text-primary-bright">& CLEANING SERVICES</span></h1>
     <p class="hero-subtitle">
       Professional, Fully Insured Detailing & Sanitization Services Delivered Straight to Your Driveway in Liverpool.
     </p>
     
     <div class="hero-actions">
-      <a routerLink="/booking" class="btn-primary shimmer-effect hero-btn">Get Your Quote</a>
-      <a href="#services" class="hero-btn-outline">Our Services</a>
+      <a href="#services" class="btn-primary shimmer-effect hero-btn">Our Services</a>
+    </div>
+  </div>
+</div>
+
+<!-- Deals Section -->
+<div id="deals" class="container deals-section section-padding" *ngIf="offerServices.length > 0">
+  <div class="text-center mb-5">
+    <div class="ninja-badge" style="display: inline-block; background: var(--primary-color); color: #000; padding: 4px 12px; font-weight: 800; border-radius: 4px; margin-bottom: 10px;">PREMIUM DEALS</div>
+    <h2 class="section-title text-center">Exclusive Limited Offers</h2>
+    <p class="section-subtitle">Grab these premium valeting and cleaning deals before they're gone!</p>
+  </div>
+  <div class="deals-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+    <div class="professional-card deal-card" *ngFor="let svc of offerServices" style="padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(20,20,20,0.6); backdrop-filter: blur(10px);">
+      <div class="deal-icon" [innerHTML]="svc.icon" style="font-size: 3rem; margin-bottom: 15px;"></div>
+      <div class="deal-content">
+        <h3 style="color: #fff; font-weight: 700; margin-bottom: 10px;">{{ svc.name }}</h3>
+        <div style="color: #aaa; font-size: 0.95rem; margin-bottom: 20px;" [innerHTML]="svc.description"></div>
+        <div class="deal-pricing" style="margin-bottom: 25px;">
+          <span class="old-price" *ngIf="svc.price" style="text-decoration: line-through; color: #888; margin-right: 10px;">£{{ svc.price | number:'1.2-2' }}</span>
+          <span class="new-price" style="color: var(--primary-color); font-weight: 800; font-size: 1.5rem;">£{{ (svc.discountedPrice || svc.price) | number:'1.2-2' }}</span>
+          <div *ngIf="svc.monthlyPrice" style="margin-top: 5px;">
+            <span class="monthly-tag" style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Monthly: £{{ svc.monthlyPrice | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+      <a routerLink="/booking" [queryParams]="{serviceId: svc.id}" class="btn-primary shimmer-effect deal-btn" style="width: 100%; display: block; padding: 12px;">Claim Deal</a>
     </div>
   </div>
 </div>
@@ -30,8 +55,8 @@
     </div>
     <div class="about-text">
       <h2 class="section-title">Who We Are</h2>
-      <h3 class="subtitle-text">Mobile Premium Valeting in Liverpool</h3>
-      <p class="desc-text">Clean Ninja is Liverpool's premier mobile valeting and bin cleaning specialist. We don't just clean; we restore. Our fully equipped "Ninja Vans" bring the highest standard of exterior foam washing and interior detailing straight to your driveway.</p>
+      <h3 class="subtitle-text">Premium Mobile Cleaning Services in Liverpool</h3>
+      <p class="desc-text">Clean Ninja is a trusted, professional cleaning company delivering high-quality services across Liverpool and surrounding areas. We specialise in a wide range of solutions including mobile car valeting, home deep cleaning, end of tenancy cleaning, window cleaning, and pavement cleaning.<br><br>Our goal is simple — we don’t just clean, we transform spaces. Whether it’s restoring the shine to your vehicle, bringing freshness back to your home, or preparing a property for its next tenant, our experienced team ensures every job is completed to the highest standard.<br><br>With fully equipped mobile units and a commitment to reliability, we bring convenience right to your doorstep. Clean Ninja combines professional expertise with eco-friendly practices to deliver results you can trust every time.</p>
       <div class="usp-grid">
         <div class="usp-feature">
           <div class="usp-check">✓</div>
@@ -39,11 +64,11 @@
         </div>
         <div class="usp-feature">
           <div class="usp-check">✓</div>
-          <span>Liverpool Based Experts</span>
+          <span>Liverpool-Based Cleaning Experts</span>
         </div>
         <div class="usp-feature">
           <div class="usp-check">✓</div>
-          <span>Rapid Ninja Response Time</span>
+          <span>Fast & Reliable Service</span>
         </div>
         <div class="usp-feature">
           <div class="usp-check">✓</div>
@@ -58,31 +83,26 @@
 <div id="services" class="services-section container section-padding">
   <div class="text-center mb-5">
     <h2 class="section-title text-center">Ninja Services</h2>
-    <p class="section-subtitle">Premium mobile valeting and bin cleaning solutions for your vehicle and home.</p>
+    <p class="section-subtitle">Premium mobile valeting and cleaning solutions for your vehicle and home.</p>
   </div>
   
   <div class="services-grid">
-    <div class="service-card-wrapper" *ngFor="let service of services">
-      <div *ngIf="service.isHighlighted" class="featured-badge">⭐ MOST POPULAR</div>
+    <div class="service-card-wrapper" *ngFor="let cat of landingCategories">
       <div class="professional-card service-card">
         <div class="card-image-wrap">
-          <img [src]="getMediaUrl(service.media[0]?.url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="service.name" class="card-img" />
+          <img [src]="getMediaUrl(cat.mediaUrl)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="cat.name" class="card-img" />
           <div class="card-price-overlay">
-            <span class="price-tag">£{{ (service.discountedPrice || service.price) | number:'1.2-2' }}</span>
+            <span class="price-tag">{{ cat.serviceCount > 1 ? cat.serviceCount + ' Packages' : 'Book Now' }}</span>
           </div>
         </div>
         
         <div class="card-body">
-          <div class="service-icon-sm" [innerHTML]="service.icon"></div>
-          <h3 class="service-name">{{ service.name }}</h3>
-          <p class="service-desc">{{ service.description }}</p>
+          <div class="service-icon-sm" [innerHTML]="cat.icon"></div>
+          <h3 class="service-name"><span *ngIf="cat.icon">{{ cat.icon }} </span>{{ cat.name }}</h3>
+          <div class="service-desc">Professional {{ cat.name.toLowerCase() }} solutions for your home or vehicle.</div>
           
-          <div class="service-meta" *ngIf="service.monthlyPrice">
-             <span class="monthly-badge">Subscription from £{{ service.monthlyPrice | number:'1.2-2' }}/mo</span>
-          </div>
-
           <div class="card-footer">
-            <a routerLink="/booking" class="btn-primary w-100">Book Now</a>
+            <a [routerLink]="['/booking']" [queryParams]="cat.isStandalone ? { serviceId: cat.serviceId } : { category: cat.name }" class="btn-primary w-100">View {{ cat.name }}</a>
           </div>
         </div>
       </div>
@@ -209,35 +229,3 @@
   </div>
 </div>
 
-<!-- Special Offers Popup -->
-<div class="offers-popup-overlay" *ngIf="showOffersPopup" (click)="showOffersPopup = false">
-  <div class="offers-popup-content glass-card" (click)="$event.stopPropagation()">
-    <button class="close-popup" (click)="showOffersPopup = false">&times;</button>
-    
-    <div class="popup-header">
-      <div class="ninja-badge">NINJA DEALS</div>
-      <h2>Exclusive Limited Offers</h2>
-      <p>Grab these premium valeting deals before they're gone!</p>
-    </div>
-
-    <div class="popup-offers-list">
-      <div class="popup-offer-item" *ngFor="let svc of offerServices">
-        <div class="offer-icon" [innerHTML]="svc.icon"></div>
-        <div class="offer-details">
-          <h4>{{ svc.name }}</h4>
-          <p>{{ svc.description }}</p>
-          <div class="offer-pricing" style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-            <span class="old-price" *ngIf="svc.price" style="text-decoration: line-through; color: #888; font-size: 0.9rem;">£{{ svc.price }}</span>
-            <span class="new-price" style="color: var(--primary-color); font-weight: 800; font-size: 1.3rem;">£{{ svc.discountedPrice || svc.price }}</span>
-            <span class="monthly-tag" *ngIf="svc.monthlyPrice" style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">Monthly: £{{ svc.monthlyPrice }}</span>
-          </div>
-        </div>
-        <a routerLink="/booking" (click)="showOffersPopup = false" class="btn-primary shimmer-effect" style="white-space: nowrap; padding: 10px 20px;">Claim Deal</a>
-      </div>
-    </div>
-    
-    <div class="popup-footer">
-      <p>Premium Mobile Service Straight To Your Door</p>
-    </div>
-  </div>
-</div>

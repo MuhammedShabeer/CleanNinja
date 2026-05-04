@@ -12,6 +12,7 @@ import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '
 export class Landing implements OnInit, OnDestroy {
   public tagline: string = '';
   public services: CleanService[] = [];
+  public landingCategories: any[] = [];
   public gallery: GalleryImage[] = [];
   public instagramHandle: string = '';
   public backendUrl: string = ''; // Relative paths for media resolution
@@ -27,7 +28,6 @@ export class Landing implements OnInit, OnDestroy {
   public feedbackSuccess: { [id: number]: boolean } = {};
   
   public offerServices: CleanService[] = [];
-  public showOffersPopup: boolean = false;
 
   constructor(
       private seoService: SeoService,
@@ -48,8 +48,34 @@ export class Landing implements OnInit, OnDestroy {
           this.cdr.detectChanges();
       });
       this.serviceApi.getServices().subscribe(s => {
-          this.services = s;
-          this.offerServices = s.filter(svc => svc.showInOffersPopup);
+          this.services = s.filter(svc => svc.name !== 'Bin Cleaning');
+          this.offerServices = this.services.filter(svc => svc.showInOffersPopup);
+
+          // Extract categories for the landing page grid
+          const cats = new Set(this.services.map(svc => svc.category).filter(c => !!c && c !== 'Uncategorized'));
+          this.landingCategories = Array.from(cats).map(catName => {
+              const catServices = this.services.filter(svc => svc.category === catName);
+              const firstWithMedia = catServices.find(svc => svc.media && svc.media.length > 0);
+              return {
+                  name: catName,
+                  mediaUrl: firstWithMedia?.media[0]?.url,
+                  icon: catServices[0]?.icon || '✨',
+                  serviceCount: catServices.length
+              };
+          });
+          
+          // Add uncategorized services as their own standalone cards in the category grid if desired,
+          // or just map them to a "General" category. Actually, let's include 'Uncategorized' services as their own categories.
+          this.services.filter(svc => svc.category === 'Uncategorized').forEach(svc => {
+              this.landingCategories.push({
+                  name: svc.name,
+                  mediaUrl: svc.media && svc.media.length > 0 ? svc.media[0].url : undefined,
+                  icon: svc.icon || '✨',
+                  serviceCount: 1,
+                  isStandalone: true,
+                  serviceId: svc.id
+              });
+          });
           
           this.testimonials = []; // Clear and aggregate
           s.forEach(svc => {
@@ -66,7 +92,7 @@ export class Landing implements OnInit, OnDestroy {
           // Add default testimonials if none exist yet
           if (this.testimonials.length === 0) {
             this.testimonials = [
-              { id: 0, serviceId: 0, customerName: 'John Doe', rating: 5, comment: 'Best bin cleaning service in Liverpool. They are on time, professional and the results are amazing. Highly recommended!', isApproved: true, createdAt: '' },
+              { id: 0, serviceId: 0, customerName: 'John Doe', rating: 5, comment: 'Best valeting service in Liverpool. They are on time, professional and the results are amazing. Highly recommended!', isApproved: true, createdAt: '' },
               { id: 0, serviceId: 0, customerName: 'Sarah Smith', rating: 5, comment: 'My car looks brand new! The interior detailing is second to none. Ninja speed and quality!', isApproved: true, createdAt: '' },
               { id: 0, serviceId: 0, customerName: 'Mike Wilson', rating: 5, comment: 'Great value for money. The mobile service is so convenient. Five stars!', isApproved: true, createdAt: '' }
             ];
@@ -75,14 +101,7 @@ export class Landing implements OnInit, OnDestroy {
           this.startAutoSlide();
           this.cdr.detectChanges();
 
-          // Check if popup should be shown (once per session)
-          if (this.offerServices.length > 0 && !sessionStorage.getItem('offersPopupShown')) {
-              setTimeout(() => {
-                  this.showOffersPopup = true;
-                  sessionStorage.setItem('offersPopupShown', 'true');
-                  this.cdr.detectChanges();
-              }, 2000);
-          }
+
       });
   }
 
