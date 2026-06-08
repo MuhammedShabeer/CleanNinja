@@ -19,7 +19,7 @@ namespace CleanNinja.Server.Controllers
         }
 
         [HttpGet("available-slots")]
-        public async Task<ActionResult<IEnumerable<DateTime>>> GetAvailableSlots([FromQuery] int serviceId, [FromQuery] DateTime date)
+        public async Task<ActionResult<IEnumerable<TimeSlotDto>>> GetAvailableSlots([FromQuery] int serviceId, [FromQuery] DateTime date)
         {
             return await _availabilityService.GetAvailableSlotsAsync(serviceId, date);
         }

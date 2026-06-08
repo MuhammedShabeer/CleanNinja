@@ -10,10 +10,12 @@ namespace CleanNinja.Server.Controllers
     public class ContentController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ContentController(AppDbContext context)
+        public ContentController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/content
@@ -54,6 +56,52 @@ namespace CleanNinja.Server.Controllers
         private bool SiteContentExists(int id)
         {
             return _context.SiteContent.Any(e => e.Id == id);
+        }
+
+        // POST: api/content/upload-flyer
+        [HttpPost("upload-flyer")]
+        public async Task<IActionResult> UploadFlyer(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("No file provided.");
+
+            var ext = Path.GetExtension(file.FileName).ToLower();
+            if (!new[] { ".png", ".jpg", ".jpeg", ".gif", ".webp" }.Contains(ext))
+            {
+                return BadRequest("Invalid image format.");
+            }
+
+            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "flyers");
+            Directory.CreateDirectory(uploadsDir);
+            var uniqueName = $"{Guid.NewGuid()}{ext}";
+            var filePath = Path.Combine(uploadsDir, uniqueName);
+
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            var fileUrl = $"/uploads/flyers/{uniqueName}";
+
+            var flyerUrlContent = await _context.SiteContent.FirstOrDefaultAsync(s => s.Key == "OfferFlyerUrl");
+            if (flyerUrlContent != null)
+            {
+                flyerUrlContent.Value = fileUrl;
+            }
+            else
+            {
+                _context.SiteContent.Add(new SiteContent { Section = "Offers", Key = "OfferFlyerUrl", Value = fileUrl });
+            }
+
+            var flyerActiveContent = await _context.SiteContent.FirstOrDefaultAsync(s => s.Key == "OfferFlyerActive");
+            if (flyerActiveContent != null)
+            {
+                flyerActiveContent.Value = "true"; // Auto-activate on upload
+            }
+            else
+            {
+                _context.SiteContent.Add(new SiteContent { Section = "Offers", Key = "OfferFlyerActive", Value = "true" });
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { url = fileUrl });
         }
     }
 }

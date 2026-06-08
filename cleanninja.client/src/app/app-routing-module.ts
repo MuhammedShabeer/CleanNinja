@@ -16,6 +16,7 @@ import { AdminGallery } from './pages/admin/gallery/gallery';
 import { AdminContent } from './pages/admin/content/content';
 import { AdminUsers } from './pages/admin/users/users';
 import { AdminExpenses } from './pages/admin/expenses/expenses';
+import { AdminReviews } from './pages/admin/reviews/reviews';
 import { Login } from './pages/login/login';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -39,6 +40,7 @@ const routes: Routes = [
       { path: 'services', component: AdminServices },
       { path: 'gallery', component: AdminGallery },
       { path: 'content', component: AdminContent },
+      { path: 'reviews', component: AdminReviews },
       { path: 'users', component: AdminUsers }
     ]
   },

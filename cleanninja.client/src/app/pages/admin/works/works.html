@@ -35,7 +35,8 @@
           <tr *ngFor="let w of works">
             <td>
               <div class="fw-semibold">{{ w.customerName }}</div>
-              <small class="text-muted">{{ w.phone }}</small>
+              <small class="text-muted d-block">{{ w.phone }}</small>
+              <small class="text-info" *ngIf="w.scheduledDate">📅 {{ w.scheduledDate | date:'shortDate' }} <span *ngIf="w.timeSlotLabel">({{ w.timeSlotLabel }})</span></small>
             </td>
             <td>{{ w.servicePackage }}</td>
             <td>

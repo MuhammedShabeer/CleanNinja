@@ -11,8 +11,7 @@ export class AdminServices implements OnInit {
   public newService: any = { name: '', category: 'Uncategorized', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
-  public loadedFeedbacks: { [serviceId: number]: ServiceFeedback[] } = {};
-
+  public isUploadingFlyer: { [key: number]: boolean } = {};
   constructor(
     private serviceApi: ServiceApiService,
     private cdr: ChangeDetectorRef
@@ -69,26 +68,33 @@ export class AdminServices implements OnInit {
     input.value = '';
   }
 
+  onFlyerSelected(event: Event, service: CleanService): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.isUploadingFlyer[service.id] = true;
+    this.serviceApi.uploadOfferFlyer(service.id, file).subscribe({
+      next: (res) => { 
+        this.isUploadingFlyer[service.id] = false; 
+        service.offerFlyerUrl = res.url;
+        this.saveService(service);
+      },
+      error: () => { this.isUploadingFlyer[service.id] = false; alert('Flyer upload failed.'); }
+    });
+    input.value = '';
+  }
+
+  removeFlyer(service: CleanService): void {
+    if (!confirm('Remove this offer flyer?')) return;
+    service.offerFlyerUrl = undefined;
+    this.saveService(service);
+  }
+
   deleteMedia(serviceId: number, mediaId: number): void {
     if (!confirm('Delete this media?')) return;
     this.serviceApi.deleteMedia(serviceId, mediaId).subscribe(() => this.fetchServices());
   }
 
-  loadFeedback(serviceId: number): void {
-    this.serviceApi.getFeedback(serviceId).subscribe(data => {
-      this.loadedFeedbacks[serviceId] = data;
-      this.cdr.detectChanges();
-    });
-  }
-
-  approveFeedback(feedbackId: number, serviceId: number): void {
-    this.serviceApi.approveFeedback(feedbackId).subscribe(() => this.loadFeedback(serviceId));
-  }
-
-  deleteFeedback(feedbackId: number, serviceId: number): void {
-    if (!confirm('Delete this review?')) return;
-    this.serviceApi.deleteFeedback(feedbackId).subscribe(() => this.loadFeedback(serviceId));
-  }
 
   toggleHighlight(s: CleanService): void {
     s.isHighlighted = !s.isHighlighted;

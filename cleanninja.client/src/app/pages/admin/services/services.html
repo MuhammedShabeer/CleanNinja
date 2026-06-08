@@ -25,12 +25,6 @@
               <svg cIcon name="cilPlus" class="me-2"></svg> Create
             </button>
           </c-col>
-          <c-col [md]="12" class="mt-2">
-            <c-form-check [switch]="true">
-              <input cFormCheckInput type="checkbox" id="showInOffersPopupNew" [(ngModel)]="newService.showInOffersPopup" />
-              <label cFormCheckLabel for="showInOffersPopupNew">Show in Offers Popup</label>
-            </c-form-check>
-          </c-col>
         </c-row>
       </c-card-body>
     </c-card>
@@ -83,32 +77,7 @@
                 </div>
               </div>
 
-              <!-- Customer Reviews moderation -->
-              <div class="mt-3 border-top pt-3">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="fw-semibold small text-muted">Customer Reviews</span>
-                  <button cButton size="sm" color="secondary" variant="outline" (click)="loadFeedback(s.id)">
-                    Load Reviews ({{ (loadedFeedbacks[s.id] || []).length }})
-                  </button>
-                </div>
-                <div *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length > 0">
-                  <div *ngFor="let fb of loadedFeedbacks[s.id]" class="border rounded p-2 mb-2 small" [class.bg-warning-subtle]="!fb.isApproved" [class.bg-success-subtle]="fb.isApproved">
-                    <div class="d-flex justify-content-between align-items-start">
-                      <div>
-                        <strong>{{ fb.customerName }}</strong>
-                        <span class="ms-2">{{ '★'.repeat(fb.rating) }}{{ '☆'.repeat(5 - fb.rating) }}</span>
-                        <span class="ms-2 badge" [class.bg-warning]="!fb.isApproved" [class.bg-success]="fb.isApproved">{{ fb.isApproved ? 'Approved' : 'Pending' }}</span>
-                      </div>
-                      <div class="d-flex gap-1">
-                        <button *ngIf="!fb.isApproved" cButton size="sm" color="success" (click)="approveFeedback(fb.id, s.id)">✓ Approve</button>
-                        <button cButton size="sm" color="danger" variant="outline" (click)="deleteFeedback(fb.id, s.id)"><svg cIcon name="cilTrash"></svg></button>
-                      </div>
-                    </div>
-                    <p class="mb-0 mt-1 text-muted">{{ fb.comment }}</p>
-                  </div>
-                </div>
-                <p *ngIf="loadedFeedbacks[s.id] && loadedFeedbacks[s.id].length === 0" class="text-muted small mb-0">No reviews yet.</p>
-              </div>
+
             </div>
 
             <!-- Edit mode -->
@@ -163,11 +132,21 @@
                   <input cFormControl type="number" [(ngModel)]="s.monthlyPrice" />
                 </c-col>
               </c-row>
-              <div class="mb-4">
-                <c-form-check [switch]="true">
-                  <input cFormCheckInput type="checkbox" [id]="'showInOffersPopupEdit' + s.id" [(ngModel)]="s.showInOffersPopup" />
-                  <label cFormCheckLabel [for]="'showInOffersPopupEdit' + s.id">Show in Offers Popup</label>
-                </c-form-check>
+              <h6 class="mt-4 border-bottom pb-2">Exclusive Offer Flyer</h6>
+              <div class="mb-4 bg-white p-3 rounded border">
+                <div *ngIf="s.offerFlyerUrl" class="mb-3 text-center">
+                  <img [src]="s.offerFlyerUrl" alt="Offer Flyer" class="img-fluid rounded shadow-sm mb-2" style="max-height: 200px;">
+                  <br>
+                  <button cButton color="danger" size="sm" variant="outline" (click)="removeFlyer(s)">Remove Flyer</button>
+                </div>
+                <div *ngIf="!s.offerFlyerUrl">
+                  <p class="small text-muted mb-2">Upload a flyer image. This service will be featured in the "Exclusive Limited Offers" section on the landing page.</p>
+                  <label cButton color="primary" class="d-flex align-items-center justify-content-center fw-bold" style="width: 200px;">
+                      <span *ngIf="!isUploadingFlyer[s.id]">Upload Flyer</span>
+                      <span *ngIf="isUploadingFlyer[s.id]" class="spinner-border spinner-border-sm"></span>
+                      <input type="file" accept="image/*" hidden (change)="onFlyerSelected($event, s)" />
+                  </label>
+                </div>
               </div>
               <div class="d-flex gap-2">
                 <button cButton color="success" class="flex-grow-1" (click)="saveService(s)">Save Settings</button>

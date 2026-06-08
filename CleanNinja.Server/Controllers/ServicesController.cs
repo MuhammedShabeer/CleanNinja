@@ -71,6 +71,7 @@ namespace CleanNinja.Server.Controllers
             service.YearlyPrice = updated.YearlyPrice;
             service.IsHighlighted = updated.IsHighlighted;
             service.ShowInOffersPopup = updated.ShowInOffersPopup;
+            service.OfferFlyerUrl = updated.OfferFlyerUrl;
             service.IsActive = updated.IsActive;
             service.DefaultDurationMinutes = updated.DefaultDurationMinutes;
             await _context.SaveChangesAsync();
@@ -121,6 +122,34 @@ namespace CleanNinja.Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(media);
+        }
+
+        // POST: api/services/5/offer-flyer
+        [HttpPost("{id}/offer-flyer")]
+        public async Task<IActionResult> UploadOfferFlyer(int id, IFormFile file)
+        {
+            var service = await _context.Services.FindAsync(id);
+            if (service == null) return NotFound();
+            if (file == null || file.Length == 0) return BadRequest("No file provided.");
+
+            var ext = Path.GetExtension(file.FileName).ToLower();
+            if (!new[] { ".png", ".jpg", ".jpeg", ".gif", ".webp" }.Contains(ext))
+            {
+                return BadRequest("Invalid image format.");
+            }
+
+            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "flyers");
+            Directory.CreateDirectory(uploadsDir);
+            var uniqueName = $"{Guid.NewGuid()}{ext}";
+            var filePath = Path.Combine(uploadsDir, uniqueName);
+
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            service.OfferFlyerUrl = $"/uploads/flyers/{uniqueName}";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { url = service.OfferFlyerUrl });
         }
 
         // DELETE: api/services/5/media/3

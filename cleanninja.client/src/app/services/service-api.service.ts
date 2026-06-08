@@ -20,6 +20,10 @@ export interface ServiceFeedback {
   createdAt: string;
 }
 
+export interface SystemFeedback extends ServiceFeedback {
+  serviceName: string;
+}
+
 export interface GalleryImage {
   id: number;
   url: string;
@@ -44,6 +48,7 @@ export interface CleanService {
   yearlyPrice?: number;
   defaultDurationMinutes: number;
   showInOffersPopup: boolean;
+  offerFlyerUrl?: string;
   createdAt: string;
   media: ServiceMedia[];
   feedbacks: ServiceFeedback[];
@@ -93,6 +98,12 @@ export class ServiceApiService {
     return this.http.post<ServiceMedia>(`/api/services/${serviceId}/media`, formData);
   }
 
+  uploadOfferFlyer(serviceId: number, file: File): Observable<{url: string}> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post<{url: string}>(`/api/services/${serviceId}/offer-flyer`, formData);
+  }
+
   deleteMedia(serviceId: number, mediaId: number): Observable<void> {
     return this.http.delete<void>(`/api/services/${serviceId}/media/${mediaId}`);
   }
@@ -100,6 +111,10 @@ export class ServiceApiService {
   // Feedback
   getFeedback(serviceId: number): Observable<ServiceFeedback[]> {
     return this.http.get<ServiceFeedback[]>(`/api/feedback/${serviceId}/all`);
+  }
+
+  getAllFeedbackSystemWide(): Observable<SystemFeedback[]> {
+    return this.http.get<SystemFeedback[]>('/api/feedback/all');
   }
 
   submitFeedback(fb: Partial<ServiceFeedback>): Observable<any> {

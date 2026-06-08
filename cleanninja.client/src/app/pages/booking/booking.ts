@@ -20,8 +20,8 @@ export class Booking implements OnInit {
   public selectedFrequency: string = 'Once';
   public frequencyCount: number = 2; // must be > 1 for recurring
   public scheduledDate: string = '';
-  public availableSlots: string[] = [];
-  public selectedSlot: string | null = null;
+  public availableSlots: any[] = [];
+  public selectedSlot: any | null = null;
   public isLoadingSlots: boolean = false;
 
   public isSubmitting: boolean = false;
@@ -116,7 +116,7 @@ export class Booking implements OnInit {
     if (!this.selectedService || !this.scheduledDate) return;
     this.isLoadingSlots = true;
     this.selectedSlot = null;
-    this.http.get<string[]>(`/api/bookings/available-slots?serviceId=${this.selectedService.id}&date=${this.scheduledDate}`)
+    this.http.get<any[]>(`/api/bookings/available-slots?serviceId=${this.selectedService.id}&date=${this.scheduledDate}`)
       .subscribe({
         next: (slots) => {
           this.availableSlots = slots;
@@ -130,7 +130,7 @@ export class Booking implements OnInit {
       });
   }
 
-  selectSlot(slot: string): void {
+  selectSlot(slot: any): void {
     this.selectedSlot = slot;
   }
 
@@ -160,8 +160,9 @@ export class Booking implements OnInit {
     };
     if (this.scheduledDate && this.selectedSlot) {
       // Create a full DateTime from date and slot
-      // Slot is ISO string from server
-      payload.scheduledDate = this.selectedSlot;
+      // Slot value is ISO string from server
+      payload.scheduledDate = this.selectedSlot.value;
+      payload.timeSlotLabel = this.selectedSlot.label;
     }
 
     this.http.post('/api/bookings', payload).subscribe({

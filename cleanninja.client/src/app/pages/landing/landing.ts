@@ -49,7 +49,7 @@ export class Landing implements OnInit, OnDestroy {
       });
       this.serviceApi.getServices().subscribe(s => {
           this.services = s.filter(svc => svc.name !== 'Bin Cleaning');
-          this.offerServices = this.services.filter(svc => svc.showInOffersPopup);
+          this.offerServices = this.services.filter(svc => !!svc.offerFlyerUrl);
 
           // Extract categories for the landing page grid
           const cats = new Set(this.services.map(svc => svc.category).filter(c => !!c && c !== 'Uncategorized'));

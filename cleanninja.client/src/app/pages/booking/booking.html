@@ -104,7 +104,7 @@
                 class="btn"
                 [class.btn-primary]="selectedSlot === slot"
                 [class.btn-outline-secondary]="selectedSlot !== slot">
-                {{ slot | date:'shortTime' }}
+                {{ slot.label }}
               </button>
             </div>
           </div>
@@ -137,7 +137,7 @@
             <div>
               <h5 class="mb-0 fw-bold">{{ selectedService.name }}</h5>
               <div class="small text-muted" *ngIf="selectedSlot">
-                Scheduled for: {{ selectedSlot | date:'longDate' }} at {{ selectedSlot | date:'shortTime' }}
+                Scheduled for: {{ selectedSlot.value | date:'longDate' }} at {{ selectedSlot.label }}
                 <span *ngIf="selectedFrequency !== 'Once'"> — Repeating {{ selectedFrequency }} x {{ frequencyCount }}</span>
               </div>
             </div>

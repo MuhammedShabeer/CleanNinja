@@ -19,61 +19,41 @@
     <h2 class="section-title text-center">Exclusive Limited Offers</h2>
     <p class="section-subtitle">Grab these premium valeting and cleaning deals before they're gone!</p>
   </div>
-  <div class="deals-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-    <div class="professional-card deal-card" *ngFor="let svc of offerServices" style="padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; background: rgba(20,20,20,0.6); backdrop-filter: blur(10px);">
-      <div class="deal-icon" [innerHTML]="svc.icon" style="font-size: 3rem; margin-bottom: 15px;"></div>
-      <div class="deal-content">
-        <h3 style="color: #fff; font-weight: 700; margin-bottom: 10px;">{{ svc.name }}</h3>
-        <div style="color: #aaa; font-size: 0.95rem; margin-bottom: 20px;" [innerHTML]="svc.description"></div>
-        <div class="deal-pricing" style="margin-bottom: 25px;">
-          <span class="old-price" *ngIf="svc.price" style="text-decoration: line-through; color: #888; margin-right: 10px;">£{{ svc.price | number:'1.2-2' }}</span>
-          <span class="new-price" style="color: var(--primary-color); font-weight: 800; font-size: 1.5rem;">£{{ (svc.discountedPrice || svc.price) | number:'1.2-2' }}</span>
-          <div *ngIf="svc.monthlyPrice" style="margin-top: 5px;">
-            <span class="monthly-tag" style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Monthly: £{{ svc.monthlyPrice | number:'1.2-2' }}</span>
-          </div>
-        </div>
+  
+  <div class="row gx-5 gy-5 justify-content-center">
+    <div class="col-md-6 col-lg-5 text-center mb-5" *ngFor="let svc of offerServices">
+      <h4 class="mb-3" style="color: var(--primary-color);">{{ svc.name }}</h4>
+      <img [src]="getMediaUrl(svc.offerFlyerUrl)" alt="Offer Flyer" style="width: 100%; height: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--primary-color);">
+      <div class="mt-4">
+        <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn btn-primary btn-lg w-100" style="font-weight: 800; padding: 15px; font-size: 1.2rem; text-transform: uppercase; box-shadow: 0 0 20px rgba(220,53,69,0.4);">🔥 Claim Deal Now</a>
       </div>
-      <a routerLink="/booking" [queryParams]="{serviceId: svc.id}" class="btn-primary shimmer-effect deal-btn" style="width: 100%; display: block; padding: 12px;">Claim Deal</a>
     </div>
   </div>
 </div>
 
+
 <!-- About Us Section -->
 <div class="container about-section section-padding">
-  <div class="about-grid">
-    <div class="about-image">
-      <div class="image-stack">
-        <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800" alt="Clean Ninja Van" class="about-main-img">
-        <div class="usp-floating-card">
-          <span class="usp-icon">💎</span>
-          <div>
-            <strong>100% Guaranteed</strong>
-            <p>Premium Finish</p>
-          </div>
-        </div>
+  <div class="about-text text-center" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="section-title text-center">Who We Are</h2>
+    <h3 class="subtitle-text">Premium Mobile Cleaning Services in Liverpool</h3>
+    <p class="desc-text">Clean Ninja is a trusted, professional cleaning company delivering high-quality services across Liverpool and surrounding areas. We specialise in a wide range of solutions including mobile car valeting, home deep cleaning, end of tenancy cleaning, window cleaning, and pavement cleaning.<br><br>Our goal is simple — we don’t just clean, we transform spaces. Whether it’s restoring the shine to your vehicle, bringing freshness back to your home, or preparing a property for its next tenant, our experienced team ensures every job is completed to the highest standard.<br><br>With fully equipped mobile units and a commitment to reliability, we bring convenience right to your doorstep. Clean Ninja combines professional expertise with eco-friendly practices to deliver results you can trust every time.</p>
+    <div class="usp-grid text-start mt-5" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 700px; margin: 0 auto;">
+      <div class="usp-feature">
+        <div class="usp-check">✓</div>
+        <span>Fully Insured & Professional</span>
       </div>
-    </div>
-    <div class="about-text">
-      <h2 class="section-title">Who We Are</h2>
-      <h3 class="subtitle-text">Premium Mobile Cleaning Services in Liverpool</h3>
-      <p class="desc-text">Clean Ninja is a trusted, professional cleaning company delivering high-quality services across Liverpool and surrounding areas. We specialise in a wide range of solutions including mobile car valeting, home deep cleaning, end of tenancy cleaning, window cleaning, and pavement cleaning.<br><br>Our goal is simple — we don’t just clean, we transform spaces. Whether it’s restoring the shine to your vehicle, bringing freshness back to your home, or preparing a property for its next tenant, our experienced team ensures every job is completed to the highest standard.<br><br>With fully equipped mobile units and a commitment to reliability, we bring convenience right to your doorstep. Clean Ninja combines professional expertise with eco-friendly practices to deliver results you can trust every time.</p>
-      <div class="usp-grid">
-        <div class="usp-feature">
-          <div class="usp-check">✓</div>
-          <span>Fully Insured & Professional</span>
-        </div>
-        <div class="usp-feature">
-          <div class="usp-check">✓</div>
-          <span>Liverpool-Based Cleaning Experts</span>
-        </div>
-        <div class="usp-feature">
-          <div class="usp-check">✓</div>
-          <span>Fast & Reliable Service</span>
-        </div>
-        <div class="usp-feature">
-          <div class="usp-check">✓</div>
-          <span>Eco-Friendly Cleaning Solutions</span>
-        </div>
+      <div class="usp-feature">
+        <div class="usp-check">✓</div>
+        <span>Liverpool-Based Cleaning Experts</span>
+      </div>
+      <div class="usp-feature">
+        <div class="usp-check">✓</div>
+        <span>Fast & Reliable Service</span>
+      </div>
+      <div class="usp-feature">
+        <div class="usp-check">✓</div>
+        <span>Eco-Friendly Cleaning Solutions</span>
       </div>
     </div>
   </div>

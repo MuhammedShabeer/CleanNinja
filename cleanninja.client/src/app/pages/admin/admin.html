@@ -60,6 +60,11 @@
           <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
         </a>
       </c-nav-item>
+      <c-nav-item *ngIf="hasAccess('reviews')">
+        <a cNavLink routerLink="/admin/reviews" routerLinkActive="active">
+          <svg cIcon name="cilStar" class="nav-icon"></svg> Reviews
+        </a>
+      </c-nav-item>
       <c-nav-item *ngIf="hasAccess('users')">
         <a cNavLink routerLink="/admin/users" routerLinkActive="active">
           <svg cIcon name="cilUser" class="nav-icon"></svg> Admin Users

@@ -1,3 +1,11 @@
+<c-card class="mb-4">
+  <c-card-header><strong>Exclusive Offer Flyer</strong></c-card-header>
+  <c-card-body>
+    <p class="small text-muted mb-3">Upload a flyer image. Uploading a new image will automatically set it as the active flyer on the public landing page. You can toggle it off in the table below.</p>
+    <input cFormControl type="file" accept="image/*" (change)="onFlyerSelected($event)" />
+  </c-card-body>
+</c-card>
+
 <c-card>
   <c-card-header><strong>Edit Site Content</strong></c-card-header>
   <c-card-body>

@@ -158,10 +158,34 @@ using (var scope = app.Services.CreateScope())
         BEGIN
             ALTER TABLE Bookings ADD FrequencyCount INT NOT NULL DEFAULT 1;
         END
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bookings' AND COLUMN_NAME = 'TimeSlotLabel')
+        BEGIN
+            ALTER TABLE Bookings ADD TimeSlotLabel NVARCHAR(MAX) NULL;
+        END
+
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Services' AND COLUMN_NAME = 'OfferFlyerUrl')
+        BEGIN
+            ALTER TABLE Services ADD OfferFlyerUrl NVARCHAR(MAX) NULL;
+        END
 
         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Services' AND COLUMN_NAME = 'Category')
         BEGIN
             ALTER TABLE Services ADD Category NVARCHAR(MAX) NOT NULL DEFAULT 'Uncategorized';
+        END
+
+        IF NOT EXISTS (SELECT * FROM SiteContent WHERE Section = 'Booking' AND [Key] = 'TimeSlots')
+        BEGIN
+            INSERT INTO SiteContent (Section, [Key], Value) VALUES ('Booking', 'TimeSlots', '8:00 am to 11:00 am, 11:00 am to 2:00 pm, 2:00 pm to 5:00 pm, 5:00 pm to 8:00 pm');
+        END
+
+        IF NOT EXISTS (SELECT * FROM SiteContent WHERE Section = 'Offers' AND [Key] = 'OfferFlyerUrl')
+        BEGIN
+            INSERT INTO SiteContent (Section, [Key], Value) VALUES ('Offers', 'OfferFlyerUrl', '');
+        END
+
+        IF NOT EXISTS (SELECT * FROM SiteContent WHERE Section = 'Offers' AND [Key] = 'OfferFlyerActive')
+        BEGIN
+            INSERT INTO SiteContent (Section, [Key], Value) VALUES ('Offers', 'OfferFlyerActive', 'false');
         END
     "
     );
@@ -184,6 +208,12 @@ using (var scope = app.Services.CreateScope())
             VALUES ('Gold Package', 'Placeholder', 'Car Wash', 44.99, 90, 1, 1, '', 0, GETUTCDATE());
         END
 
+        IF NOT EXISTS (SELECT * FROM Services WHERE Name = 'Premium Platinum')
+        BEGIN
+            INSERT INTO Services (Name, Description, Category, Price, DefaultDurationMinutes, IsActive, IsHighlighted, Icon, SortOrder, CreatedAt)
+            VALUES ('Premium Platinum', 'Placeholder', 'Car Wash', 99.00, 150, 1, 1, '', 0, GETUTCDATE());
+        END
+
         IF NOT EXISTS (SELECT * FROM Services WHERE Name = 'Pavement Cleaning')
         BEGIN
             INSERT INTO Services (Name, Description, Category, Price, DefaultDurationMinutes, IsActive, IsHighlighted, Icon, SortOrder, CreatedAt)
@@ -200,6 +230,11 @@ using (var scope = app.Services.CreateScope())
             Description = '<strong>COMPLETE INTERIOR &amp; EXTERIOR CARE</strong><br><br><strong>EXTERIOR CLEANING</strong><ul style=""margin-top:10px; padding-left:20px;""><li>HIGH PRESURE PRE RINSE TO REMOVE LOOSE DIRT</li><li>THICK FOAM WASH USING PREMIUM SHAMPOO</li><li>EXTERIOR BODY HAND WASH</li><li>WHEEL &amp; RIM DEEP CLEANING</li><li>TYRE WASH &amp; BASIC TYRE SHINE</li><li>UNDER BODY WASH</li><li>DOOR SILLS &amp; EXTERIOR TRIMS WIPED CLEAN</li><li>EXTERIOR GLASS CLEANING</li><li>FINAL HAND DRY FOR A STREAK FREE FINISH</li></ul><strong>INTERIOR CLEANING</strong><ul style=""margin-top:10px; padding-left:20px;""><li>FULL INTERIOR VACCUM CLEANING</li><li>MAT CLEANING (RUBBER OR FABRIC)</li><li>DASHBOARD &amp; INTERIOR PANEL POLISH</li><li>CENTER CONSOLE &amp; CUP HOLDER CLEANING</li><li>DOOR PANEL &amp; HANDLE CLEANING</li><li>INTERIOR GLASS CLEANING</li><li>HANGING CAR FRESHNER</li></ul>', 
             Icon = '' 
         WHERE Name = 'Gold Package';
+
+        UPDATE Services SET 
+            Description = '<strong>EXTERIOR DETAILING</strong><ul style=""margin-top:10px; padding-left:20px;""><li>ENGINE ROOM CLEANING</li><li>ENGINE BAY DEGREASING</li><li>ENGINE ROOM ANTI RUST SPRAY</li><li>IRON PARTICLE REMOVAL</li><li>WATER SPOT REMOVAL</li><li>CERAMIC SHAMPOO WASH</li><li>SPRAY CERAMIC PROTECTION</li><li>HIGH PRESSURE PRE RINSE</li><li>PREMIUM SNOW FOAM WASH</li><li>WHEEL &amp; RIM DEEP CLEANING</li><li>TYRE CLEANING &amp; PREMIUM TYRE SHINE</li><li>UNDERBODY WASH</li><li>DOOR JAMB &amp; TRIM CLEANING</li><li>EXTERIOR GLASS CLEANING</li><li>STREAK-FREE HAND DRY FINISH</li><li>PLASTIC TRIM DRESSING</li></ul><strong>INTERIOR DETAILING</strong><ul style=""margin-top:10px; padding-left:20px;""><li>FULL INTERIOR VACUUM</li><li>SEAT DEEP CLEANING (EXTRACTION)</li><li>CARPET &amp; MAT EXTRACTION</li><li>DASHBOARD &amp; CONSOLE POLISH</li><li>DOOR PANEL CLEANING</li><li>INTERIOR GLASS CLEANING</li><li>HANGING AIR FRESHENER</li></ul>', 
+            Icon = '' 
+        WHERE Name = 'Premium Platinum';
 
         UPDATE Services SET Icon = '' WHERE Name = 'Pavement Cleaning';
 

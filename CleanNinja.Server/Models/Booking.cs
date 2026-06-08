@@ -30,6 +30,7 @@ namespace CleanNinja.Server.Models
 
         // Schedule support — null means it's a regular on-demand booking
         public DateTime? ScheduledDate { get; set; }
+        public string? TimeSlotLabel { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

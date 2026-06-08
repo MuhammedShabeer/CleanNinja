@@ -11,7 +11,7 @@
               <c-card-body>
                 <h5 class="card-title">{{ b.customerName }} <span cBadge color="info" class="ms-2">{{ b.servicePackage }}</span></h5>
                 <p class="small text-medium-emphasis mb-1">📞 {{ b.phone }}</p>
-                <p class="small text-medium-emphasis mb-1">📅 {{ b.createdAt | date:'short' }} <span cBadge color="secondary" class="ms-1" *ngIf="b.frequency">{{ b.frequency }}</span></p>
+                <p class="small text-medium-emphasis mb-1">📅 {{ b.scheduledDate | date:'mediumDate' }} <strong *ngIf="b.timeSlotLabel" class="text-dark">{{ b.timeSlotLabel }}</strong> <span cBadge color="secondary" class="ms-1" *ngIf="b.frequency">{{ b.frequency }}</span></p>
                 <p class="small text-medium-emphasis mb-2">📍 {{ b.address || 'No address' }}</p>
                 
                 <div class="d-grid gap-2 mt-3">
@@ -60,7 +60,10 @@
               <td><strong>{{ pb.customerName }}</strong></td>
               <td>{{ pb.servicePackage }}</td>
               <td>{{ pb.phone }}</td>
-              <td>{{ pb.createdAt | date:'shortDate' }} <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span></td>
+              <td>
+                <div>{{ pb.scheduledDate | date:'shortDate' }} <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span></div>
+                <small class="text-muted" *ngIf="pb.timeSlotLabel">{{ pb.timeSlotLabel }}</small>
+              </td>
               <td>{{ pb.assignedEmployeeName || 'Unassigned' }}</td>
               <td><span cBadge color="success">{{ pb.status }}</span></td>
             </tr>
@@ -87,7 +90,7 @@
           <div class="small text-white-50 text-uppercase mb-1" style="font-size:0.7rem; letter-spacing:1px">Service</div>
           <div class="fw-bold text-primary mb-3">{{ approvingBooking.servicePackage }}</div>
           <div class="small text-white-50 text-uppercase mb-1" style="font-size:0.7rem; letter-spacing:1px">Requested Start</div>
-          <div class="fw-bold">{{ approvingBooking.scheduledDate | date:'fullDate' }}</div>
+          <div class="fw-bold">{{ approvingBooking.scheduledDate | date:'fullDate' }} <span *ngIf="approvingBooking.timeSlotLabel" class="text-warning ms-1">({{ approvingBooking.timeSlotLabel }})</span></div>
         </div>
 
         <div class="form-group mb-4">

@@ -17,7 +17,7 @@ namespace CleanNinja.Server.Controllers
         }
 
         // GET: api/feedback/{serviceId} — public, only approved
-        [HttpGet("{serviceId}")]
+        [HttpGet("{serviceId:int}")]
         public async Task<ActionResult<IEnumerable<ServiceFeedback>>> GetFeedback(int serviceId)
         {
             return await _context.ServiceFeedbacks
@@ -27,12 +27,33 @@ namespace CleanNinja.Server.Controllers
         }
 
         // GET: api/feedback/{serviceId}/all — all incl unapproved (for admin)
-        [HttpGet("{serviceId}/all")]
+        [HttpGet("{serviceId:int}/all")]
         public async Task<ActionResult<IEnumerable<ServiceFeedback>>> GetAllFeedback(int serviceId)
         {
             return await _context.ServiceFeedbacks
                 .Where(f => f.ServiceId == serviceId)
                 .OrderByDescending(f => f.CreatedAt)
+                .ToListAsync();
+        }
+
+        // GET: api/feedback/all — all feedbacks across all services (for admin)
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllFeedbackSystemWide()
+        {
+            return await _context.ServiceFeedbacks
+                .Include(f => f.Service)
+                .OrderByDescending(f => f.CreatedAt)
+                .Select(f => new 
+                {
+                    f.Id,
+                    f.ServiceId,
+                    f.CustomerName,
+                    f.Rating,
+                    f.Comment,
+                    f.IsApproved,
+                    f.CreatedAt,
+                    ServiceName = f.Service != null ? f.Service.Name : "Unknown"
+                })
                 .ToListAsync();
         }
 
