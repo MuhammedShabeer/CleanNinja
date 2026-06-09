@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ServiceApiService, SystemFeedback } from '../../../services/service-api.service';
 
 @Component({
@@ -10,7 +10,10 @@ export class AdminReviews implements OnInit {
   public feedbacks: SystemFeedback[] = [];
   public loading: boolean = true;
 
-  constructor(private serviceApi: ServiceApiService) {}
+  constructor(
+    private serviceApi: ServiceApiService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadFeedbacks();
@@ -22,10 +25,12 @@ export class AdminReviews implements OnInit {
       next: (data: SystemFeedback[]) => {
         this.feedbacks = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         console.error('Failed to load feedbacks', err);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

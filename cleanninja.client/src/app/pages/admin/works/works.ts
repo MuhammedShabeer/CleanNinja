@@ -117,4 +117,15 @@ export class AdminWorks implements OnInit {
     if (!confirm('Delete this work?')) return;
     this.http.delete(`/api/bookings/${id}`).subscribe(() => this.fetchWorks());
   }
+
+  copyReviewLink(work: any): void {
+    const origin = window.location.origin;
+    const link = `${origin}/#/?review=true&serviceId=${work.serviceId}`;
+    navigator.clipboard.writeText(link).then(() => {
+      alert('Review link copied to clipboard:\n' + link);
+    }).catch(err => {
+      console.error('Could not copy text: ', err);
+      prompt('Failed to auto-copy. Copy this link:', link);
+    });
+  }
 }

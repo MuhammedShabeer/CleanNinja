@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { SeoService } from '../../services/seo.service';
 import { ContentService } from '../../services/content.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
@@ -23,13 +24,12 @@ export class Landing implements OnInit, OnDestroy {
   public currentSlide: number = 0;
   private autoSlideInterval: any;
   // Feedback form state
-  public openFeedbackForms: { [id: number]: boolean } = {};
-  public feedbackDrafts: { [id: number]: { customerName: string; rating: number; comment: string } } = {};
-  public feedbackSuccess: { [id: number]: boolean } = {};
+
   
   public offerServices: CleanService[] = [];
 
   constructor(
+      private route: ActivatedRoute,
       private seoService: SeoService,
       private contentService: ContentService,
       private serviceApi: ServiceApiService,
@@ -79,9 +79,6 @@ export class Landing implements OnInit, OnDestroy {
           
           this.testimonials = []; // Clear and aggregate
           s.forEach(svc => {
-              this.feedbackDrafts[svc.id] = { customerName: '', rating: 5, comment: '' };
-              this.openFeedbackForms[svc.id] = false;
-              this.feedbackSuccess[svc.id] = false;
 
               // Aggregate approved feedbacks for the main carousel
               if (svc.feedbacks) {
@@ -89,16 +86,17 @@ export class Landing implements OnInit, OnDestroy {
               }
           });
 
-          // Add default testimonials if none exist yet
-          if (this.testimonials.length === 0) {
-            this.testimonials = [
-              { id: 0, serviceId: 0, customerName: 'John Doe', rating: 5, comment: 'Best valeting service in Liverpool. They are on time, professional and the results are amazing. Highly recommended!', isApproved: true, createdAt: '' },
-              { id: 0, serviceId: 0, customerName: 'Sarah Smith', rating: 5, comment: 'My car looks brand new! The interior detailing is second to none. Ninja speed and quality!', isApproved: true, createdAt: '' },
-              { id: 0, serviceId: 0, customerName: 'Mike Wilson', rating: 5, comment: 'Great value for money. The mobile service is so convenient. Five stars!', isApproved: true, createdAt: '' }
-            ];
-          }
-
           this.startAutoSlide();
+          
+          this.route.queryParams.subscribe(params => {
+              if (params['review'] === 'true') {
+                  this.showGlobalFeedbackForm = true;
+                  if (params['serviceId']) {
+                      this.globalFeedbackDraft.serviceId = parseInt(params['serviceId'], 10);
+                  }
+              }
+          });
+          
           this.cdr.detectChanges();
 
 
@@ -132,24 +130,36 @@ export class Landing implements OnInit, OnDestroy {
     this.startAutoSlide();
   }
 
-  toggleFeedbackForm(serviceId: number): void {
-      this.openFeedbackForms[serviceId] = !this.openFeedbackForms[serviceId];
-      this.feedbackSuccess[serviceId] = false;
+  // Global Feedback Form
+  public showGlobalFeedbackForm: boolean = false;
+  public globalFeedbackDraft: { serviceId: number, customerName: string, rating: number, comment: string } = { serviceId: 0, customerName: '', rating: 5, comment: '' };
+  public globalFeedbackSuccess: boolean = false;
+
+  toggleGlobalFeedbackForm(): void {
+      this.showGlobalFeedbackForm = !this.showGlobalFeedbackForm;
+      this.globalFeedbackSuccess = false;
+      if (this.services.length > 0 && this.globalFeedbackDraft.serviceId === 0) {
+          this.globalFeedbackDraft.serviceId = this.services[0].id;
+      }
   }
 
-  submitFeedback(serviceId: number): void {
-      const draft = this.feedbackDrafts[serviceId];
-      if (!draft.customerName.trim() || !draft.comment.trim()) {
+  submitGlobalFeedback(): void {
+      if (this.globalFeedbackDraft.serviceId === 0) {
+          alert('Please select a service.'); return;
+      }
+      if (!this.globalFeedbackDraft.customerName.trim() || !this.globalFeedbackDraft.comment.trim()) {
           alert('Please fill in your name and comment.'); return;
       }
-      this.serviceApi.submitFeedback({ serviceId, ...draft }).subscribe({
+      this.serviceApi.submitFeedback(this.globalFeedbackDraft).subscribe({
           next: () => {
-              this.feedbackSuccess[serviceId] = true;
-              this.feedbackDrafts[serviceId] = { customerName: '', rating: 5, comment: '' };
+              this.globalFeedbackSuccess = true;
+              this.globalFeedbackDraft = { serviceId: 0, customerName: '', rating: 5, comment: '' };
+              this.cdr.detectChanges();
           },
           error: () => alert('Failed to submit feedback. Please try again.')
       });
   }
+
 
   avgRating(feedbacks: ServiceFeedback[]): number {
       if (!feedbacks || feedbacks.length === 0) return 0;

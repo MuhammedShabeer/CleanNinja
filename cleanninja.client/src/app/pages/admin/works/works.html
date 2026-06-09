@@ -58,6 +58,7 @@
               <div class="d-flex gap-1">
                 <button *ngIf="w.status === 'Pending'" class="btn btn-sm btn-info" (click)="acceptWork(w.id)">Accept</button>
                 <button *ngIf="w.status !== 'Completed'" class="btn btn-sm btn-success" (click)="openCompleteWork(w)">Complete</button>
+                <button *ngIf="w.status === 'Completed'" class="btn btn-sm btn-outline-primary" (click)="copyReviewLink(w)">Review Link</button>
                 <button class="btn btn-sm btn-outline-danger" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
               </div>
             </td>
