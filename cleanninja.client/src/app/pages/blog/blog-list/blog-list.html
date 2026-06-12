@@ -1,0 +1,39 @@
+<section class="blog-hero section-padding bg-light">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold mb-3">Our Latest <span class="text-primary">Blogs</span></h1>
+    <p class="lead text-muted">Read our latest tips, news, and updates.</p>
+  </div>
+</section>
+
+<section class="blog-list section-padding">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let blog of blogs">
+        <div class="card h-100 border-0 shadow-sm blog-card">
+          <img *ngIf="blog.imageUrl" [src]="blog.imageUrl" class="card-img-top blog-img" alt="{{ blog.title }}">
+          <div *ngIf="!blog.imageUrl" class="card-img-top blog-img d-flex align-items-center justify-content-center bg-light text-muted">
+            <i class="bi bi-image" style="font-size: 3rem;"></i>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="mb-2 text-muted small">
+              <span class="me-3"><i class="bi bi-calendar"></i> {{ blog.createdAt }}</span>
+              <span><i class="bi bi-person"></i> {{ blog.author }}</span>
+            </div>
+            <h4 class="card-title fw-bold mb-3">{{ blog.title }}</h4>
+            <p class="card-text flex-grow-1 text-muted" [innerHTML]="blog.content"></p>
+            <a [routerLink]="['/blogs', blog.id]" class="btn btn-outline-primary mt-auto align-self-start">Read More</a>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="blogs.length === 0 && !errorMsg" class="col-12 text-center py-5">
+        <h4 class="text-muted">No blog posts available yet.</h4>
+      </div>
+
+      <div *ngIf="errorMsg" class="col-12 text-center py-5">
+        <h4 class="text-danger">Error Loading Blogs</h4>
+        <p class="text-danger">{{ errorMsg }}</p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { SeoService } from '../../services/seo.service';
 import { ContentService } from '../../services/content.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
@@ -15,6 +16,7 @@ export class Landing implements OnInit, OnDestroy {
   public services: CleanService[] = [];
   public landingCategories: any[] = [];
   public gallery: GalleryImage[] = [];
+  public blogs: any[] = [];
   public instagramHandle: string = '';
   public backendUrl: string = ''; // Relative paths for media resolution
   public isMobileMenuOpen: boolean = false;
@@ -33,7 +35,8 @@ export class Landing implements OnInit, OnDestroy {
       private seoService: SeoService,
       private contentService: ContentService,
       private serviceApi: ServiceApiService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +48,10 @@ export class Landing implements OnInit, OnDestroy {
       });
       this.serviceApi.getGallery().subscribe(g => {
           this.gallery = g;
+          this.cdr.detectChanges();
+      });
+      this.http.get<any[]>('/api/blogs').subscribe(b => {
+          this.blogs = b;
           this.cdr.detectChanges();
       });
       this.serviceApi.getServices().subscribe(s => {

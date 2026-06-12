@@ -37,14 +37,18 @@ import { AdminContent } from './pages/admin/content/content';
 import { AdminUsers } from './pages/admin/users/users';
 import { AdminExpenses } from './pages/admin/expenses/expenses';
 import { AdminReviews } from './pages/admin/reviews/reviews';
+import { AdminBlogs } from './pages/admin/blogs/blogs';
 import { Login } from './pages/login/login';
+import { BlogList } from './pages/blog/blog-list/blog-list';
+import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
 
 @NgModule({
   declarations: [
     App, Landing, Booking, Admin, Login,
     AdminDashboard, AdminBookings, AdminWorks, AdminSchedules, AdminCalendar,
     AdminRevenue, AdminEmployees, AdminServices, AdminGallery, AdminContent,
-    AdminUsers, AdminExpenses, AdminReviews
+    AdminUsers, AdminExpenses, AdminReviews, AdminBlogs,
+    BlogList, BlogDetail
   ],
   imports: [
     BrowserModule,

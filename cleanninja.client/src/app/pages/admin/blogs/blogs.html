@@ -1,0 +1,87 @@
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>Manage Blog Posts</span>
+    <button class="btn btn-primary btn-sm" (click)="openCreateModal()">Write New Blog</button>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Created At</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let blog of blogs">
+            <td>
+              <img *ngIf="blog.imageUrl" [src]="blog.imageUrl" alt="Blog Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+              <div *ngIf="!blog.imageUrl" style="width: 50px; height: 50px; background: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center;">📝</div>
+            </td>
+            <td>{{ blog.title }}</td>
+            <td>{{ blog.author }}</td>
+            <td>{{ blog.createdAt | date:'shortDate' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{'bg-success': blog.isPublished, 'bg-secondary': !blog.isPublished}">
+                {{ blog.isPublished ? 'Published' : 'Draft' }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-info me-2" (click)="openEditModal(blog)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteBlog(blog.id)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="blogs.length === 0">
+            <td colspan="6" class="text-center text-muted py-4">No blog posts found. Write your first post!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Edit/Create Modal -->
+<div class="modal fade show d-block" tabindex="-1" *ngIf="isModalOpen" style="background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ isEditing ? 'Edit Blog Post' : 'New Blog Post' }}</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" [(ngModel)]="currentBlog.title" placeholder="Blog post title">
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Author</label>
+            <input type="text" class="form-control" [(ngModel)]="currentBlog.author">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Image URL (optional)</label>
+            <input type="text" class="form-control" [(ngModel)]="currentBlog.imageUrl" placeholder="https://...">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Content</label>
+          <textarea class="form-control" [(ngModel)]="currentBlog.content" rows="10" placeholder="Write your blog content here..."></textarea>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="isPublished" [(ngModel)]="currentBlog.isPublished">
+          <label class="form-check-label" for="isPublished">
+            Publish immediately
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveBlog()">Save Blog</button>
+      </div>
+    </div>
+  </div>
+</div>

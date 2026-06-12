@@ -17,12 +17,17 @@ import { AdminContent } from './pages/admin/content/content';
 import { AdminUsers } from './pages/admin/users/users';
 import { AdminExpenses } from './pages/admin/expenses/expenses';
 import { AdminReviews } from './pages/admin/reviews/reviews';
+import { AdminBlogs } from './pages/admin/blogs/blogs';
 import { Login } from './pages/login/login';
 import { AuthGuard } from './guards/auth.guard';
+import { BlogList } from './pages/blog/blog-list/blog-list';
+import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
 
 const routes: Routes = [
   { path: '', component: Landing },
   { path: 'booking', component: Booking },
+  { path: 'blogs', component: BlogList },
+  { path: 'blogs/:id', component: BlogDetail },
   { 
     path: 'admin', 
     component: Admin, 
@@ -41,6 +46,7 @@ const routes: Routes = [
       { path: 'gallery', component: AdminGallery },
       { path: 'content', component: AdminContent },
       { path: 'reviews', component: AdminReviews },
+      { path: 'blogs', component: AdminBlogs },
       { path: 'users', component: AdminUsers }
     ]
   },
