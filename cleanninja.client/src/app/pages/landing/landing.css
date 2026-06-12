@@ -36,8 +36,8 @@
 }
 
 .text-primary-bright {
-  color: #ff9d42; /* Bright Orange for visibility */
-  text-shadow: 0 0 20px rgba(246, 129, 20, 0.4);
+  color: #ff4d58; /* Bright Orange for visibility */
+  text-shadow: 0 0 20px rgba(230, 57, 70, 0.4);
 }
 
 .hero-subtitle {
@@ -640,7 +640,7 @@
   font-weight: 800;
   font-size: 1.2rem;
   color: #fff;
-  box-shadow: 0 4px 10px rgba(246, 129, 20, 0.4);
+  box-shadow: 0 4px 10px rgba(230, 57, 70, 0.4);
 }
 
 .carousel-dots {
@@ -675,7 +675,7 @@
   top: 20px;
   right: 30px;
   font-size: 4rem;
-  color: rgba(246, 129, 20, 0.1);
+  color: rgba(230, 57, 70, 0.1);
   font-family: serif;
 }
 
@@ -996,8 +996,8 @@
 }
 
 .popup-offer-item:hover {
-  background: rgba(246, 129, 20, 0.05);
-  border-color: rgba(246, 129, 20, 0.2);
+  background: rgba(230, 57, 70, 0.05);
+  border-color: rgba(230, 57, 70, 0.2);
   transform: translateX(5px);
 }
 

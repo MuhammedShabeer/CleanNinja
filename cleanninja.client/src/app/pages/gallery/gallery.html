@@ -1,0 +1,22 @@
+<div class="container section-padding" style="margin-top: 50px; min-height: 70vh;">
+  <h2 class="section-title text-center">Work Showcase</h2>
+  <p class="text-center" style="color:#aaa;margin-bottom:30px;">Premium results for our Liverpool community.</p>
+
+  <div class="gallery-grid" *ngIf="gallery.length > 0">
+    <div class="gallery-card" *ngFor="let img of gallery">
+      <img [src]="getMediaUrl(img.url)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="img.title || 'Work Gallery'" class="gallery-img">
+      <div class="gallery-overlay">
+        <h4 class="overlay-title">{{ img.title || 'Premium Finish' }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center" *ngIf="gallery.length === 0">
+    <div class="glass-card gallery-placeholder" style="border-color: #eee; background-color: #f9f9f9; padding: 60px; border-radius: 15px;">
+      <i class="bi bi-images" style="font-size: 3rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+      <h4 style="color: #666; font-weight: 600;">Work Showcase Coming Soon</h4>
+      <p style="color: #999;">📸 Ninja work is currently being uploaded. Check back soon!</p>
+      <a routerLink="/" class="btn-primary mt-4" style="text-decoration: none; display: inline-block;">Back to Home</a>
+    </div>
+  </div>
+</div>

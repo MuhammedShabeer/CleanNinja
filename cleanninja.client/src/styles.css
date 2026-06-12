@@ -8,7 +8,7 @@
   --text-color: #444444;   /* Dark Charcoal / Soft dark gray */
   --text-muted: #666666;
   --card-bg: #ffffff;
-  --accent-hover: #ff9d42;
+  --accent-hover: #ff4d58;
   --heading-font: 'Poppins', sans-serif;
   --body-font: 'Hind', sans-serif;
 }
@@ -76,7 +76,7 @@ h1, h2, h3, h4, h5, h6 {
   .landing-theme .btn-primary:hover {
     background-color: var(--accent-hover);
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(246, 129, 20, 0.3);
+    box-shadow: 0 10px 20px rgba(230, 57, 70, 0.3);
     color: white;
   }
 

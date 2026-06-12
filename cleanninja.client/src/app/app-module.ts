@@ -41,6 +41,8 @@ import { AdminBlogs } from './pages/admin/blogs/blogs';
 import { Login } from './pages/login/login';
 import { BlogList } from './pages/blog/blog-list/blog-list';
 import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
+import { GalleryPage } from './pages/gallery/gallery';
+import { FooterComponent } from './components/footer/footer';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,7 @@ import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
     AdminDashboard, AdminBookings, AdminWorks, AdminSchedules, AdminCalendar,
     AdminRevenue, AdminEmployees, AdminServices, AdminGallery, AdminContent,
     AdminUsers, AdminExpenses, AdminReviews, AdminBlogs,
-    BlogList, BlogDetail
+    BlogList, BlogDetail, GalleryPage, FooterComponent
   ],
   imports: [
     BrowserModule,

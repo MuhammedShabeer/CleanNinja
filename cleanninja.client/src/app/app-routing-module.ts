@@ -22,12 +22,14 @@ import { Login } from './pages/login/login';
 import { AuthGuard } from './guards/auth.guard';
 import { BlogList } from './pages/blog/blog-list/blog-list';
 import { BlogDetail } from './pages/blog/blog-detail/blog-detail';
+import { GalleryPage } from './pages/gallery/gallery';
 
 const routes: Routes = [
   { path: '', component: Landing },
   { path: 'booking', component: Booking },
   { path: 'blogs', component: BlogList },
   { path: 'blogs/:id', component: BlogDetail },
+  { path: 'gallery', component: GalleryPage },
   { 
     path: 'admin', 
     component: Admin, 

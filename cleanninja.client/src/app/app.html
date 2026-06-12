@@ -9,7 +9,7 @@
         <a routerLink="/" (click)="closeMobileMenu()">Home</a>
         <a href="#services" (click)="closeMobileMenu()">Services</a>
         <a routerLink="/blogs" (click)="closeMobileMenu()">Blogs</a>
-        <a href="#gallery" (click)="closeMobileMenu()">Gallery</a>
+        <a routerLink="/gallery" (click)="closeMobileMenu()">Gallery</a>
         <a href="#contact" (click)="closeMobileMenu()">Contact</a>
         <a routerLink="/booking" class="btn-primary shimmer-effect" (click)="closeMobileMenu()">Book Now</a>
       </nav>
@@ -20,6 +20,10 @@
 <main class="app-main" [class.landing-theme]="showBrandedHeader" [class.admin-theme]="!showBrandedHeader">
   <router-outlet></router-outlet>
 </main>
+
+<div class="landing-theme" *ngIf="showBrandedHeader">
+  <app-footer></app-footer>
+</div>
 
 <!-- PWA Install Banner - Only for landing/booking -->
 <div class="landing-theme" *ngIf="showBrandedHeader && showInstallButton">

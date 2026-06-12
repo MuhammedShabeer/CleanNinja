@@ -1,0 +1,82 @@
+<footer class="app-footer">
+  <div class="container pt-5 pb-4">
+    <div class="row gx-5 gy-4">
+      <!-- Column 1: Brand / About -->
+      <div class="col-lg-3 col-md-6 footer-col">
+        <h3 class="footer-brand mb-4">
+          <img src="assets/images/CleanNinjaNew.png" alt="Clean Ninja Logo" class="footer-logo me-2"> 
+          CLEAN NINJA
+        </h3>
+        <p class="footer-text">Liverpool's most trusted premium cleaning professionals. We don't just clean; we restore the shine and hygiene of your space with unparalleled attention to detail.</p>
+        <div class="social-links mt-4">
+          <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Column 2: Recent Blogs -->
+      <div class="col-lg-3 col-md-6 footer-col">
+        <h4 class="footer-heading">RECENT BLOGS</h4>
+        <div class="recent-work-list">
+          <div class="recent-work-item" *ngFor="let blog of blogs | slice:0:3">
+            <img *ngIf="blog.imageUrl" [src]="blog.imageUrl" class="rw-img" alt="{{ blog.title }}">
+            <div *ngIf="!blog.imageUrl" class="rw-img d-flex align-items-center justify-content-center bg-secondary text-white" style="font-size: 1.5rem;">
+              <i class="bi bi-image"></i>
+            </div>
+            <div class="rw-text">
+              <a [routerLink]="['/blogs', blog.id]" class="rw-title" style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ blog.title }}</a>
+              <span class="rw-meta">By {{ blog.author || 'Clean Ninja' }} / 📝</span>
+            </div>
+          </div>
+          <div class="recent-work-item" *ngIf="blogs.length === 0">
+            <p class="footer-text">📝 No recent blogs yet...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: Quick Links -->
+      <div class="col-lg-3 col-md-6 footer-col">
+        <h4 class="footer-heading">QUICK LINKS</h4>
+        <ul class="footer-services">
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/gallery">Work Showcase</a></li>
+          <li><a routerLink="/blogs">Blogs</a></li>
+          <li><a routerLink="/booking">Book Now</a></li>
+          <li><a routerLink="/admin/login">Staff Login</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Contact Us -->
+      <div class="col-lg-3 col-md-6 footer-col">
+        <h4 class="footer-heading">CONTACT US</h4>
+        <ul class="footer-contact">
+          <li>
+            <span class="fc-icon">📍</span>
+            <div class="fc-text">
+              <strong>ADDRESS</strong>
+              <p>Liverpool & Surrounding Areas, UK</p>
+            </div>
+          </li>
+          <li>
+            <span class="fc-icon">📱</span>
+            <div class="fc-text">
+              <strong>PHONE</strong>
+              <p>+44 7578 334674<br>(Available for bookings)</p>
+            </div>
+          </li>
+          <li>
+            <span class="fc-icon">📧</span>
+            <div class="fc-text">
+              <strong>EMAIL</strong>
+              <p>cleanninjaexperts@gmail.com</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom text-center mt-5 pt-4">
+    <p class="mb-0" style="color: #666; font-size: 0.9rem;">&copy; 2026 Clean Ninja. All Rights Reserved.</p>
+  </div>
+</footer>
