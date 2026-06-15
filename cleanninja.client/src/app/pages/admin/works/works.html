@@ -19,7 +19,7 @@
   <c-card-header><strong>All Works</strong></c-card-header>
   <c-card-body>
     <div *ngIf="works.length === 0" class="text-muted text-center py-3">No works yet.</div>
-    <div *ngIf="works.length > 0" class="table-responsive">
+    <div *ngIf="works.length > 0" class="table-responsive d-none d-md-block">
       <table class="table table-hover table-striped align-middle mb-0">
         <thead class="table-light">
           <tr>
@@ -66,6 +66,42 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Mobile Card View -->
+    <div *ngIf="works.length > 0" class="d-block d-md-none mt-3">
+      <c-card *ngFor="let w of works" class="mb-3 shadow-sm border-start-primary">
+        <c-card-body>
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <h5 class="card-title mb-0">{{ w.customerName }}</h5>
+              <small class="text-muted">{{ w.phone }}</small>
+            </div>
+            <span class="badge rounded-pill text-white"
+              [class.bg-success]="w.status === 'Completed'"
+              [class.bg-warning]="w.status === 'InProgress' || w.status === 'Accepted'"
+              [class.bg-secondary]="w.status === 'Pending'">
+              {{ w.status }}
+            </span>
+          </div>
+          <p class="small text-info mb-1" *ngIf="w.scheduledDate">📅 {{ w.scheduledDate | date:'shortDate' }} <span *ngIf="w.timeSlotLabel">({{ w.timeSlotLabel }})</span></p>
+          <p class="small mb-2">📦 {{ w.servicePackage }}</p>
+          <p class="small mb-3">💰 Revenue: <span class="fw-semibold">{{ w.revenue > 0 ? ('£' + w.revenue) : '—' }}</span></p>
+
+          <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-center mb-3" (click)="openAssignModal(w)">
+            <svg cIcon name="cilPeople" size="sm" class="me-2"></svg>
+            <span class="text-truncate">{{ getAssignedNames(w) || 'Assign Ninjas...' }}</span>
+          </button>
+
+          <div class="d-flex gap-2 justify-content-end">
+            <button *ngIf="w.status === 'Pending'" class="btn btn-sm btn-info flex-grow-1" (click)="acceptWork(w.id)">Accept</button>
+            <button *ngIf="w.status !== 'Completed'" class="btn btn-sm btn-success flex-grow-1" (click)="openCompleteWork(w)">Complete</button>
+            <button *ngIf="w.status === 'Completed'" class="btn btn-sm btn-outline-primary flex-grow-1" (click)="copyReviewLink(w)">Review Link</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteWork(w.id)"><svg cIcon name="cilTrash"></svg></button>
+          </div>
+        </c-card-body>
+      </c-card>
+    </div>
+
   </c-card-body>
 </c-card>
 

@@ -25,7 +25,8 @@
     <c-card>
       <c-card-header><strong>Current Ninja Staff</strong> ({{ employees.length }})</c-card-header>
       <c-card-body>
-        <table cTable hover responsive [striped]="true">
+        <div class="d-none d-md-block">
+          <table cTable hover responsive [striped]="true">
           <thead>
             <tr>
               <th>Name</th>
@@ -53,6 +54,29 @@
             </tr>
           </tbody>
         </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-block d-md-none">
+          <c-card *ngFor="let e of employees" class="mb-3 shadow-sm border-start-info">
+            <c-card-body>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h5 class="card-title mb-0">{{ e.name }}</h5>
+                  <span cBadge color="secondary" class="mt-1">{{ e.role }}</span>
+                </div>
+                <button cButton color="danger" variant="outline" size="sm" (click)="removeEmployee(e.id)">
+                  <svg cIcon name="cilTrash"></svg>
+                </button>
+              </div>
+              <p class="small text-muted mb-3">📞 {{ e.phone }}</p>
+              <button cButton size="sm" class="w-100" [color]="e.isActive ? 'success' : 'secondary'" (click)="toggleEmployeeActive(e)">
+                {{ e.isActive ? 'Status: Active' : 'Status: Inactive' }}
+              </button>
+            </c-card-body>
+          </c-card>
+        </div>
+
         <p *ngIf="employees.length === 0" class="text-center py-3 text-medium-emphasis">No employees added yet.</p>
       </c-card-body>
     </c-card>

@@ -48,7 +48,7 @@
           <strong>Expense History</strong>
         </c-card-header>
         <c-card-body class="p-0">
-          <div class="table-responsive">
+          <div class="table-responsive d-none d-md-block">
             <table cTable [hover]="true" [align]="'middle'" class="mb-0">
               <thead class="bg-light">
                 <tr>
@@ -83,6 +83,31 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Mobile Card View -->
+          <div class="d-block d-md-none p-3">
+            <c-card *ngFor="let ex of expenses" class="mb-3 shadow-sm border-start-danger">
+              <c-card-body>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <h5 class="card-title mb-0 fw-medium">{{ ex.description }}</h5>
+                    <c-badge color="secondary" class="bg-opacity-10 text-dark border-0 px-2 py-1 mt-1 rounded-pill">{{ ex.category }}</c-badge>
+                  </div>
+                  <span class="fw-bold text-danger">£{{ ex.amount | number:'1.2-2' }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <span class="small text-muted">📅 {{ ex.date | date:'mediumDate' }}</span>
+                  <button cButton color="danger" variant="outline" size="sm" (click)="deleteExpense(ex.id)">
+                    <svg cIcon name="cilTrash"></svg>
+                  </button>
+                </div>
+              </c-card-body>
+            </c-card>
+            <div *ngIf="expenses.length === 0" class="text-center py-5 text-muted">
+              <div class="mb-2"><svg cIcon name="cilInfo" size="xl"></svg></div>
+              No expenses recorded yet.
+            </div>
           </div>
         </c-card-body>
       </c-card>

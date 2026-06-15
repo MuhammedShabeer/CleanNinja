@@ -44,8 +44,9 @@
         <strong>Past Orders</strong> ({{ previousBookings.length }})
       </c-card-header>
       <c-card-body>
-        <table cTable hover responsive [striped]="true">
-          <thead>
+        <div class="d-none d-md-block">
+          <table cTable hover responsive [striped]="true">
+            <thead>
             <tr>
               <th>Customer</th>
               <th>Package</th>
@@ -69,6 +70,29 @@
             </tr>
           </tbody>
         </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-block d-md-none">
+          <c-card *ngFor="let pb of previousBookings" class="mb-3 shadow-sm border-start-success">
+            <c-card-body>
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h5 class="card-title mb-0">{{ pb.customerName }}</h5>
+                  <small class="text-muted">{{ pb.phone }}</small>
+                </div>
+                <span cBadge color="success">{{ pb.status }}</span>
+              </div>
+              <p class="small text-info mb-1" *ngIf="pb.scheduledDate">📅 {{ pb.scheduledDate | date:'shortDate' }} 
+                <span *ngIf="pb.timeSlotLabel">({{ pb.timeSlotLabel }})</span>
+                <span cBadge color="secondary" class="ms-1" *ngIf="pb.frequency">{{ pb.frequency }}</span>
+              </p>
+              <p class="small mb-1">📦 {{ pb.servicePackage }}</p>
+              <p class="small mb-0">🤷 Ninja: <span class="fw-semibold">{{ pb.assignedEmployeeName || 'Unassigned' }}</span></p>
+            </c-card-body>
+          </c-card>
+        </div>
+
         <p *ngIf="previousBookings.length === 0" class="text-center py-3 text-medium-emphasis">No past orders found.</p>
       </c-card-body>
     </c-card>

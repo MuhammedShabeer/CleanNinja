@@ -121,17 +121,10 @@ table tbody td {
 
 /* ── Mobile Table Grid Overrides ── */
 @media (max-width: 768px) {
-  table tbody td, table thead th {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 140px; /* Force ellipsis to trigger */
-  }
-  table tbody td *, table thead th * {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    max-width: 100%;
+  /* Tables are now hidden on mobile in favor of card views,
+     but we leave a clean foundational rule just in case. */
+  table tbody td {
+    font-size: 0.85rem;
   }
 }
 

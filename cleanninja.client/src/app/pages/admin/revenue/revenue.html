@@ -41,7 +41,7 @@
           <strong>Earnings Breakdown per Service</strong>
         </c-card-header>
         <c-card-body class="p-0">
-          <div class="table-responsive">
+          <div class="table-responsive d-none d-md-block">
             <table cTable [hover]="true" [align]="'middle'" class="mb-0">
               <thead class="bg-light">
                 <tr>
@@ -68,6 +68,28 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Mobile Card View -->
+          <div class="d-block d-md-none p-3">
+            <c-card *ngFor="let w of revenueSummary.works" class="mb-3 shadow-sm border-start-success">
+              <c-card-body>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h5 class="card-title mb-0 fw-medium">{{ w.customerName }}</h5>
+                  <span class="fw-bold text-success">£{{ w.revenue | number:'1.2-2' }}</span>
+                </div>
+                <p class="small mb-1">📦 {{ w.servicePackage }}</p>
+                <p class="small mb-2">
+                  🤷 Staff: 
+                  <c-badge color="info" *ngIf="w.assignedEmployeeName">{{ w.assignedEmployeeName }}</c-badge>
+                  <span class="text-muted" *ngIf="!w.assignedEmployeeName">No Staff</span>
+                </p>
+                <div class="text-muted small">📅 Completed: {{ w.completedAt | date:'mediumDate' }}</div>
+              </c-card-body>
+            </c-card>
+            <div *ngIf="!revenueSummary.works || revenueSummary.works.length === 0" class="text-center py-5 text-muted">
+              No completed works yet.
+            </div>
           </div>
         </c-card-body>
       </c-card>

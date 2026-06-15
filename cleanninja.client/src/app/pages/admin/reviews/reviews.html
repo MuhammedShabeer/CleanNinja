@@ -16,7 +16,7 @@
           <p class="mb-0">No customer reviews found.</p>
         </div>
 
-        <div class="table-responsive" *ngIf="!loading && feedbacks.length > 0">
+        <div class="table-responsive d-none d-md-block" *ngIf="!loading && feedbacks.length > 0">
           <table class="table table-hover align-middle">
             <thead class="table-light">
               <tr>
@@ -59,6 +59,44 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="d-block d-md-none" *ngIf="!loading && feedbacks.length > 0">
+          <div class="card mb-3 shadow-sm" *ngFor="let fb of feedbacks">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                  <h6 class="card-title fw-bold mb-1">{{ fb.customerName }}</h6>
+                  <span class="badge bg-secondary text-white">{{ fb.serviceName }}</span>
+                </div>
+                <div>
+                  <span class="badge rounded-pill bg-success" *ngIf="fb.isApproved">Approved</span>
+                  <span class="badge rounded-pill bg-warning text-dark" *ngIf="!fb.isApproved">Pending</span>
+                </div>
+              </div>
+              <div class="mb-2">
+                <span class="text-warning">
+                  <ng-container *ngFor="let star of [1,2,3,4,5]">
+                    <span *ngIf="star <= fb.rating">★</span>
+                    <span *ngIf="star > fb.rating" class="text-muted">☆</span>
+                  </ng-container>
+                </span>
+                <small class="ms-1 text-muted">({{fb.rating}})</small>
+              </div>
+              <p class="small text-muted fst-italic mb-3">"{{ fb.comment }}"</p>
+              <p class="small text-muted mb-3">📅 {{ fb.createdAt | date:'shortDate' }}</p>
+              
+              <div class="d-flex gap-2">
+                <button *ngIf="!fb.isApproved" class="btn btn-sm btn-success text-white flex-grow-1" (click)="approveFeedback(fb.id)">
+                  <svg cIcon name="cilCheckCircle" size="sm" class="me-1"></svg> Approve
+                </button>
+                <button class="btn btn-sm btn-danger text-white flex-grow-1" (click)="deleteFeedback(fb.id)">
+                  <svg cIcon name="cilTrash" size="sm" class="me-1"></svg> Delete
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

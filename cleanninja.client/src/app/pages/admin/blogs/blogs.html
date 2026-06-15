@@ -4,7 +4,7 @@
     <button class="btn btn-primary btn-sm" (click)="openCreateModal()">Write New Blog</button>
   </div>
   <div class="card-body">
-    <div class="table-responsive">
+    <div class="table-responsive d-none d-md-block">
       <table class="table table-hover">
         <thead>
           <tr>
@@ -40,6 +40,31 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="d-block d-md-none">
+      <div *ngIf="blogs.length === 0" class="text-center text-muted py-4">No blog posts found. Write your first post!</div>
+      <div class="card mb-3 shadow-sm" *ngFor="let blog of blogs">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <img *ngIf="blog.imageUrl" [src]="blog.imageUrl" alt="Blog Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" class="me-3">
+            <div *ngIf="!blog.imageUrl" style="width: 50px; height: 50px; background: #eee; border-radius: 4px; display: flex; align-items: center; justify-content: center;" class="me-3">🖼️</div>
+            <div>
+              <h5 class="card-title mb-1">{{ blog.title }}</h5>
+              <span class="badge" [ngClass]="{'bg-success': blog.isPublished, 'bg-secondary': !blog.isPublished}">
+                {{ blog.isPublished ? 'Published' : 'Draft' }}
+              </span>
+            </div>
+          </div>
+          <p class="small text-muted mb-1">✍️ {{ blog.author }}</p>
+          <p class="small text-muted mb-3">📅 {{ blog.createdAt | date:'shortDate' }}</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-info flex-grow-1" (click)="openEditModal(blog)">Edit</button>
+            <button class="btn btn-sm btn-danger flex-grow-1" (click)="deleteBlog(blog.id)">Delete</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
