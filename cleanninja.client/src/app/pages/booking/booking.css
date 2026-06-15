@@ -205,28 +205,83 @@
   transform: none;
 }
 
-/* ── Success message ──────────────────────────── */
-.success-message {
-  padding: 80px 20px;
-  background: rgba(0,255,0,0.04);
-  border-radius: 16px;
-  border: 1px solid rgba(0,255,0,0.15);
-  max-width: 500px;
-  margin: 0 auto;
+/* ── Premium Success message ──────────────────────────── */
+.success-message-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
 }
 
-.success-icon {
-  font-size: 4rem;
-  margin-bottom: 16px;
+.premium-success-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  padding: 50px 40px;
+  max-width: 550px;
+  width: 100%;
+  border-top: 6px solid #28a745;
+  animation: slideUpFade 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
 
-.success-message h2 {
-  color: #fff;
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon-wrapper {
+  margin-bottom: 25px;
+}
+
+.success-icon-wrapper svg {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 10px 15px rgba(40, 167, 69, 0.3));
+}
+
+.success-title {
+  font-family: var(--heading-font);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1a1a1a;
   margin-bottom: 10px;
+  letter-spacing: -0.5px;
 }
 
-.success-message p {
-  color: #aaa;
+.success-subtitle {
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.success-details {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.success-details p {
+  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.success-btn {
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+  transition: all 0.3s ease;
+}
+
+.success-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(220, 53, 69, 0.4);
 }
 
 .input-group-text {

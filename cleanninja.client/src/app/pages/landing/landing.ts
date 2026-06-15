@@ -25,6 +25,10 @@ export class Landing implements OnInit, OnDestroy {
   public testimonials: ServiceFeedback[] = [];
   public currentSlide: number = 0;
   private autoSlideInterval: any;
+  
+  public currentDealSlide: number = 0;
+  private dealSlideInterval: any;
+
   // Feedback form state
 
   
@@ -94,6 +98,7 @@ export class Landing implements OnInit, OnDestroy {
           });
 
           this.startAutoSlide();
+          this.startDealAutoSlide();
           
           this.route.queryParams.subscribe(params => {
               if (params['review'] === 'true') {
@@ -114,12 +119,23 @@ export class Landing implements OnInit, OnDestroy {
     if (this.autoSlideInterval) {
       clearInterval(this.autoSlideInterval);
     }
+    if (this.dealSlideInterval) {
+      clearInterval(this.dealSlideInterval);
+    }
   }
 
   private startAutoSlide(): void {
     this.autoSlideInterval = setInterval(() => {
       this.nextSlide();
     }, 5000);
+  }
+
+  private startDealAutoSlide(): void {
+    this.dealSlideInterval = setInterval(() => {
+      if (this.offerServices.length > 0) {
+        this.currentDealSlide = (this.currentDealSlide + 1) % this.offerServices.length;
+      }
+    }, 4000);
   }
 
   public nextSlide(): void {
@@ -135,6 +151,62 @@ export class Landing implements OnInit, OnDestroy {
     // Reset interval if user interacts
     clearInterval(this.autoSlideInterval);
     this.startAutoSlide();
+  }
+
+  public nextDealSlide(): void {
+    this.currentDealSlide = (this.currentDealSlide + 1) % this.offerServices.length;
+    clearInterval(this.dealSlideInterval);
+    this.startDealAutoSlide();
+  }
+
+  public prevDealSlide(): void {
+    this.currentDealSlide = (this.currentDealSlide - 1 + this.offerServices.length) % this.offerServices.length;
+    clearInterval(this.dealSlideInterval);
+    this.startDealAutoSlide();
+  }
+
+  public setDealSlide(index: number): void {
+    this.currentDealSlide = index;
+    clearInterval(this.dealSlideInterval);
+    this.startDealAutoSlide();
+  }
+
+  // Touch Handling
+  private touchStartX: number = 0;
+  private touchEndX: number = 0;
+
+  public onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+
+  public onDealTouchEnd(event: TouchEvent): void {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.handleDealSwipe();
+  }
+
+  private handleDealSwipe(): void {
+    const swipeThreshold = 50;
+    if (this.touchEndX < this.touchStartX - swipeThreshold) {
+      this.nextDealSlide();
+    }
+    if (this.touchEndX > this.touchStartX + swipeThreshold) {
+      this.prevDealSlide();
+    }
+  }
+
+  public onTestimonialTouchEnd(event: TouchEvent): void {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.handleTestimonialSwipe();
+  }
+
+  private handleTestimonialSwipe(): void {
+    const swipeThreshold = 50;
+    if (this.touchEndX < this.touchStartX - swipeThreshold) {
+      this.nextSlide();
+    }
+    if (this.touchEndX > this.touchStartX + swipeThreshold) {
+      this.prevSlide();
+    }
   }
 
   // Global Feedback Form

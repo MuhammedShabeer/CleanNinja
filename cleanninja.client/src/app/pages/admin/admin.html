@@ -1,84 +1,86 @@
 <div class="admin-theme">
-  <c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" [unfoldable]="false" id="sidebar" colorScheme="dark">
+  <c-sidebar #sidebar="cSidebar" [visible]="sidebarVisible" (visibleChange)="sidebarVisible = $event" [class.show]="sidebarVisible" [attr.inert]="sidebarVisible ? null : true" [unfoldable]="false" id="sidebar" colorScheme="dark" class="sidebar-mobile-fix">
     <c-sidebar-brand class="d-md-flex align-items-center justify-content-center py-4 px-3 border-bottom border-secondary border-opacity-10 d-sm-flex">
       <img src="favicon.png" height="32" class="me-2 rounded shadow-sm">
       <span class="fw-bold tracking-wider">CLEAN NINJA</span>
     </c-sidebar-brand>
     <c-sidebar-nav>
       <c-nav-item *ngIf="hasAccess('dashboard')">
-        <a cNavLink routerLink="/admin/dashboard" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/dashboard" routerLinkActive="active" (click)="forceNavigate('/admin/dashboard', $event)">
           <svg cIcon name="cilSpeedometer" class="nav-icon"></svg> Dashboard
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('bookings')">
-        <a cNavLink routerLink="/admin/bookings" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/bookings" routerLinkActive="active" (click)="forceNavigate('/admin/bookings', $event)">
           <svg cIcon name="cilList" class="nav-icon"></svg> Bookings
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('works')">
-        <a cNavLink routerLink="/admin/works" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/works" routerLinkActive="active" (click)="forceNavigate('/admin/works', $event)">
           <svg cIcon name="cilTask" class="nav-icon"></svg> Works
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('schedules')">
-        <a cNavLink routerLink="/admin/schedules" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/schedules" routerLinkActive="active" (click)="forceNavigate('/admin/schedules', $event)">
           <svg cIcon name="cilTask" class="nav-icon"></svg> Schedules
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('calendar')">
-        <a cNavLink routerLink="/admin/calendar" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/calendar" routerLinkActive="active" (click)="forceNavigate('/admin/calendar', $event)">
           <svg cIcon name="cilCalendar" class="nav-icon"></svg> Calendar
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('revenue')">
-        <a cNavLink routerLink="/admin/revenue" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/revenue" routerLinkActive="active" (click)="forceNavigate('/admin/revenue', $event)">
           <svg cIcon name="cilDollar" class="nav-icon"></svg> Revenue
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('expenses')">
-        <a cNavLink routerLink="/admin/expenses" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/expenses" routerLinkActive="active" (click)="forceNavigate('/admin/expenses', $event)">
           <svg cIcon name="cilWallet" class="nav-icon"></svg> Expenses
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('employees')">
-        <a cNavLink routerLink="/admin/employees" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/employees" routerLinkActive="active" (click)="forceNavigate('/admin/employees', $event)">
           <svg cIcon name="cilPeople" class="nav-icon"></svg> Employees
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('services')">
-        <a cNavLink routerLink="/admin/services" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/services" routerLinkActive="active" (click)="forceNavigate('/admin/services', $event)">
           <svg cIcon name="cilSettings" class="nav-icon"></svg> Services
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('gallery')">
-        <a cNavLink routerLink="/admin/gallery" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/gallery" routerLinkActive="active" (click)="forceNavigate('/admin/gallery', $event)">
           <svg cIcon name="cilImage" class="nav-icon"></svg> Gallery
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('content')">
-        <a cNavLink routerLink="/admin/content" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/content" routerLinkActive="active" (click)="forceNavigate('/admin/content', $event)">
           <svg cIcon name="cilSettings" class="nav-icon"></svg> Content
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('reviews')">
-        <a cNavLink routerLink="/admin/reviews" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/reviews" routerLinkActive="active" (click)="forceNavigate('/admin/reviews', $event)">
           <svg cIcon name="cilStar" class="nav-icon"></svg> Reviews
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('blogs')">
-        <a cNavLink routerLink="/admin/blogs" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/blogs" routerLinkActive="active" (click)="forceNavigate('/admin/blogs', $event)">
           <svg cIcon name="cilPen" class="nav-icon"></svg> Blogs
         </a>
       </c-nav-item>
       <c-nav-item *ngIf="hasAccess('users')">
-        <a cNavLink routerLink="/admin/users" routerLinkActive="active">
+        <a cNavLink routerLink="/admin/users" routerLinkActive="active" (click)="forceNavigate('/admin/users', $event)">
           <svg cIcon name="cilUser" class="nav-icon"></svg> Admin Users
         </a>
       </c-nav-item>
     </c-sidebar-nav>
   </c-sidebar>
 
-  <div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent">
+  <div *ngIf="sidebarVisible" class="sidebar-backdrop d-md-none" (click)="sidebarVisible = false"></div>
+
+  <div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent" [class.sidebar-hidden]="!sidebarVisible">
     <c-header class="mb-4 d-print-none shadow-sm" position="sticky">
       <div class="header-main w-100 bg-white">
         <c-container fluid class="d-flex align-items-center justify-content-between h-100">
@@ -119,4 +121,8 @@
     </div>
   </div>
 </div>
+
+
+
+
 

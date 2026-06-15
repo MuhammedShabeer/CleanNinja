@@ -20,14 +20,27 @@
     <p class="section-subtitle">Grab these premium valeting and cleaning deals before they're gone!</p>
   </div>
   
-  <div class="row gx-5 gy-5 justify-content-center">
-    <div class="col-md-6 col-lg-5 text-center mb-5" *ngFor="let svc of offerServices">
-      <h4 class="mb-3" style="color: var(--primary-color);">{{ svc.name }}</h4>
-      <img [src]="getMediaUrl(svc.offerFlyerUrl)" alt="Offer Flyer" style="width: 100%; height: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid var(--primary-color);">
-      <div class="mt-4">
-        <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn btn-primary btn-lg w-100" style="font-weight: 800; padding: 15px; font-size: 1.2rem; text-transform: uppercase; box-shadow: 0 0 20px rgba(220,53,69,0.4);">🔥 Claim Deal Now</a>
+  <div class="deals-carousel-container">
+    <div class="deals-carousel-track" [style.transform]="'translateX(' + (-currentDealSlide * 100) + '%)'" (touchstart)="onTouchStart($event)" (touchend)="onDealTouchEnd($event)">
+      <div class="deals-carousel-slide" *ngFor="let svc of offerServices; let i = index" [class.active-slide]="i === currentDealSlide">
+        <div class="deal-card">
+          <h4 class="deal-title">{{ svc.name }}</h4>
+          <div class="deal-img-wrapper">
+            <img [src]="getMediaUrl(svc.offerFlyerUrl)" alt="Offer Flyer" class="deal-img">
+          </div>
+          <div class="mt-4">
+            <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn btn-primary btn-lg w-100 claim-btn">🔥 Claim Deal Now</a>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Carousel Dots -->
+  <div class="carousel-dots deals-dots" *ngIf="offerServices.length > 1">
+    <span class="dot" *ngFor="let svc of offerServices; let i = index" 
+          [class.active]="i === currentDealSlide"
+          (click)="setDealSlide(i)"></span>
   </div>
 </div>
 
@@ -94,7 +107,7 @@
   <div class="container testimonials-section">
     <h2 class="section-title text-center">Customer Reviews</h2>
     <div class="testimonials-container" *ngIf="testimonials.length > 0">
-      <div class="testimonials-slider" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'">
+      <div class="testimonials-slider" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'" (touchstart)="onTouchStart($event)" (touchend)="onTestimonialTouchEnd($event)">
         <div class="professional-card testimonial-card" *ngFor="let t of testimonials; let i = index">
           <div class="testimonial-header">
             <div class="stars-display">

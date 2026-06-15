@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class AdminWorks implements OnInit {
   public works: any[] = [];
   public employees: any[] = [];
+  public services: any[] = [];
   
   public completingWork: any = null;
   public completeRevenue: number = 0;
@@ -26,6 +27,7 @@ export class AdminWorks implements OnInit {
   ngOnInit(): void {
     this.fetchWorks();
     this.fetchEmployees();
+    this.fetchServices();
   }
 
   fetchWorks(): void {
@@ -39,6 +41,12 @@ export class AdminWorks implements OnInit {
     this.http.get<any[]>('/api/employees').subscribe(data => {
       this.employees = Array.from(new Map(data.map(item => [item['id'], item])).values());
       this.cdr.detectChanges();
+    });
+  }
+
+  fetchServices(): void {
+    this.http.get<any[]>('/api/services').subscribe(data => {
+      this.services = data;
     });
   }
 
@@ -120,7 +128,17 @@ export class AdminWorks implements OnInit {
 
   copyReviewLink(work: any): void {
     const origin = window.location.origin;
-    const link = `${origin}/#/?review=true&serviceId=${work.serviceId}`;
+    let serviceId = '';
+    
+    if (this.services && work.servicePackage) {
+      const baseName = work.servicePackage.split(' (')[0].trim();
+      const service = this.services.find((s: any) => s.name === baseName);
+      if (service) {
+        serviceId = service.id.toString();
+      }
+    }
+
+    const link = `${origin}/#/?review=true${serviceId ? '&serviceId=' + serviceId : ''}`;
     navigator.clipboard.writeText(link).then(() => {
       alert('Review link copied to clipboard:\n' + link);
     }).catch(err => {

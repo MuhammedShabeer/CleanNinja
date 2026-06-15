@@ -18,6 +18,7 @@
 .admin-theme {
   background: #f0f2f5;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ── Cards: White Body, Clean Shadow ── */
@@ -118,6 +119,22 @@ table tbody td {
   font-size: .9rem;
 }
 
+/* ── Mobile Table Grid Overrides ── */
+@media (max-width: 768px) {
+  table tbody td, table thead th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 140px; /* Force ellipsis to trigger */
+  }
+  table tbody td *, table thead th * {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+}
+
 table tbody tr:hover {
   background: #f8fafc !important;
 }
@@ -177,10 +194,53 @@ c-card.border-warning  { border-left: 4px solid #f59e0b !important; }
   box-shadow: 2px 0 8px rgba(0,0,0,.12) !important;
 }
 
+@media (max-width: 768px) {
+  .sidebar-mobile-fix.show {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+  }
+  .sidebar-mobile-fix {
+    position: fixed !important;
+    z-index: 1050 !important;
+    height: 100vh !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+    width: 250px !important;
+    left: 0;
+    top: 0;
+  }
+  
+  .wrapper {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 1040;
+  transition: opacity 0.3s ease-in-out;
+  animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* ── Scrollable table wrapper ── */
 .table-responsive {
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Empty state messages ── */
