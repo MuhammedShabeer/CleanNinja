@@ -49,6 +49,10 @@ export class Landing implements OnInit, OnDestroy {
           this.instagramHandle = this.contentService.getValue('InstagramHandle', '@clean_ninja_official');
           const schema = this.seoService.getLocalBusinessSchema({ WhatsAppContact: this.contentService.getValue('WhatsAppContact') });
           this.seoService.setJsonLd(schema);
+          this.seoService.updateSeoTags(
+              "Clean Ninja - Mobile Valeting & Cleaning in Liverpool",
+              "Clean Ninja provides premium mobile car valeting, detailing, and home cleaning services straight to your driveway in Liverpool."
+          );
       });
       this.serviceApi.getGallery().subscribe(g => {
           this.gallery = g;

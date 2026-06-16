@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ServiceApiService, GalleryImage } from '../../services/service-api.service';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-gallery',
@@ -13,10 +14,15 @@ export class GalleryPage implements OnInit {
 
   constructor(
     private serviceApi: ServiceApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
+    this.seoService.updateSeoTags(
+        'Our Work - Valeting & Cleaning in Liverpool',
+        'View the transformational results of our mobile valeting and cleaning services in Liverpool.'
+    );
     this.serviceApi.getGallery().subscribe(g => {
       this.gallery = g;
       this.cdr.detectChanges();

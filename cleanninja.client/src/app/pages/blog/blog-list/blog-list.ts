@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { SeoService } from '../../../services/seo.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -11,9 +12,13 @@ export class BlogList implements OnInit {
   blogs: any[] = [];
   errorMsg: string = '';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private seoService: SeoService) {}
 
   ngOnInit(): void {
+    this.seoService.updateSeoTags(
+        'Cleaning Tips & News in Liverpool - Clean Ninja',
+        'Read the latest valeting tips, news, and updates from Clean Ninja in Liverpool.'
+    );
     this.http.get<any[]>('/api/blogs').subscribe({
       next: (res) => {
         this.blogs = res;

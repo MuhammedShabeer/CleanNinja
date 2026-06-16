@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceApiService, CleanService } from '../../services/service-api.service';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-booking',
@@ -32,7 +33,8 @@ export class Booking implements OnInit {
     private serviceApi: ServiceApiService,
     private http: HttpClient,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private seoService: SeoService
   ) {}
 
   get frequencyLabel(): string {
@@ -66,6 +68,10 @@ export class Booking implements OnInit {
   }
 
   ngOnInit(): void {
+    this.seoService.updateSeoTags(
+        'Book a Cleaning Service in Liverpool - Clean Ninja',
+        'Schedule your premium mobile valeting and cleaning service in Liverpool today.'
+    );
     this.serviceApi.getServices().subscribe(s => {
       this.services = s;
       

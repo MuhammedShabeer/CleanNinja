@@ -1,5 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Title, Meta } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,17 @@ export class SeoService {
 
   constructor(
       @Inject(DOCUMENT) private doc: Document,
-      @Inject(PLATFORM_ID) private platformId: Object
+      @Inject(PLATFORM_ID) private platformId: Object,
+      private title: Title,
+      private meta: Meta
   ) {}
+
+  public updateSeoTags(titleStr: string, descriptionStr: string): void {
+      this.title.setTitle(titleStr);
+      this.meta.updateTag({ name: 'description', content: descriptionStr });
+      this.meta.updateTag({ property: 'og:title', content: titleStr });
+      this.meta.updateTag({ property: 'og:description', content: descriptionStr });
+  }
 
   public setJsonLd(data: any): void {
       if (isPlatformBrowser(this.platformId)) {
