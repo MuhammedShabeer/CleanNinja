@@ -46,6 +46,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<CleanNinja.Server.Services.IAvailabilityService, CleanNinja.Server.Services.AvailabilityService>();
+builder.Services.AddScoped<CleanNinja.Server.Services.IEmailService, CleanNinja.Server.Services.EmailService>();
 
 // Allow large uploads (photos/videos) up to 100 MB
 builder.WebHost.ConfigureKestrel(options =>
@@ -149,6 +150,10 @@ using (var scope = app.Services.CreateScope())
         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bookings' AND COLUMN_NAME = 'DurationMinutes')
         BEGIN
             ALTER TABLE Bookings ADD DurationMinutes INT NOT NULL DEFAULT 60;
+        END
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bookings' AND COLUMN_NAME = 'CustomerEmail')
+        BEGIN
+            ALTER TABLE Bookings ADD CustomerEmail NVARCHAR(MAX) NOT NULL DEFAULT '';
         END
         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Bookings' AND COLUMN_NAME = 'Frequency')
         BEGIN

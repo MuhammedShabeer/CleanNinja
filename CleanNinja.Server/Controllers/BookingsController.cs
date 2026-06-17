@@ -11,11 +11,13 @@ namespace CleanNinja.Server.Controllers
     {
         private readonly AppDbContext _context;
         private readonly Services.IAvailabilityService _availabilityService;
+        private readonly Services.IEmailService _emailService;
 
-        public BookingsController(AppDbContext context, Services.IAvailabilityService availabilityService)
+        public BookingsController(AppDbContext context, Services.IAvailabilityService availabilityService, Services.IEmailService emailService)
         {
             _context = context;
             _availabilityService = availabilityService;
+            _emailService = emailService;
         }
 
         [HttpGet("available-slots")]
@@ -83,6 +85,10 @@ namespace CleanNinja.Server.Controllers
 
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
+            
+            // Fire and forget email or await it
+            _ = _emailService.SendBookingConfirmationAsync(booking);
+            
             return CreatedAtAction(nameof(GetPendingBookings), new { id = booking.Id }, booking);
         }
 

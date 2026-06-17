@@ -7,6 +7,7 @@ namespace CleanNinja.Server.Models
     {
         public int Id { get; set; }
         public required string CustomerName { get; set; }
+        public required string CustomerEmail { get; set; }
         public required string Phone { get; set; }
         public required string ServicePackage { get; set; }
         public string? Address { get; set; }

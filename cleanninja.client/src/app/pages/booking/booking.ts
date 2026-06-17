@@ -16,6 +16,7 @@ export class Booking implements OnInit {
   public selectedCategory: string = 'All';
   public selectedService: CleanService | null = null;
   public customerName: string = '';
+  public customerEmail: string = '';
   public phone: string = '';
   public address: string = '';
   public selectedFrequency: string = 'Once';
@@ -142,7 +143,7 @@ export class Booking implements OnInit {
 
   submitBooking(event: Event): void {
     event.preventDefault();
-    if (!this.selectedService || !this.customerName || !this.phone) {
+    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone) {
       alert('Please fill out all fields and select a service.');
       return;
     }
@@ -155,6 +156,7 @@ export class Booking implements OnInit {
     this.isSubmitting = true;
     const payload: any = {
       customerName: this.customerName,
+      customerEmail: this.customerEmail,
       phone: this.phone,
       servicePackage: `${this.selectedService.name} (${this.selectedFrequency}${this.selectedFrequency !== 'Once' ? ' x' + this.frequencyCount : ''})`,
       address: this.address,
@@ -176,6 +178,11 @@ export class Booking implements OnInit {
         this.isSubmitting = false;
         this.submitSuccess = true;
         this.cdr.detectChanges();
+        
+        // Explicitly snap to the top so the success message is immediately visible
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
       },
       error: (err) => {
         console.error(err);
