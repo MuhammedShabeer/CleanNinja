@@ -26,6 +26,12 @@ export class Booking implements OnInit {
   public selectedSlot: any | null = null;
   public isLoadingSlots: boolean = false;
 
+  public preferredHour: string = '10:00';
+  public availableHours: string[] = [
+    '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
+    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+  ];
+
   public isSubmitting: boolean = false;
   public submitSuccess: boolean = false;
   public backendUrl: string = ''; // Relative path by default
@@ -178,9 +184,13 @@ export class Booking implements OnInit {
       payload.scheduledDate = this.selectedSlot.value;
       payload.timeSlotLabel = this.selectedSlot.label;
     } else if (!this.selectedService.isSlotBased && this.scheduledDate) {
-      // Just set scheduled date (midnight) and custom label
-      payload.scheduledDate = new Date(this.scheduledDate).toISOString();
-      payload.timeSlotLabel = "Assessment Request";
+      // Create date with preferred hour
+      const date = new Date(this.scheduledDate);
+      const [hours, minutes] = this.preferredHour.split(':');
+      date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+      
+      payload.scheduledDate = date.toISOString();
+      payload.timeSlotLabel = `Assessment at ${this.preferredHour}`;
       payload.durationMinutes = 0;
     }
 

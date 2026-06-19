@@ -95,7 +95,7 @@
 
         <!-- Date & Slot Selection -->
         <div class="row g-3" *ngIf="selectedService">
-          <div [ngClass]="selectedService.isSlotBased ? 'col-md-6' : 'col-12'" class="form-group">
+          <div class="col-md-6 form-group">
             <label class="form-label fw-bold mb-2">Select Date</label>
             <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" (change)="onDateChange()" class="form-control" required />
           </div>
@@ -113,6 +113,12 @@
                 {{ slot.label }}
               </button>
             </div>
+          </div>
+          <div class="col-md-6 form-group" *ngIf="!selectedService.isSlotBased">
+            <label class="form-label fw-bold mb-2">Preferred Time</label>
+            <select [(ngModel)]="preferredHour" name="preferredHour" class="form-select">
+              <option *ngFor="let hour of availableHours" [value]="hour">{{ hour }}</option>
+            </select>
           </div>
         </div>
 
@@ -156,7 +162,7 @@
         <button type="button" class="btn btn-primary btn-lg w-100 mt-4 py-3 fw-bold" 
           (click)="submitBooking($event)" 
           [disabled]="isSubmitting || !selectedService || (selectedService?.isSlotBased && !selectedSlot) || (selectedFrequency !== 'Once' && frequencyCount < 2)">
-          {{ isSubmitting ? 'Confirming Your Ninja...' : (selectedService?.isSlotBased ? 'Confirm Booking' : 'Request On-Site Assessment') }}
+          {{ isSubmitting ? 'Confirming Your Ninja...' : (selectedService?.isSlotBased ? 'Confirm Booking' : 'Book Appointment') }}
         </button>
       </form>
     </div>
