@@ -9,11 +9,21 @@
           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
         </svg>
       </div>
-      <h2 class="success-title">Your Booking is Confirmed!</h2>
-      <p class="success-subtitle">Thank you for choosing Clean Ninja.</p>
-      <div class="success-details">
-        <p>We have received your booking request for <strong>{{ selectedService?.name }}</strong>. Our team will contact you soon via WhatsApp or phone to confirm your schedule.</p>
-      </div>
+      <ng-container *ngIf="selectedService?.isSlotBased !== false">
+        <h2 class="success-title">Your Booking is Confirmed!</h2>
+        <p class="success-subtitle">Thank you for choosing Clean Ninja.</p>
+        <div class="success-details">
+          <p>We have received your booking request for <strong>{{ selectedService?.name }}</strong>. Our team will contact you soon via WhatsApp or phone to confirm your schedule.</p>
+        </div>
+      </ng-container>
+      
+      <ng-container *ngIf="selectedService?.isSlotBased === false">
+        <h2 class="success-title">Your Request for an Appointment is Confirmed!</h2>
+        <p class="success-subtitle">Thank you for choosing Clean Ninja.</p>
+        <div class="success-details">
+          <p>We have received your request for a viewing for <strong>{{ selectedService?.name }}</strong>. Our team will visit your location to check the condition, look around, and provide your custom quote.</p>
+        </div>
+      </ng-container>
       <button class="btn btn-primary success-btn w-100 mb-3" (click)="submitSuccess = false; isSubmitting = false; customerName=''; customerEmail=''; phone=''; address=''">Book Another Service</button>
       <a routerLink="/" class="btn btn-outline-secondary w-100" style="padding: 14px; font-weight: 700; border-radius: 50px;">Return Home</a>
     </div>
