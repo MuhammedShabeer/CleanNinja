@@ -4,6 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { SeoService } from '../../services/seo.service';
 import { ContentService } from '../../services/content.service';
 import { ServiceApiService, CleanService, ServiceFeedback, GalleryImage } from '../../services/service-api.service';
+import { register } from 'swiper/element/bundle';
+
+register();
 
 @Component({
   selector: 'app-landing',
@@ -21,16 +24,8 @@ export class Landing implements OnInit, OnDestroy {
   public backendUrl: string = ''; // Relative paths for media resolution
   public isMobileMenuOpen: boolean = false;
 
-  // Carousel State
-  public testimonials: ServiceFeedback[] = [];
-  public currentSlide: number = 0;
-  private autoSlideInterval: any;
-  
-  public currentDealSlide: number = 0;
-  private dealSlideInterval: any;
-
   // Feedback form state
-
+  public testimonials: ServiceFeedback[] = [];
   
   public offerServices: CleanService[] = [];
 
@@ -101,8 +96,7 @@ export class Landing implements OnInit, OnDestroy {
               }
           });
 
-          this.startAutoSlide();
-          this.startDealAutoSlide();
+          // Swiper handles auto-slide naturally now
           
           this.route.queryParams.subscribe(params => {
               if (params['review'] === 'true') {
@@ -120,98 +114,9 @@ export class Landing implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.autoSlideInterval) {
-      clearInterval(this.autoSlideInterval);
-    }
-    if (this.dealSlideInterval) {
-      clearInterval(this.dealSlideInterval);
-    }
   }
 
-  private startAutoSlide(): void {
-    this.autoSlideInterval = setInterval(() => {
-      this.nextSlide();
-    }, 5000);
-  }
-
-  private startDealAutoSlide(): void {
-    this.dealSlideInterval = setInterval(() => {
-      if (this.offerServices.length > 0) {
-        this.currentDealSlide = (this.currentDealSlide + 1) % this.offerServices.length;
-      }
-    }, 4000);
-  }
-
-  public nextSlide(): void {
-    this.currentSlide = (this.currentSlide + 1) % this.testimonials.length;
-  }
-
-  public prevSlide(): void {
-    this.currentSlide = (this.currentSlide - 1 + this.testimonials.length) % this.testimonials.length;
-  }
-
-  public setSlide(index: number): void {
-    this.currentSlide = index;
-    // Reset interval if user interacts
-    clearInterval(this.autoSlideInterval);
-    this.startAutoSlide();
-  }
-
-  public nextDealSlide(): void {
-    this.currentDealSlide = (this.currentDealSlide + 1) % this.offerServices.length;
-    clearInterval(this.dealSlideInterval);
-    this.startDealAutoSlide();
-  }
-
-  public prevDealSlide(): void {
-    this.currentDealSlide = (this.currentDealSlide - 1 + this.offerServices.length) % this.offerServices.length;
-    clearInterval(this.dealSlideInterval);
-    this.startDealAutoSlide();
-  }
-
-  public setDealSlide(index: number): void {
-    this.currentDealSlide = index;
-    clearInterval(this.dealSlideInterval);
-    this.startDealAutoSlide();
-  }
-
-  // Touch Handling
-  private touchStartX: number = 0;
-  private touchEndX: number = 0;
-
-  public onTouchStart(event: TouchEvent): void {
-    this.touchStartX = event.changedTouches[0].screenX;
-  }
-
-  public onDealTouchEnd(event: TouchEvent): void {
-    this.touchEndX = event.changedTouches[0].screenX;
-    this.handleDealSwipe();
-  }
-
-  private handleDealSwipe(): void {
-    const swipeThreshold = 50;
-    if (this.touchEndX < this.touchStartX - swipeThreshold) {
-      this.nextDealSlide();
-    }
-    if (this.touchEndX > this.touchStartX + swipeThreshold) {
-      this.prevDealSlide();
-    }
-  }
-
-  public onTestimonialTouchEnd(event: TouchEvent): void {
-    this.touchEndX = event.changedTouches[0].screenX;
-    this.handleTestimonialSwipe();
-  }
-
-  private handleTestimonialSwipe(): void {
-    const swipeThreshold = 50;
-    if (this.touchEndX < this.touchStartX - swipeThreshold) {
-      this.nextSlide();
-    }
-    if (this.touchEndX > this.touchStartX + swipeThreshold) {
-      this.prevSlide();
-    }
-  }
+  // Touch Handling removed since Swiper takes care of it
 
   // Global Feedback Form
   public showGlobalFeedbackForm: boolean = false;
@@ -262,5 +167,45 @@ export class Landing implements OnInit, OnDestroy {
 
   closeMobileMenu() {
     this.isMobileMenuOpen = false;
+  }
+
+  // Contact Form
+  public contactName: string = '';
+  public contactPhone: string = '';
+  public contactMessage: string = '';
+  public isSubmittingContact: boolean = false;
+  public contactSuccess: boolean = false;
+
+  submitContactForm(): void {
+    if (!this.contactName.trim() || !this.contactMessage.trim()) {
+      alert('Name and Message are required.');
+      return;
+    }
+    
+    this.isSubmittingContact = true;
+    this.contactSuccess = false;
+
+    const payload = {
+      name: this.contactName,
+      phone: this.contactPhone,
+      message: this.contactMessage
+    };
+
+    this.serviceApi.submitContact(payload).subscribe({
+      next: () => {
+        this.isSubmittingContact = false;
+        this.contactSuccess = true;
+        this.contactName = '';
+        this.contactPhone = '';
+        this.contactMessage = '';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.contactSuccess = false; this.cdr.detectChanges(); }, 5000);
+      },
+      error: () => {
+        this.isSubmittingContact = false;
+        alert('Failed to send request. Please try again or call us.');
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

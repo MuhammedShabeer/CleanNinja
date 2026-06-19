@@ -8,6 +8,7 @@ namespace CleanNinja.Server.Services
     public interface IEmailService
     {
         Task SendBookingConfirmationAsync(Booking booking);
+        Task SendContactInquiryAsync(ContactRequest request);
     }
 
     public class EmailService : IEmailService
@@ -72,6 +73,44 @@ Date/Time: {booking.ScheduledDate?.ToString("f") ?? "Not specified"} ({booking.T
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending booking confirmation emails");
+            }
+        }
+
+        public async Task SendContactInquiryAsync(ContactRequest request)
+        {
+            try
+            {
+                var smtpServer = _config["EmailSettings:SmtpServer"];
+                var smtpPort = int.Parse(_config["EmailSettings:SmtpPort"] ?? "587");
+                var smtpUsername = _config["EmailSettings:SmtpUsername"];
+                var smtpPassword = _config["EmailSettings:SmtpPassword"];
+                var adminEmail = _config["EmailSettings:AdminEmail"];
+
+                using var client = new SmtpClient(smtpServer, smtpPort)
+                {
+                    Credentials = new NetworkCredential(smtpUsername, smtpPassword),
+                    EnableSsl = true
+                };
+
+                var adminMessage = new MailMessage
+                {
+                    From = new MailAddress(smtpUsername!, "Clean Ninja System"),
+                    Subject = $"New Contact Inquiry from {request.Name}",
+                    Body = $@"A new inquiry was submitted via the contact form:
+
+Name: {request.Name}
+Phone: {request.Phone}
+
+Message:
+{request.Message}",
+                    IsBodyHtml = false
+                };
+                adminMessage.To.Add(adminEmail!);
+                await client.SendMailAsync(adminMessage);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending contact inquiry email");
             }
         }
 

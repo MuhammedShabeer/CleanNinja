@@ -128,4 +128,9 @@ export class ServiceApiService {
   deleteFeedback(id: number): Observable<void> {
     return this.http.delete<void>(`/api/feedback/${id}`);
   }
+
+  // Contact
+  submitContact(contactData: any): Observable<any> {
+    return this.http.post('/api/contact', contactData);
+  }
 }

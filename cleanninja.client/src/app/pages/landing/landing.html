@@ -7,7 +7,7 @@
     </p>
     
     <div class="hero-actions">
-      <a href="#services" class="btn-primary shimmer-effect hero-btn">Our Services</a>
+      <a routerLink="/booking" class="btn-primary shimmer-effect hero-btn">Book Now</a>
     </div>
   </div>
 </div>
@@ -21,8 +21,8 @@
   </div>
   
   <div class="deals-carousel-container">
-    <div class="deals-carousel-track" [style.transform]="'translateX(' + (-currentDealSlide * 100) + '%)'" (touchstart)="onTouchStart($event)" (touchend)="onDealTouchEnd($event)">
-      <div class="deals-carousel-slide" *ngFor="let svc of offerServices; let i = index" [class.active-slide]="i === currentDealSlide">
+    <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="4000" slides-per-view="1" space-between="20">
+      <swiper-slide *ngFor="let svc of offerServices">
         <div class="deal-card">
           <h4 class="deal-title">{{ svc.name }}</h4>
           <div class="deal-img-wrapper">
@@ -32,15 +32,8 @@
             <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn btn-primary btn-lg w-100 claim-btn">🔥 Claim Deal Now</a>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Carousel Dots -->
-  <div class="carousel-dots deals-dots" *ngIf="offerServices.length > 1">
-    <span class="dot" *ngFor="let svc of offerServices; let i = index" 
-          [class.active]="i === currentDealSlide"
-          (click)="setDealSlide(i)"></span>
+      </swiper-slide>
+    </swiper-container>
   </div>
 </div>
 
@@ -107,31 +100,26 @@
   <div class="container testimonials-section">
     <h2 class="section-title text-center">Customer Reviews</h2>
     <div class="testimonials-container" *ngIf="testimonials.length > 0">
-      <div class="testimonials-slider" [style.transform]="'translateX(' + (-currentSlide * 100) + '%)'" (touchstart)="onTouchStart($event)" (touchend)="onTestimonialTouchEnd($event)">
-        <div class="professional-card testimonial-card" *ngFor="let t of testimonials; let i = index">
-          <div class="testimonial-header">
-            <div class="stars-display">
-              <span *ngFor="let s of [1,2,3,4,5]">★</span>
+      <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="5000" slides-per-view="1" space-between="30" breakpoints='{"768": {"slidesPerView": 2}}' style="padding-bottom: 40px;">
+        <swiper-slide *ngFor="let t of testimonials">
+          <div class="professional-card testimonial-card h-100 mx-1">
+            <div class="testimonial-header">
+              <div class="stars-display">
+                <span *ngFor="let s of [1,2,3,4,5]">★</span>
+              </div>
+              <div class="quote-icon">"</div>
             </div>
-            <div class="quote-icon">"</div>
-          </div>
-          <p class="quote-text">{{ t.comment }}</p>
-          <div class="author-info">
-            <div class="author-avatar">{{ t.customerName.charAt(0) }}</div>
-            <div class="author-text">
-              <strong class="author-name">{{ t.customerName }}</strong>
-              <span class="author-status">Verified Ninja Customer</span>
+            <p class="quote-text">{{ t.comment }}</p>
+            <div class="author-info">
+              <div class="author-avatar">{{ t.customerName.charAt(0) }}</div>
+              <div class="author-text">
+                <strong class="author-name">{{ t.customerName }}</strong>
+                <span class="author-status">Verified Ninja Customer</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Carousel Dots -->
-    <div class="carousel-dots" *ngIf="testimonials.length > 0">
-      <span class="dot" *ngFor="let t of testimonials; let i = index" 
-            [class.active]="i === currentSlide"
-            (click)="setSlide(i)"></span>
+        </swiper-slide>
+      </swiper-container>
     </div>
 
     <!-- Add Review Button -->
@@ -231,21 +219,26 @@
       </div>
       
       <div class="contact-form-panel">
+        <div *ngIf="contactSuccess" class="alert alert-success" style="background: #e6f9e6; color: #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          Thank you! Your request has been sent. Our team will contact you shortly.
+        </div>
         <div class="form-row">
           <div class="form-group-custom">
             <label>Name</label>
-            <input type="text" placeholder="Your Name">
+            <input type="text" placeholder="Your Name" [(ngModel)]="contactName">
           </div>
           <div class="form-group-custom">
             <label>Phone</label>
-            <input type="tel" placeholder="Your Phone Number">
+            <input type="tel" placeholder="Your Phone Number" [(ngModel)]="contactPhone">
           </div>
         </div>
         <div class="form-group-custom">
           <label>Inquiry Message</label>
-          <textarea rows="4" placeholder="How can our Ninja's help you today?"></textarea>
+          <textarea rows="4" placeholder="How can our Ninja's help you today?" [(ngModel)]="contactMessage"></textarea>
         </div>
-        <button class="btn-primary w-100 py-3 mt-3">Send Your Request</button>
+        <button class="btn-primary w-100 py-3 mt-3" (click)="submitContactForm()" [disabled]="isSubmittingContact">
+          {{ isSubmittingContact ? 'Sending...' : 'Send Your Request' }}
+        </button>
       </div>
     </div>
   </div>

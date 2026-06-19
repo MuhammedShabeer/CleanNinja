@@ -121,30 +121,23 @@
   padding: 20px 0;
 }
 
-.deals-carousel-track {
-  display: flex;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-  will-change: transform;
-}
-
-.deals-carousel-slide {
-  min-width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
-  opacity: 0.5;
-  transform: scale(0.9);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.deals-carousel-slide.active-slide {
-  opacity: 1;
-  transform: scale(1);
+.deals-carousel-container swiper-container {
+  --swiper-pagination-color: var(--primary-color);
+  --swiper-pagination-bullet-inactive-color: rgba(0, 0, 0, 0.25);
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-size: 10px;
+  --swiper-pagination-bottom: 0px;
+  padding-bottom: 65px;
 }
 
 .deal-card {
   text-align: center;
-  background: transparent;
-  padding: 10px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+  margin: 10px 10px 30px 10px;
 }
 
 .deal-title {
@@ -158,15 +151,16 @@
 .deal-img-wrapper {
   overflow: hidden;
   border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   border: 2px solid var(--primary-color);
   background: #000;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
+  margin-bottom: 20px;
 }
 
 .deal-card:hover .deal-img-wrapper {
   transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(220,53,69,0.5);
+  box-shadow: 0 15px 40px rgba(220,53,69,0.4);
 }
 
 .deal-img {
@@ -182,11 +176,19 @@
 
 .claim-btn {
   font-weight: 800;
-  padding: 15px;
-  font-size: 1.2rem;
+  height: 54px;
+  font-size: 1.15rem;
   text-transform: uppercase;
-  box-shadow: 0 0 20px rgba(220,53,69,0.4);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(220,53,69,0.3);
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
 }
 
 .claim-btn:hover {
@@ -194,17 +196,7 @@
   box-shadow: 0 0 30px rgba(220,53,69,0.6);
 }
 
-.deals-dots {
-  margin-top: 20px;
-}
 
-.deals-dots .dot {
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.deals-dots .dot:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
 
 .services-section {
   background-color: #f8f9fa; 
@@ -710,16 +702,16 @@
   padding: 20px 0 60px;
 }
 
-.testimonials-slider {
-  display: flex;
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-  width: 100%;
+.testimonials-container swiper-container {
+  --swiper-pagination-color: var(--primary-color);
+  --swiper-pagination-bullet-inactive-color: rgba(0, 0, 0, 0.2);
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-size: 10px;
+  padding-bottom: 30px;
 }
 
 .testimonial-card {
-  min-width: 100%;
-  flex: 0 0 100%;
-  padding: 50px;
+  padding: 40px;
   position: relative;
   box-sizing: border-box;
 }
@@ -738,31 +730,7 @@
   box-shadow: 0 4px 10px rgba(230, 57, 70, 0.4);
 }
 
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 30px;
-}
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.dot:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.dot.active {
-  background: var(--primary-color);
-  transform: scale(1.3);
-  box-shadow: 0 0 10px var(--primary-color);
-}
 
 .testimonial-card::after {
   content: '""';
