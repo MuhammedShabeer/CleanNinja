@@ -8,7 +8,7 @@ import { ServiceApiService, CleanService, ServiceFeedback } from '../../../servi
 })
 export class AdminServices implements OnInit {
   public services: CleanService[] = [];
-  public newService: any = { name: '', category: 'Uncategorized', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
+  public newService: any = { name: '', category: 'Uncategorized', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, isSlotBased: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
   public editingService: CleanService | null = null;
   public isUploadingMedia: { [key: number]: boolean } = {};
   public isUploadingFlyer: { [key: number]: boolean } = {};
@@ -32,9 +32,11 @@ export class AdminServices implements OnInit {
     if (!this.newService.name.trim()) { alert('Service name is required.'); return; }
     // Ensure default active state for new services
     this.newService.isActive = true;
+    if (this.newService.isSlotBased === undefined) this.newService.isSlotBased = true;
+    
     this.serviceApi.createService(this.newService).subscribe({
       next: () => {
-        this.newService = { name: '', category: 'Uncategorized', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
+        this.newService = { name: '', category: 'Uncategorized', description: '', icon: '<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="..."/></svg>', sortOrder: 0, isActive: true, isSlotBased: true, showInOffersPopup: false, defaultDurationMinutes: 60 };
         this.fetchServices();
       },
       error: (err) => {

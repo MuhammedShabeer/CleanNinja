@@ -95,11 +95,11 @@
 
         <!-- Date & Slot Selection -->
         <div class="row g-3" *ngIf="selectedService">
-          <div class="col-md-6 form-group">
+          <div [ngClass]="selectedService.isSlotBased ? 'col-md-6' : 'col-12'" class="form-group">
             <label class="form-label fw-bold mb-2">Select Date</label>
             <input type="date" [(ngModel)]="scheduledDate" name="scheduledDate" (change)="onDateChange()" class="form-control" required />
           </div>
-          <div class="col-md-6 form-group">
+          <div class="col-md-6 form-group" *ngIf="selectedService.isSlotBased">
             <label class="form-label fw-bold mb-2">Select Time Slot</label>
             <div *ngIf="isLoadingSlots" class="py-2 text-warning small"><span class="spinner-border spinner-border-sm me-2"></span>Checking availability...</div>
             <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && scheduledDate" class="py-2 text-danger small">No slots available for this date.</div>
@@ -155,8 +155,8 @@
 
         <button type="button" class="btn btn-primary btn-lg w-100 mt-4 py-3 fw-bold" 
           (click)="submitBooking($event)" 
-          [disabled]="isSubmitting || !selectedService || !selectedSlot || (selectedFrequency !== 'Once' && frequencyCount < 2)">
-          {{ isSubmitting ? 'Confirming Your Ninja...' : 'Confirm Booking' }}
+          [disabled]="isSubmitting || !selectedService || (selectedService?.isSlotBased && !selectedSlot) || (selectedFrequency !== 'Once' && frequencyCount < 2)">
+          {{ isSubmitting ? 'Confirming Your Ninja...' : (selectedService?.isSlotBased ? 'Confirm Booking' : 'Request On-Site Assessment') }}
         </button>
       </form>
     </div>

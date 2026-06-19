@@ -17,6 +17,12 @@
           <c-col [md]="2">
             <input cFormControl type="number" [(ngModel)]="newService.defaultDurationMinutes" placeholder="Duration (mins)" />
           </c-col>
+          <c-col [md]="2" class="d-flex align-items-center">
+            <c-form-check>
+              <input cFormCheckInput type="checkbox" [(ngModel)]="newService.isSlotBased" id="newSlotBased" />
+              <label cFormCheckLabel for="newSlotBased">Strict Slots</label>
+            </c-form-check>
+          </c-col>
           <c-col [md]="1">
             <input cFormControl type="number" [(ngModel)]="newService.sortOrder" placeholder="Sort Order" />
           </c-col>
@@ -110,6 +116,12 @@
                   <c-col [sm]="4">
                     <label cLabel class="small text-muted">Duration (Minutes)</label>
                     <input cFormControl type="number" [(ngModel)]="s.defaultDurationMinutes" />
+                  </c-col>
+                  <c-col [sm]="4" class="d-flex align-items-end pb-2">
+                    <c-form-check>
+                      <input cFormCheckInput type="checkbox" [(ngModel)]="s.isSlotBased" [id]="'slotBased'+s.id" />
+                      <label cFormCheckLabel [for]="'slotBased'+s.id">Strict Time Slots</label>
+                    </c-form-check>
                   </c-col>
               </c-row>
 

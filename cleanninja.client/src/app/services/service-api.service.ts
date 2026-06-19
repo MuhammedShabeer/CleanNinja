@@ -38,6 +38,7 @@ export interface CleanService {
   description: string;
   icon: string;
   isActive: boolean;
+  isSlotBased: boolean;
   isHighlighted: boolean;
   sortOrder: number;
   category: string;

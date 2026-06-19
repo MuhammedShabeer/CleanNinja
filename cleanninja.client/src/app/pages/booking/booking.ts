@@ -120,7 +120,7 @@ export class Booking implements OnInit {
   }
 
   fetchAvailableSlots(): void {
-    if (!this.selectedService || !this.scheduledDate) return;
+    if (!this.selectedService || !this.scheduledDate || !this.selectedService.isSlotBased) return;
     this.isLoadingSlots = true;
     this.selectedSlot = null;
     this.http.get<any[]>(`/api/bookings/available-slots?serviceId=${this.selectedService.id}&date=${this.scheduledDate}`)
@@ -143,8 +143,13 @@ export class Booking implements OnInit {
 
   submitBooking(event: Event): void {
     event.preventDefault();
-    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone) {
-      alert('Please fill out all fields and select a service.');
+    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone || !this.scheduledDate) {
+      alert('Please fill out all required fields and select a service/date.');
+      return;
+    }
+
+    if (this.selectedService.isSlotBased && !this.selectedSlot) {
+      alert('Please select a time slot.');
       return;
     }
 
@@ -166,11 +171,17 @@ export class Booking implements OnInit {
       longitude: 0,
       durationMinutes: this.selectedService.defaultDurationMinutes
     };
-    if (this.scheduledDate && this.selectedSlot) {
+
+    if (this.selectedService.isSlotBased && this.scheduledDate && this.selectedSlot) {
       // Create a full DateTime from date and slot
       // Slot value is ISO string from server
       payload.scheduledDate = this.selectedSlot.value;
       payload.timeSlotLabel = this.selectedSlot.label;
+    } else if (!this.selectedService.isSlotBased && this.scheduledDate) {
+      // Just set scheduled date (midnight) and custom label
+      payload.scheduledDate = new Date(this.scheduledDate).toISOString();
+      payload.timeSlotLabel = "Assessment Request";
+      payload.durationMinutes = 0;
     }
 
     this.http.post('/api/bookings', payload).subscribe({

@@ -9,6 +9,7 @@ namespace CleanNinja.Server.Models
         public string Description { get; set; } = string.Empty;
         public string Icon { get; set; } = "🔧"; // emoji or text
         public bool IsActive { get; set; } = true;
+        public bool IsSlotBased { get; set; } = true;
         public bool IsHighlighted { get; set; } = false;
         public int SortOrder { get; set; } = 0;
         public int DefaultDurationMinutes { get; set; } = 60;
