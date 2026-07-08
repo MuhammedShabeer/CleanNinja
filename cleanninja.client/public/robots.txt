@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cleanninja.com/sitemap.xml
+Sitemap: https://cleanninja.uk/sitemap.xml

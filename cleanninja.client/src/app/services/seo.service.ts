@@ -38,7 +38,7 @@ export class SeoService {
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
           "name": "Clean Ninja",
-          "image": "https://cleanninja.com/logo.png",
+          "image": "https://cleanninja.uk/logo.png",
           "address": {
               "@type": "PostalAddress",
               "addressLocality": "Liverpool",
@@ -46,7 +46,7 @@ export class SeoService {
               "addressCountry": "UK"
           },
           "telephone": content.WhatsAppContact || "+447578334674",
-          "url": "https://cleanninja.com"
+          "url": "https://cleanninja.uk"
       };
   }
 }
