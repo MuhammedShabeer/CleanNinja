@@ -49,4 +49,27 @@ export class SeoService {
           "url": "https://cleanninja.uk"
       };
   }
+
+  public getBlogPostingSchema(blog: any): any {
+      return {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": blog.title,
+          "image": blog.imageUrl || "https://cleanninja.uk/logo.png",
+          "author": {
+              "@type": "Organization",
+              "name": blog.author || "Clean Ninja"
+          },
+          "publisher": {
+              "@type": "Organization",
+              "name": "Clean Ninja",
+              "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://cleanninja.uk/logo.png"
+              }
+          },
+          "datePublished": blog.createdAt || new Date().toISOString(),
+          "description": blog.content ? blog.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : ""
+      };
+  }
 }
