@@ -19,6 +19,7 @@ export class Booking implements OnInit {
   public customerEmail: string = '';
   public phone: string = '';
   public address: string = '';
+  public zipcode: string = '';
   public selectedFrequency: string = 'Once';
   public frequencyCount: number = 2; // must be > 1 for recurring
   public scheduledDate: string = '';
@@ -149,8 +150,8 @@ export class Booking implements OnInit {
 
   submitBooking(event: Event): void {
     event.preventDefault();
-    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone || !this.scheduledDate) {
-      alert('Please fill out all required fields and select a service/date.');
+    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone || !this.scheduledDate || !this.address || !this.zipcode) {
+      alert('Please fill out all required fields (Name, Email, Phone, Address, Postcode, Service, and Date).');
       return;
     }
 
@@ -170,7 +171,7 @@ export class Booking implements OnInit {
       customerEmail: this.customerEmail,
       phone: this.phone,
       servicePackage: `${this.selectedService.name} (${this.selectedFrequency}${this.selectedFrequency !== 'Once' ? ' x' + this.frequencyCount : ''})`,
-      address: this.address,
+      address: `${this.address}, ${this.zipcode}`,
       frequency: this.selectedFrequency,
       frequencyCount: this.selectedFrequency !== 'Once' ? this.frequencyCount : 1,
       latitude: 0,

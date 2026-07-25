@@ -24,7 +24,7 @@
           <p>We have received your request for a viewing for <strong>{{ selectedService?.name }}</strong>. Our team will visit your location to check the condition, look around, and provide your custom quote.</p>
         </div>
       </ng-container>
-      <button class="btn btn-primary success-btn w-100 mb-3" (click)="submitSuccess = false; isSubmitting = false; customerName=''; customerEmail=''; phone=''; address=''">Book Another Service</button>
+      <button class="btn btn-primary success-btn w-100 mb-3" (click)="submitSuccess = false; isSubmitting = false; customerName=''; customerEmail=''; phone=''; address=''; zipcode=''">Book Another Service</button>
       <a routerLink="/" class="btn btn-outline-secondary w-100" style="padding: 14px; font-weight: 700; border-radius: 50px;">Return Home</a>
     </div>
   </div>
@@ -95,9 +95,13 @@
             <label class="form-label fw-bold mb-2">Phone Number</label>
             <input type="tel" [(ngModel)]="phone" name="phone" required placeholder="+44 7000 000000" class="form-control" />
           </div>
-          <div class="col-12 form-group">
+          <div class="col-md-8 form-group">
             <label class="form-label fw-bold mb-2">Address / Location</label>
-            <input type="text" [(ngModel)]="address" name="address" placeholder="123 High Street, Liverpool" class="form-control" />
+            <input type="text" [(ngModel)]="address" name="address" required placeholder="123 High Street, Liverpool" class="form-control" />
+          </div>
+          <div class="col-md-4 form-group">
+            <label class="form-label fw-bold mb-2">Postcode / Zipcode</label>
+            <input type="text" [(ngModel)]="zipcode" name="zipcode" required placeholder="L1 1AA" class="form-control" />
           </div>
         </div>
 
