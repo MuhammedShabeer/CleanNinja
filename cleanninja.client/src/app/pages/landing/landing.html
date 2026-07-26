@@ -1,120 +1,196 @@
-<div class="hero-section">
-  <div class="hero-overlay"></div>
+<!-- ═══════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-bg-overlay"></div>
+  <div class="hero-noise"></div>
+
   <div class="container hero-content">
-    <h1 class="hero-main-title">EXPERT MOBILE VALETING<br><span class="text-primary-bright">& CLEANING SERVICES</span></h1>
-    <p class="hero-subtitle">
-      Professional, Fully Insured Detailing & Sanitization Services Delivered Straight to Your Driveway in Liverpool.
+    <div class="hero-eyebrow">
+      <span class="hero-badge">🥷 Liverpool's #1 Cleaning Ninjas</span>
+    </div>
+
+    <h1 class="hero-headline">
+      We Don't Just Clean.<br>
+      <span class="hero-highlight">We Transform.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Premium mobile valeting &amp; cleaning services delivered straight to your door across Liverpool — fully insured, eco-friendly &amp; built for perfection.
     </p>
-    
-    <div class="hero-actions">
-      <a routerLink="/booking" class="btn-primary shimmer-effect hero-btn">Book Now</a>
+
+    <div class="hero-cta-group">
+      <a routerLink="/booking" class="btn-hero-primary shimmer-effect">
+        <span>Book a Ninja</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#services" class="btn-hero-ghost">Explore Services</a>
     </div>
   </div>
-</div>
 
-<!-- Deals Section -->
-<div id="deals" class="container deals-section section-padding" *ngIf="offerServices.length > 0">
-  <div class="text-center mb-5">
-    <div class="ninja-badge" style="display: inline-block; background: var(--primary-color); color: #000; padding: 4px 12px; font-weight: 800; border-radius: 4px; margin-bottom: 10px;">PREMIUM DEALS</div>
-    <h2 class="section-title text-center">Exclusive Limited Offers</h2>
-    <p class="section-subtitle">Grab these premium valeting and cleaning deals before they're gone!</p>
-  </div>
-  
-  <div class="deals-carousel-container">
-    <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="4000" slides-per-view="1" space-between="20">
-      <swiper-slide *ngFor="let svc of offerServices">
-        <div class="deal-card">
-          <h4 class="deal-title">{{ svc.name }}</h4>
-          <div class="deal-img-wrapper">
-            <img [src]="getMediaUrl(svc.offerFlyerUrl)" alt="Offer Flyer" class="deal-img">
-          </div>
-          <div class="mt-4">
-            <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn btn-primary btn-lg w-100 claim-btn">🔥 Claim Deal Now</a>
-          </div>
+  <!-- Trust strip anchored to bottom of hero -->
+  <div class="hero-trust-strip">
+    <div class="container">
+      <div class="trust-items">
+        <div class="trust-item">
+          <span class="trust-num">5.0<span class="trust-star">★</span></span>
+          <span class="trust-label">Average Rating</span>
         </div>
-      </swiper-slide>
-    </swiper-container>
-  </div>
-</div>
-
-
-<!-- About Us Section -->
-<div class="container about-section section-padding">
-  <div class="about-text text-center" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="section-title text-center">Who We Are</h2>
-    <h3 class="subtitle-text">Premium Mobile Cleaning Services in Liverpool</h3>
-    <p class="desc-text">Clean Ninja is a trusted, professional cleaning company delivering high-quality services across Liverpool and surrounding areas. We specialise in a wide range of solutions including mobile car valeting, home deep cleaning, end of tenancy cleaning, window cleaning, and pavement cleaning.<br><br>Our goal is simple — we don’t just clean, we transform spaces. Whether it’s restoring the shine to your vehicle, bringing freshness back to your home, or preparing a property for its next tenant, our experienced team ensures every job is completed to the highest standard.<br><br>With fully equipped mobile units and a commitment to reliability, we bring convenience right to your doorstep. Clean Ninja combines professional expertise with eco-friendly practices to deliver results you can trust every time.</p>
-    <div class="usp-grid text-start mt-5" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 700px; margin: 0 auto;">
-      <div class="usp-feature">
-        <div class="usp-check">✓</div>
-        <span>Fully Insured & Professional</span>
-      </div>
-      <div class="usp-feature">
-        <div class="usp-check">✓</div>
-        <span>Liverpool-Based Cleaning Experts</span>
-      </div>
-      <div class="usp-feature">
-        <div class="usp-check">✓</div>
-        <span>Fast & Reliable Service</span>
-      </div>
-      <div class="usp-feature">
-        <div class="usp-check">✓</div>
-        <span>Eco-Friendly Cleaning Solutions</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Services Section -->
-<div id="services" class="services-section container section-padding">
-  <div class="text-center mb-5">
-    <h2 class="section-title text-center">Ninja Services</h2>
-    <p class="section-subtitle">Premium mobile valeting and cleaning solutions for your vehicle and home.</p>
-  </div>
-  
-  <div class="services-grid">
-    <div class="service-card-wrapper" *ngFor="let cat of landingCategories">
-      <div class="professional-card service-card">
-        <div class="card-image-wrap">
-          <img [src]="getMediaUrl(cat.mediaUrl)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="cat.name" class="card-img" />
-          <div class="card-price-overlay">
-            <span class="price-tag">{{ cat.serviceCount > 1 ? cat.serviceCount + ' Packages' : 'Book Now' }}</span>
-          </div>
-        </div>
-        
-        <div class="card-body">
-          <h3 class="service-name"><span *ngIf="cat.icon">{{ cat.icon }} </span>{{ cat.name }}</h3>
-          <div class="service-desc">Professional {{ cat.name.toLowerCase() }} solutions for your home or vehicle.</div>
-          
-          <div class="card-footer">
-            <a [routerLink]="['/booking']" [queryParams]="cat.isStandalone ? { serviceId: cat.serviceId } : { category: cat.name }" class="btn-primary w-100">View {{ cat.name }}</a>
-          </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-num">100<span class="trust-plus">%</span></span>
+          <span class="trust-label">Fully Insured</span>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Testimonials Section -->
-<div class="testimonials-bg-wrap" id="reviews" style="background: var(--bg-secondary); padding: 100px 0;">
-  <div class="container testimonials-section">
-    <h2 class="section-title text-center">Customer Reviews</h2>
-    <div class="testimonials-container" *ngIf="testimonials.length > 0">
-      <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="5000" slides-per-view="1" space-between="30" breakpoints='{"768": {"slidesPerView": 2}}' style="padding-bottom: 40px;">
-        <swiper-slide *ngFor="let t of testimonials">
-          <div class="professional-card testimonial-card h-100 mx-1">
-            <div class="testimonial-header">
-              <div class="stars-display">
-                <span *ngFor="let s of [1,2,3,4,5]">★</span>
-              </div>
-              <div class="quote-icon">"</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DEALS SECTION
+═══════════════════════════════════════════════════ -->
+<section id="deals" class="deals-section" *ngIf="offerServices.length > 0">
+  <div class="container">
+    <div class="deals-header">
+      <span class="deals-fire-badge">🔥 LIMITED TIME</span>
+      <h2 class="deals-title">Hot Deals You Can't Miss</h2>
+      <p class="deals-sub">Grab these exclusive offers before they vanish — serious savings on premium services.</p>
+    </div>
+
+    <div class="deals-carousel-container">
+      <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="4000" slides-per-view="1" space-between="20">
+        <swiper-slide *ngFor="let svc of offerServices">
+          <div class="deal-card">
+            <div class="deal-card-glow"></div>
+            <h4 class="deal-title">{{ svc.name }}</h4>
+            <div class="deal-img-wrapper">
+              <img [src]="getMediaUrl(svc.offerFlyerUrl)" alt="Offer Flyer" class="deal-img">
+              <div class="deal-img-shine"></div>
             </div>
-            <p class="quote-text">{{ t.comment }}</p>
-            <div class="author-info">
-              <div class="author-avatar">{{ t.customerName.charAt(0) }}</div>
-              <div class="author-text">
-                <strong class="author-name">{{ t.customerName }}</strong>
-                <span class="author-status">Verified Ninja Customer</span>
+            <div class="deal-cta-wrap">
+              <a [routerLink]="['/booking']" [queryParams]="{serviceId: svc.id}" class="btn-deal-claim">
+                🔥 Claim Deal Now
+              </a>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     ABOUT SECTION
+═══════════════════════════════════════════════════ -->
+<section class="about-section">
+  <div class="container">
+    <div class="about-inner">
+      <div class="about-label">WHO WE ARE</div>
+      <h2 class="about-headline">Liverpool's Most Trusted<br><span class="text-red">Cleaning Experts</span></h2>
+      <p class="about-body">
+        Clean Ninja is a professional cleaning company delivering premium results across Liverpool and surrounding areas. We specialise in mobile car valeting, home deep cleaning, end of tenancy cleaning, window cleaning, and pavement cleaning.
+      </p>
+      <p class="about-body">
+        We don't just clean — we transform spaces. Every job is completed to the highest standard, with fully equipped mobile units, eco-friendly products, and a team that takes pride in every detail.
+      </p>
+
+      <div class="usp-chips">
+        <div class="usp-chip">
+          <span class="chip-icon">🛡️</span>
+          <span>Fully Insured &amp; Professional</span>
+        </div>
+        <div class="usp-chip">
+          <span class="chip-icon">📍</span>
+          <span>Liverpool-Based Experts</span>
+        </div>
+        <div class="usp-chip">
+          <span class="chip-icon">⚡</span>
+          <span>Fast &amp; Reliable Service</span>
+        </div>
+        <div class="usp-chip">
+          <span class="chip-icon">🌿</span>
+          <span>Eco-Friendly Products</span>
+        </div>
+        <div class="usp-chip">
+          <span class="chip-icon">📱</span>
+          <span>Easy Online Booking</span>
+        </div>
+        <div class="usp-chip">
+          <span class="chip-icon">✅</span>
+          <span>100% Satisfaction Guaranteed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SERVICES SECTION
+═══════════════════════════════════════════════════ -->
+<section id="services" class="services-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">WHAT WE DO</span>
+      <h2 class="section-title-dark">Ninja-Grade Services</h2>
+      <p class="section-sub-dark">Premium solutions for your vehicle and home — every time, without compromise.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card-wrapper" *ngFor="let cat of landingCategories">
+        <div class="service-card">
+          <div class="service-card-image">
+            <img [src]="getMediaUrl(cat.mediaUrl)" (error)="$any($event.target).src='assets/images/service_placeholder.png'" [alt]="cat.name" class="service-img" />
+            <div class="service-img-overlay"></div>
+            <div class="service-pkg-badge">
+              <span>{{ cat.serviceCount > 1 ? cat.serviceCount + ' Packages' : 'Book Now' }}</span>
+            </div>
+          </div>
+
+          <div class="service-card-body">
+            <div class="service-icon-wrap" *ngIf="cat.icon">{{ cat.icon }}</div>
+            <h3 class="service-card-title">{{ cat.name }}</h3>
+            <p class="service-card-desc">Professional {{ cat.name.toLowerCase() }} solutions, delivered to your door.</p>
+            <a [routerLink]="['/booking']" [queryParams]="cat.isStandalone ? { serviceId: cat.serviceId } : { category: cat.name }" class="service-card-btn">
+              View {{ cat.name }}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     TESTIMONIALS SECTION
+═══════════════════════════════════════════════════ -->
+<section class="testimonials-section" id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow light">HAPPY CUSTOMERS</span>
+      <h2 class="section-title-light">What Our Ninjas' Clients Say</h2>
+    </div>
+
+    <div class="testimonials-container" *ngIf="testimonials.length > 0">
+      <swiper-container pagination="true" pagination-clickable="true" loop="true" autoplay-delay="5000" slides-per-view="1" space-between="24" breakpoints='{"768": {"slidesPerView": 2}, "1100": {"slidesPerView": 3}}' style="padding-bottom: 50px;">
+        <swiper-slide *ngFor="let t of testimonials">
+          <div class="testimonial-card">
+            <div class="tcard-top">
+              <div class="tcard-stars">
+                <span *ngFor="let s of [1,2,3,4,5]" class="tstar">★</span>
+              </div>
+              <div class="tcard-quote-icon">"</div>
+            </div>
+            <p class="tcard-text">{{ t.comment }}</p>
+            <div class="tcard-author">
+              <div class="tcard-avatar">{{ t.customerName.charAt(0) }}</div>
+              <div class="tcard-author-info">
+                <strong class="tcard-name">{{ t.customerName }}</strong>
+                <span class="tcard-badge">✓ Verified Ninja Customer</span>
               </div>
             </div>
           </div>
@@ -122,134 +198,159 @@
       </swiper-container>
     </div>
 
-    <!-- Add Review Button -->
-    <div class="text-center mt-5">
-      <p class="text-muted mb-3" *ngIf="testimonials.length === 0">No reviews yet. Be the first to share your experience!</p>
-      <button class="btn-primary shimmer-effect" (click)="toggleGlobalFeedbackForm()">Leave a Review</button>
+    <div class="testimonials-empty" *ngIf="testimonials.length === 0">
+      <p>No reviews yet — be the first to share your experience!</p>
+    </div>
+
+    <div class="testimonials-action">
+      <button class="btn-review shimmer-effect" (click)="toggleGlobalFeedbackForm()">
+        ✍️ Leave a Review
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     GLOBAL FEEDBACK MODAL
+═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" tabindex="-1" *ngIf="showGlobalFeedbackForm" (click)="toggleGlobalFeedbackForm()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="toggleGlobalFeedbackForm()">✕</button>
+
+    <div *ngIf="globalFeedbackSuccess" class="modal-success">
+      <div class="success-icon">🎉</div>
+      <h4>Thank You!</h4>
+      <p>Your review has been submitted and will appear after approval.</p>
+    </div>
+
+    <div *ngIf="!globalFeedbackSuccess">
+      <h3 class="modal-title">Share Your Experience</h3>
+      <p class="modal-sub">Your feedback helps other Ninjas find us.</p>
+
+      <div class="modal-field">
+        <label>Select Service</label>
+        <select [(ngModel)]="globalFeedbackDraft.serviceId">
+          <option *ngFor="let s of services" [value]="s.id">{{ s.name }}</option>
+        </select>
+      </div>
+
+      <div class="modal-field">
+        <label>Your Name</label>
+        <input type="text" [(ngModel)]="globalFeedbackDraft.customerName" placeholder="e.g. John Doe">
+      </div>
+
+      <div class="modal-field">
+        <label>Rating</label>
+        <div class="star-picker">
+          <span *ngFor="let star of [1,2,3,4,5]"
+                (click)="globalFeedbackDraft.rating = star"
+                [class.active]="star <= globalFeedbackDraft.rating"
+                class="star-pick">★</span>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label>Your Review</label>
+        <textarea [(ngModel)]="globalFeedbackDraft.comment" rows="3" placeholder="Tell us about your experience..."></textarea>
+      </div>
+
+      <button class="btn-modal-submit" (click)="submitGlobalFeedback()">Submit Review</button>
     </div>
   </div>
 </div>
 
-<!-- Global Feedback Modal -->
-<div class="modal fade show d-block" tabindex="-1" *ngIf="showGlobalFeedbackForm" style="background: rgba(0,0,0,0.7); z-index: 1050;">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
-      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-        <h5 class="modal-title fw-bold" style="color: var(--text-primary);">Share Your Experience</h5>
-        <button type="button" class="btn-close" style="filter: invert(1);" (click)="toggleGlobalFeedbackForm()"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div *ngIf="globalFeedbackSuccess" class="alert alert-success text-center">
-          <h4 class="alert-heading">Thank You!</h4>
-          <p class="mb-0">Your review has been submitted and will be visible after approval.</p>
-        </div>
 
-        <div *ngIf="!globalFeedbackSuccess">
-          <div class="mb-3">
-            <label class="form-label" style="color: var(--text-secondary);">Select Service</label>
-            <select class="form-select" [(ngModel)]="globalFeedbackDraft.serviceId" style="background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-              <option *ngFor="let s of services" [value]="s.id">{{ s.name }}</option>
-            </select>
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label" style="color: var(--text-secondary);">Your Name</label>
-            <input type="text" class="form-control" [(ngModel)]="globalFeedbackDraft.customerName" placeholder="e.g. John Doe" style="background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-          </div>
-          
-          <div class="mb-3">
-            <label class="form-label" style="color: var(--text-secondary);">Rating</label>
-            <div class="d-flex gap-2">
-              <span *ngFor="let star of [1,2,3,4,5]" 
-                    (click)="globalFeedbackDraft.rating = star"
-                    style="cursor: pointer; font-size: 1.5rem;"
-                    [style.color]="star <= globalFeedbackDraft.rating ? 'var(--primary-color)' : '#555'">
-                ★
-              </span>
-            </div>
-          </div>
-          
-          <div class="mb-4">
-            <label class="form-label" style="color: var(--text-secondary);">Your Review</label>
-            <textarea class="form-control" [(ngModel)]="globalFeedbackDraft.comment" rows="3" placeholder="Tell us about your experience..." style="background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"></textarea>
-          </div>
-          
-          <button class="btn-primary w-100 py-2" (click)="submitGlobalFeedback()">Submit Review</button>
-        </div>
-      </div>
+<!-- ═══════════════════════════════════════════════════
+     CONTACT SECTION
+═══════════════════════════════════════════════════ -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">GET IN TOUCH</span>
+      <h2 class="section-title-dark">Let's Talk Cleaning</h2>
+      <p class="section-sub-dark">Ready for a transformation? Our Ninjas are standing by.</p>
     </div>
-  </div>
-</div>
 
-<!-- Contact Section -->
-<div class="container contact-section section-padding">
-  <div class="contact-card-wrap professional-card">
-    <div class="contact-grid">
+    <div class="contact-card">
+      <!-- Left: Info Panel -->
       <div class="contact-info-panel">
-        <div class="panel-header">
-          <h2 class="section-title" style="color:#fff;">Get In Touch</h2>
-          <p style="color:#ccc;">Expert advice and bookings available daily.</p>
-        </div>
-        <div class="info-items">
-          <div class="info-item-rev">
-            <span class="info-icon">📞</span>
-            <div>
-              <label>Phone</label>
-              <p>+44 7578 334674</p>
+        <div class="contact-panel-inner">
+          <h3 class="contact-info-title">Contact Details</h3>
+          <p class="contact-info-sub">Reach out any time — we respond fast.</p>
+
+          <div class="contact-info-list">
+            <div class="contact-info-item">
+              <div class="cinfo-icon">📞</div>
+              <div class="cinfo-text">
+                <label>Phone</label>
+                <a href="tel:+447578334674">+44 7578 334674</a>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="cinfo-icon">📧</div>
+              <div class="cinfo-text">
+                <label>Email</label>
+                <a href="mailto:cleanninjaexperts@gmail.com">cleanninjaexperts@gmail.com</a>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="cinfo-icon">📍</div>
+              <div class="cinfo-text">
+                <label>Service Area</label>
+                <span>Liverpool &amp; Surrounding Areas</span>
+              </div>
             </div>
           </div>
-          <div class="info-item-rev">
-            <span class="info-icon">📧</span>
-            <div>
-              <label>Email</label>
-              <p>cleanninjaexperts@gmail.com</p>
-            </div>
-          </div>
-          <div class="info-item-rev">
-            <span class="info-icon">📍</span>
-            <div>
-              <label>Service Area</label>
-              <p>Liverpool & Surrounding Areas</p>
-            </div>
-          </div>
-        </div>
-        <div class="instagram-link-footer">
-          <a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank">Follow Our Journey →</a>
+
+          <a [href]="'https://instagram.com/' + instagramHandle.replace('@', '')" target="_blank" class="contact-instagram-btn">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Follow Our Journey
+          </a>
         </div>
       </div>
-      
+
+      <!-- Right: Form Panel -->
       <div class="contact-form-panel">
-        <div *ngIf="contactSuccess" class="alert alert-success" style="background: #e6f9e6; color: #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-          Thank you! Your request has been sent. Our team will contact you shortly.
+        <div class="contact-success-msg" *ngIf="contactSuccess">
+          <span class="success-check">✓</span>
+          Thank you! We'll contact you shortly.
         </div>
-        <div class="form-row">
-          <div class="form-group-custom">
-            <label>Name</label>
-            <input type="text" placeholder="Your Name" [(ngModel)]="contactName">
+
+        <div class="contact-form-row">
+          <div class="contact-field">
+            <label>Your Name</label>
+            <input type="text" placeholder="John Doe" [(ngModel)]="contactName">
           </div>
-          <div class="form-group-custom">
-            <label>Phone</label>
-            <input type="tel" placeholder="Your Phone Number" [(ngModel)]="contactPhone">
+          <div class="contact-field">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="+44 XXXX XXXXXX" [(ngModel)]="contactPhone">
           </div>
         </div>
-        <div class="form-group-custom">
-          <label>Inquiry Message</label>
-          <textarea rows="4" placeholder="How can our Ninja's help you today?" [(ngModel)]="contactMessage"></textarea>
+
+        <div class="contact-field">
+          <label>How can we help?</label>
+          <textarea rows="5" placeholder="Tell us what you need — we'll get back to you fast." [(ngModel)]="contactMessage"></textarea>
         </div>
-        <button class="btn-primary w-100 py-3 mt-3" (click)="submitContactForm()" [disabled]="isSubmittingContact">
-          {{ isSubmittingContact ? 'Sending...' : 'Send Your Request' }}
+
+        <button class="btn-contact-submit" (click)="submitContactForm()" [disabled]="isSubmittingContact">
+          <span>{{ isSubmittingContact ? 'Sending...' : 'Send Request' }}</span>
+          <svg *ngIf="!isSubmittingContact" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
     </div>
-  </div>
 
-  <!-- Regional Map -->
-  <div class="map-container">
-    <img src="assets/images/liverpool_map.png" alt="Liverpool Map Area" class="map-img">
-    <div class="map-overlay">
-      <div class="map-pin">📍</div>
-      <h3 class="text-white fw-bold mb-1" style="font-family: var(--heading-font); letter-spacing: 1px;">Serving Liverpool</h3>
-      <p class="text-white-50 fw-semibold mb-0" style="font-size: 1.1rem;">and surrounding areas</p>
+    <!-- Liverpool Map -->
+    <div class="map-container">
+      <img src="assets/images/liverpool_map.png" alt="Liverpool Map Area" class="map-img">
+      <div class="map-overlay">
+        <div class="map-pin-wrap">
+          <div class="map-pin-pulse"></div>
+          <div class="map-pin">📍</div>
+        </div>
+        <h3 class="map-label">Serving Liverpool</h3>
+        <p class="map-sublabel">and surrounding areas</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
