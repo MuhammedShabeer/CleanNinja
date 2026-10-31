@@ -148,71 +148,12 @@ export class Booking implements OnInit {
     this.selectedSlot = slot;
   }
 
-  submitBooking(event: Event): void {
-    event.preventDefault();
-    if (!this.selectedService || !this.customerName || !this.customerEmail || !this.phone || !this.scheduledDate || !this.address || !this.zipcode) {
-      alert('Please fill out all required fields (Name, Email, Phone, Address, Postcode, Service, and Date).');
-      return;
+  submitBooking(event?: Event): void {
+    if (event) {
+      event.preventDefault();
     }
-
-    if (this.selectedService.isSlotBased && !this.selectedSlot) {
-      alert('Please select a time slot.');
-      return;
-    }
-
-    if (this.selectedFrequency !== 'Once' && (this.frequencyCount < 2)) {
-      alert('Frequency count must be greater than 1.');
-      return;
-    }
-
-    this.isSubmitting = true;
-    const payload: any = {
-      customerName: this.customerName,
-      customerEmail: this.customerEmail,
-      phone: this.phone,
-      servicePackage: `${this.selectedService.name} (${this.selectedFrequency}${this.selectedFrequency !== 'Once' ? ' x' + this.frequencyCount : ''})`,
-      address: `${this.address}, ${this.zipcode}`,
-      frequency: this.selectedFrequency,
-      frequencyCount: this.selectedFrequency !== 'Once' ? this.frequencyCount : 1,
-      latitude: 0,
-      longitude: 0,
-      durationMinutes: this.selectedService.defaultDurationMinutes
-    };
-
-    if (this.selectedService.isSlotBased && this.scheduledDate && this.selectedSlot) {
-      // Create a full DateTime from date and slot
-      // Slot value is ISO string from server
-      payload.scheduledDate = this.selectedSlot.value;
-      payload.timeSlotLabel = this.selectedSlot.label;
-    } else if (!this.selectedService.isSlotBased && this.scheduledDate) {
-      // Create date with preferred hour
-      const date = new Date(this.scheduledDate);
-      const [hours, minutes] = this.preferredHour.split(':');
-      date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-      
-      payload.scheduledDate = date.toISOString();
-      payload.timeSlotLabel = `Assessment at ${this.preferredHour}`;
-      payload.durationMinutes = 0;
-    }
-
-    this.http.post('/api/bookings', payload).subscribe({
-      next: () => {
-        this.isSubmitting = false;
-        this.submitSuccess = true;
-        this.cdr.detectChanges();
-        
-        // Explicitly snap to the top so the success message is immediately visible
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-        document.body.scrollTop = 0;
-        document.documentElement.scrollTop = 0;
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Failed to submit booking. Please try again.');
-        this.isSubmitting = false;
-        this.cdr.detectChanges();
-      }
-    });
+    alert("We are not taking bookings right now. We will start taking bookings soon!");
+    return;
   }
 
   getMediaUrl(url: string | undefined): string {

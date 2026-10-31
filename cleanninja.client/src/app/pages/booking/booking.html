@@ -1,6 +1,23 @@
 <div class="booking-page container">
   <h1 class="page-title text-center">Book a Service</h1>
 
+  <!-- Bookings Paused Announcement -->
+  <div class="booking-pause-banner">
+    <div class="pause-banner-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <div class="pause-banner-content">
+      <h3 class="pause-banner-title">Bookings Temporarily Paused</h3>
+      <p class="pause-banner-text">
+        We are not taking bookings right now. We will start taking bookings soon! Feel free to explore our services and prices below. For enquiries, please <a routerLink="/" fragment="contact">contact us</a>.
+      </p>
+    </div>
+  </div>
+
   <!-- Premium Success State -->
   <div *ngIf="submitSuccess" class="success-message-container">
     <div class="premium-success-card text-center">
@@ -173,11 +190,16 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-primary btn-lg w-100 mt-4 py-3 fw-bold" 
-          (click)="submitBooking($event)" 
-          [disabled]="isSubmitting || !selectedService || (selectedService?.isSlotBased && !selectedSlot) || (selectedFrequency !== 'Once' && frequencyCount < 2)">
-          {{ isSubmitting ? 'Confirming Your Ninja...' : (selectedService?.isSlotBased ? 'Confirm Booking' : 'Book Appointment') }}
-        </button>
+        <div class="booking-blocked-action mt-4">
+          <div class="booking-blocked-badge mb-2">
+            <span class="pulse-dot"></span>
+            <span>Bookings Temporarily Paused</span>
+          </div>
+          <button type="button" class="btn btn-booking-disabled w-100 py-3" disabled>
+            <span class="btn-blocked-main">We're Not Taking Bookings Right Now</span>
+            <span class="btn-blocked-sub">We will start taking bookings soon! Stay tuned 🥷</span>
+          </button>
+        </div>
       </form>
     </div>
 

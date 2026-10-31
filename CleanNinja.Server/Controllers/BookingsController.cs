@@ -68,28 +68,11 @@ namespace CleanNinja.Server.Controllers
                 .ToListAsync();
         }
 
-        // POST: api/bookings — customer-facing booking
+        // POST: api/bookings — customer-facing booking (Temporarily blocked)
         [HttpPost]
         public async Task<ActionResult<Booking>> CreateBooking(Booking booking)
         {
-            booking.Status = "Pending";
-            booking.CreatedAt = DateTime.UtcNow;
-
-            // If duration not set, use default from service
-            if (booking.DurationMinutes <= 0)
-            {
-                var baseServiceName = booking.ServicePackage.Split(" (")[0];
-                var service = await _context.Services.FirstOrDefaultAsync(s => s.Name == baseServiceName);
-                booking.DurationMinutes = service?.DefaultDurationMinutes ?? 60;
-            }
-
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
-            
-            // Fire and forget email or await it
-            _ = _emailService.SendBookingConfirmationAsync(booking);
-            
-            return CreatedAtAction(nameof(GetPendingBookings), new { id = booking.Id }, booking);
+            return BadRequest(new { message = "We are not taking bookings right now. We will start taking bookings soon!" });
         }
 
         // POST: api/bookings/schedule — admin creates a scheduled job
